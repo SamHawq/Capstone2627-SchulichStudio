@@ -1,0 +1,39 @@
+# --- Secrets / environment files ---
+environment_vars.env
+*.env
+.env
+.env.*
+# Allow committing a template with empty values
+!*.env.example
+!.env.example
+
+# --- Claude Code files ---
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+
+# --- Real candidate data (raw files and the compiled store) ---
+candidate_data/*
+!candidate_data/README.md
+
+# --- Results pages (contain re-identified candidate IDs) ---
+results/
+
+# --- Logs (may contain pseudonymized applicant data) ---
+logs/
+*.log
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
