@@ -1,7 +1,9 @@
 """Builds a Ranker Agent for a single criterion.
 
 A ranker is an OpenAI Agents SDK `Agent` with:
-  - instructions generated from its `Criterion` (what to look for, how to score, the rules), and
+  - instructions generated from its `Criterion` (what to look for, how to score, which fields
+    it covers and how to read them, the rules), so the same builder serves built-in criteria
+    and auto criteria planned from any dataset, and
   - `output_type=RankerOutput`, which makes the SDK request structured JSON output and parse
     it into a `RankerOutput` object.
 
@@ -16,7 +18,7 @@ from agents import Agent
 from ..schemas import Criterion, RankerOutput
 
 
-def build_ranker(criterion: Criterion) -> Agent:
+def build_ranker(criterion: Criterion, client_instructions: str = "") -> Agent:
     """Create the LLM agent that scores candidates on `criterion`.
 
     Hard-constraint criteria are allowed to exclude candidates. All others are told to score
@@ -28,6 +30,8 @@ def build_ranker(criterion: Criterion) -> Agent:
 
     Args:
         criterion: The registry entry this ranker evaluates.
+        client_instructions: The client's extra instructions for this criterion (from the request,
+            usually written by the Manager agent). The rules below still take priority.
 
     Returns:
         A configured `Agent`, ready for `Runner.run(agent, input_json)`.
@@ -40,6 +44,14 @@ def build_ranker(criterion: Criterion) -> Agent:
     else:
         exclusion_rule = "This is NOT a hard constraint: score every candidate and leave `excluded` empty."
 
+    # One criterion can cover several fields; the planner's notes say how to read each one.
+    notes = {n.field: n.meaning for n in criterion.field_notes}
+    field_lines = "\n".join(f"- {f}: {notes[f]}" if f in notes else f"- {f}"
+                            for f in criterion.relevant_fields)
+
+    client = (f"\nThe client's instructions for this criterion (follow them within the rules below):\n"
+              f"{client_instructions.strip()}\n") if client_instructions.strip() else ""
+
     # Each rule targets a specific failure mode that validate_output also checks for.
     instructions = f"""You are a ranking agent in a hiring system. You evaluate candidates on ONE criterion only.
 
@@ -48,6 +60,11 @@ Criterion: {criterion.name}
 What to look for: {criterion.description}
 Scoring guidance: {criterion.scoring_guidance}
 
+Fields a candidate may have (missing fields are left out):
+{field_lines}
+A value may be a list when sources gave different answers (e.g. one per course survey);
+weigh all of them.
+{client}
 Rules:
 - Score each candidate from 0 to 10 using only the data provided for them. Do not guess missing information.
 - If a candidate has no relevant data, give them 0 and say "no data" in the rationale.

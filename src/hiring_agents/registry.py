@@ -4,8 +4,8 @@ Rankers aren't given open-ended tasks. Each one is tied to a registered `Criteri
 description, scoring guide, and list of allowed fields. This keeps rankers predictable and makes
 the system reusable beyond TA hiring: a new client supplies a different registry, not new code.
 
-To add a built-in criterion, append a `Criterion` to `DEFAULT_CRITERIA`. Make sure its
-`relevant_fields` match keys that exist in the candidate data.
+To add a built-in criterion, append a `Criterion` to `DEFAULT_CRITERIA`. Its `relevant_fields`
+must be standard field ids from `intake.DEFAULT_FIELDS` (add a FieldSpec there for new data).
 """
 
 from .schemas import Criterion

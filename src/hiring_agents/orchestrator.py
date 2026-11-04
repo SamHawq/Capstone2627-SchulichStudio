@@ -2,8 +2,9 @@
 
 Design note: the deterministic steps (which rankers run, privacy filtering, validation,
 aggregation) are plain code, so they behave the same every time and can be unit-tested
-without API calls. LLMs are used only for the judgment calls: scoring candidates. A Manager
-*LLM* can be added later to turn free-text instructions into a HiringRequest.
+without API calls. LLMs are used only for the judgment calls: planning which data fields
+feed which criteria (planning.py, once per dataset), turning free-text instructions into a
+HiringRequest (the Manager agent, drafting.py, before this runs), and scoring candidates.
 
 Entry point: `rank_candidates(request, raw_candidates)`.
 """
@@ -16,10 +17,19 @@ import time
 from agents import Runner
 
 from .aggregation import aggregate
+from .availability import extract_availability
+from .datastore import Store, load_store
+from .intake import DEFAULT_FIELDS, report_warnings, standardize
+from .planning import (
+    add_auto_criteria, base_fields, field_labels, load_catalog, new_fields, plan_catalog, with_catalog,
+)
 from .privacy import pseudonymize, view_for
 from .llm_agents import build_ranker
 from .registry import CriterionRegistry, default_registry
-from .schemas import Candidate, Criterion, FinalRanking, HiringRequest, RankerOutput
+from .schemas import (
+    Candidate, CriteriaCatalog, Criterion, CriterionUsed, FieldSpec, FinalRanking, HiringRequest,
+    RankerOutput,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +52,7 @@ def resolve_criteria(
 
     Returns:
         (active, warnings): criteria to run, in request order, plus warnings for any
-        unknown or zero-weight criteria that were skipped.
+        unknown or negative-weight criteria that were skipped.
     """
     registry = registry.copy()
     for custom in request.custom_criteria:
@@ -53,8 +63,10 @@ def resolve_criteria(
         criterion = registry.get(cid)
         if criterion is None:
             warnings.append(f"Unknown criterion '{cid}' ignored.")
-        elif weight <= 0:
+        elif weight < 0:
             warnings.append(f"Criterion '{cid}' has weight {weight} and was skipped.")
+        elif weight == 0:
+            pass  # switched off on purpose (e.g. by the Manager), so not worth a warning
         else:
             active.append(criterion)
 
@@ -62,6 +74,38 @@ def resolve_criteria(
     logger.info("Active criteria: %s", [c.id for c in active])
     logger.info("Sleeping criteria (no LLM call): %s", sleeping or "none")
     return active, warnings
+
+
+def criteria_with_data(
+    active: list[Criterion], candidates: list[Candidate]
+) -> tuple[list[Criterion], list[str]]:
+    """Put to sleep any active criterion whose fields no candidate has.
+
+    Such a ranker could only score everyone 0, which costs an LLM call and drags every total
+    down equally. Skipping it leaves its weight out, like a failed ranker.
+
+    Returns:
+        (runnable, warnings): criteria with data for at least one candidate, plus one warning
+        per skipped criterion.
+    """
+    present = {f for c in candidates for f in c.fields}
+    runnable, warnings = [], []
+    for criterion in active:
+        has = [f for f in criterion.relevant_fields if f in present]
+        missing = [f for f in criterion.relevant_fields if f not in present]
+        if not has:
+            warnings.append(f"Criterion '{criterion.id}' skipped: no candidate has any of its "
+                            f"fields {criterion.relevant_fields}.")
+            continue
+        runnable.append(criterion)
+        # A built-in criterion extended by the catalog is expected to miss its own standard
+        # fields (the data uses other columns), so that isn't worth a warning.
+        if missing and present & {n.field for n in criterion.field_notes}:
+            logger.info("[%s] ranked on its planned fields; not in the data: %s", criterion.id, missing)
+        elif missing:
+            warnings.append(f"Criterion '{criterion.id}' has no data for {missing}; "
+                            f"it is ranked on {has} only.")
+    return runnable, warnings
 
 
 def validate_output(
@@ -117,12 +161,13 @@ async def run_ranker(
 
     The agent receives a JSON payload containing the role, the client's notes, and each
     candidate's `view_for` record (only the fields this criterion needs). Every candidate is
-    sent in one call so the LLM can compare them against each other.
+    sent in one call so the LLM can compare them against each other. The request's
+    instructions for this criterion, if any, go into the agent's instructions.
 
     Args:
         criterion: The criterion to score on.
         candidates: Sanitized candidates from `pseudonymize`.
-        request: Provides `role` and `notes` as context.
+        request: Provides `role`, `notes` and this criterion's `instructions`.
 
     Returns:
         The ranker's parsed `RankerOutput` (not yet validated).
@@ -136,10 +181,14 @@ async def run_ranker(
         "additional_notes": request.notes,
         "candidates": [view_for(c, criterion) for c in candidates],
     }
-    agent = build_ranker(criterion)
+    agent = build_ranker(criterion, request.instructions.get(criterion.id, ""))
     payload_json = json.dumps(payload, indent=2)
     tag = f"[{criterion.id}]"
-    logger.info("%s Created agent '%s' (model: %s)", tag, agent.name, agent.model or "SDK default")
+    logger.info("%s Created agent '%s' (model: %s)%s", tag, agent.name, agent.model or "SDK default",
+                " with client instructions" if request.instructions.get(criterion.id) else "")
+    # Field names only; the values are in the DEBUG payload below.
+    logger.info("%s Manager -> ranker: %d candidates, fields %s", tag, len(candidates),
+                sorted({f for c in candidates for f in c.fields if f in criterion.relevant_fields}))
     logger.debug("%s Agent instructions:\n%s", tag, agent.instructions)
     logger.debug("%s Manager -> ranker payload:\n%s", tag, payload_json)
 
@@ -160,42 +209,127 @@ async def run_ranker(
     raise RuntimeError(f"Ranker '{criterion.id}' failed after {MAX_ATTEMPTS} attempts: {last_error}")
 
 
-async def rank_candidates(
+async def _get_catalog(
     request: HiringRequest,
     raw_candidates: list[dict],
+    from_store: bool,
+    registry: CriterionRegistry,
+    fields: list[FieldSpec] | None,
+    column_mapping: dict[str, str | None] | None,
+    store: Store,
+) -> tuple[CriteriaCatalog | None, list[str]]:
+    """The data's criteria catalog: the store's criteria.json, else planned now (cached)."""
+    base = [registry.get(cid) for cid in registry.ids()]
+    if from_store and (catalog := load_catalog(store.criteria)):
+        logger.info("Criteria catalog: criteria.json (%d extensions, %d auto criteria)",
+                    len(catalog.extensions), len(catalog.criteria))
+        added = new_fields(catalog, raw_candidates, base)
+        warnings = [f"{len(added)} field(s) in the store aren't in criteria.json, so no criterion uses "
+                    "them; run compile_candidates.py to plan them."] if added else []
+        return catalog, warnings
+    # Keep every non-sensitive column, so the planner can see what data exists.
+    keep = {f.id for f in fields or DEFAULT_FIELDS if f.handling == "keep"}
+    everything, report, _ = standardize(raw_candidates, base_fields(base) | keep, fields, column_mapping,
+                                        keep_unmatched=True)
+    if not from_store:  # the store's availability was extracted at compile time
+        everything, _, _ = extract_availability(everything, "unknown term")
+    # Data passed in directly is planned for this role; the store is planned at compile time.
+    logger.info("Criteria catalog: planning for this request (data passed in directly, or no criteria.json)")
+    catalog, warnings = await plan_catalog(everything, base, request.role, field_labels([report]),
+                                           store.plan_cache)
+    if from_store and catalog:
+        warnings.append("The store has no criteria.json; planned criteria for this request only. "
+                        "Run compile_candidates.py to plan and save them.")
+    return catalog, warnings
+
+
+async def rank_candidates(
+    request: HiringRequest,
+    raw_candidates: list[dict] | None = None,
     registry: CriterionRegistry | None = None,
+    fields: list[FieldSpec] | None = None,
+    column_mapping: dict[str, str | None] | None = None,
+    store: Store | None = None,
 ) -> tuple[FinalRanking, dict[str, str]]:
-    """Main entry point: rank `raw_candidates` for `request`.
+    """Main entry point: rank candidates for `request`.
 
     Steps:
-      1. Pseudonymize the candidates (sensitive fields removed, IDs replaced with refs).
-      2. Resolve the active criteria; the rest sleep.
-      3. Run all active rankers in parallel (asyncio.gather).
-      4. Validate each output. A ranker that fails is left out with a warning instead of
+      1. Criteria catalog (if `request.auto_criteria`): the store's criteria.json, planned at
+         compile time, or for data passed in directly, one Criteria Planner call (cached).
+         Its fields are added to the built-in criteria and its auto criteria to the registry
+         (see `planning`).
+      2. Resolve the requested criteria; then the auto criteria that apply to the role join,
+         each with its own ranker. The rest sleep.
+      3. Intake: map the source columns to standard fields, keeping only the ID and the
+         fields the criteria need.
+      4. Pseudonymize the candidates (IDs replaced with refs, sensitive fields removed).
+      5. Skip criteria that no candidate has data for.
+      6. Run the remaining rankers in parallel (asyncio.gather).
+      7. Validate each output. A ranker that fails is left out with a warning instead of
          failing the whole request.
-      5. Aggregate into a weighted top-X ranking.
+      8. Aggregate into a weighted top-X ranking.
 
     Args:
         request: What to hire for and how to weight the criteria.
-        raw_candidates: Candidate records from the data source. Each must have a "ucid" key.
+        raw_candidates: Candidate records in any column layout that intake can map (see
+            `intake.standardize`). If omitted, the compiled candidate store
+            (`candidate_data/candidates.json`, see `datastore`) is used.
         registry: Criteria to use. Defaults to the built-in TA criteria.
+        fields: Standard field catalog. Defaults to `intake.DEFAULT_FIELDS`.
+        column_mapping: Source column -> standard field (or None to drop), for columns the
+            catalog's aliases don't cover.
+        store: The candidate store to read (and whose criteria.json and plan cache to use).
+            Defaults to candidate_data/.
 
     Returns:
         (final_ranking, ref_map): the ranking uses pseudonymous refs. Use `ref_map[ref]` to
         get each candidate's real ID back. Do this only on our side, after all LLM calls.
 
     Raises:
-        ValueError: If no requested criterion is valid.
+        ValueError: If no requested criterion is valid or has data, or intake can't map the
+            data (see `intake.standardize`).
+        FileNotFoundError: If `raw_candidates` is omitted and the store hasn't been compiled.
         RuntimeError: If every ranker fails.
     """
+    store = store or Store()
+    from_store = raw_candidates is None
+    if from_store:
+        raw_candidates = load_store(store.candidates)
     logger.info("Request: role=%r, %d candidates, weights=%s, top_x=%d",
                 request.role, len(raw_candidates), request.criteria, request.top_x)
-    candidates, ref_map = pseudonymize(raw_candidates)
-    active, warnings = resolve_criteria(request, registry or default_registry())
+    registry = registry or default_registry()
+    warnings: list[str] = []
+    catalog = None
+    if request.auto_criteria:
+        catalog, catalog_warnings = await _get_catalog(request, raw_candidates, from_store, registry,
+                                                       fields, column_mapping, store)
+        warnings += catalog_warnings
+        if catalog:
+            registry, catalog_warnings = with_catalog(registry, catalog)
+            warnings += catalog_warnings
+
+    active, resolve_warnings = resolve_criteria(request, registry)
+    warnings += resolve_warnings
+    if not active:
+        raise ValueError("No valid criteria in request.")
+    weights = {c.id: request.criteria[c.id] for c in active}
+    skipped_fields = []
+    if catalog:
+        active, weights, skipped_fields = add_auto_criteria(catalog, active, request)
+    needed = {f for c in active for f in c.relevant_fields}
+
+    records, intake_report, intake_warnings = standardize(raw_candidates, needed, fields, column_mapping)
+    # Unused columns are expected in the store, and the planner already reports what it skipped.
+    # Missing fields are reported per criterion by criteria_with_data.
+    intake_warnings += report_warnings(intake_report, unmatched=not (from_store or request.auto_criteria),
+                                       missing=False)
+    candidates, ref_map = pseudonymize(records)
+    active, data_warnings = criteria_with_data(active, candidates)
+    warnings += intake_warnings + data_warnings
     for w in warnings:
         logger.warning(w)
     if not active:
-        raise ValueError("No valid criteria in request.")
+        raise ValueError("None of the criteria have data:\n" + "\n".join(warnings))
 
     run_start = time.perf_counter()
 
@@ -230,11 +364,21 @@ async def rank_candidates(
         role=request.role,
         outputs=outputs,
         # Only criteria that actually produced output, so failed rankers don't drag scores down.
-        weights={cid: request.criteria[cid] for cid in outputs},
+        weights={cid: weights[cid] for cid in outputs},
         all_refs=[c.ref for c in candidates],
         top_x=request.top_x,
         warnings=warnings,
     )
+    present = {f for c in candidates for f in c.fields}
+    total = sum(weights[cid] for cid in outputs)
+    used = [
+        CriterionUsed(id=c.id, name=c.name, source="requested" if c.id in request.criteria else "auto",
+                      weight=round(weights[c.id] / total, 3),
+                      fields=[f for f in c.relevant_fields if f in present])
+        for c in active if c.id in outputs
+    ]
+    final = final.model_copy(update={"intake": intake_report, "criteria": used,
+                                     "skipped_fields": skipped_fields})
     logger.info("Final ranking (top %d of %d, %d excluded, %d warnings): %s",
                 request.top_x, len(candidates), len(final.excluded), len(final.warnings),
                 [(r.candidate_ref, r.total_score) for r in final.ranking])

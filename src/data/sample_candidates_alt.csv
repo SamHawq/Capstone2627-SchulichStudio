@@ -1,0 +1,4 @@
+Student Number,Full Name,Email Address,Pronouns,Degree Program,Year,Courses & Grades,Previous TA Positions,Teaching Background,Instructor Feedback,Favourite Colour
+10000001,Sample Person E,e@example.com,they/them,Software Engineering,3,"ENGG 233: A, ENSF 338: A-",ENGG 233 (Winter 2026),Peer mentor for first-year engineering students.,Professor: 'Clear explanations and well prepared for every lab.',blue
+10000002,Sample Person F,f@example.com,she/her,Electrical Engineering,4,"ENGG 233: B+, ENEL 353: A",,Taught a summer coding camp for high school students.,,green
+10000003,Sample Person G,g@example.com,he/him,Computer Science (MSc),5,"CPSC 231: A+, ENGG 233: A","CPSC 231 (Fall 2025), CPSC 233 (Winter 2026)",Two terms of TA labs and office hours.,Student survey: average 4.6/5 'patient and approachable.',red

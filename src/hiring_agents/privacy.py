@@ -1,6 +1,7 @@
 """Strips identifying and protected data before anything is sent to an LLM.
 
-There are two layers of protection:
+Runs after intake.standardize, which has already dropped every column that isn't the ID or a
+field some active criterion needs. The checks here are a second layer on top of that:
   1. `pseudonymize` runs once per request. It removes every field in `SENSITIVE_FIELDS` and
      replaces the real ID with a random-looking ref. The ref -> real-ID map stays in our
      process and is never sent to an LLM.
@@ -15,12 +16,13 @@ import os
 import secrets
 from typing import Any
 
-from .schemas import Candidate, Criterion
+from .schemas import ID_FIELD, Candidate, Criterion
 
 logger = logging.getLogger(__name__)
 
 # Field names (case-insensitive) that are never sent to an LLM. Protected characteristics are
 # included; see Security & Privacy in docs/ARCHITECTURE.md before changing this.
+# intake.DEFAULT_FIELDS is the main list; this one catches anything that skips intake.
 # Note: matching is by field NAME only. Personal details written inside free-text fields
 # (e.g. a name in a reference letter) are not detected yet.
 SENSITIVE_FIELDS = {
@@ -31,7 +33,7 @@ SENSITIVE_FIELDS = {
 
 
 def pseudonymize(
-    raw_candidates: list[dict[str, Any]], id_field: str = "ucid"
+    raw_candidates: list[dict[str, Any]], id_field: str = ID_FIELD
 ) -> tuple[list[Candidate], dict[str, str]]:
     """Turn raw candidate records into sanitized `Candidate`s.
 
@@ -42,7 +44,7 @@ def pseudonymize(
 
     Args:
         raw_candidates: Records straight from the data source, one dict per candidate.
-        id_field: Key holding each candidate's real unique ID.
+        id_field: Key holding each candidate's real unique ID. Always removed from the fields.
 
     Returns:
         (candidates, ref_map): sanitized candidates, and a dict mapping ref to real ID used to
@@ -61,7 +63,8 @@ def pseudonymize(
         if ref in ref_map:
             raise ValueError(f"Duplicate candidate id or ref collision for '{real_id}'")
         ref_map[ref] = real_id
-        fields = {k: v for k, v in raw.items() if k.lower() not in SENSITIVE_FIELDS}
+        fields = {k: v for k, v in raw.items()
+                  if k != id_field and k.lower() not in SENSITIVE_FIELDS}
         removed |= raw.keys() - fields.keys()
         candidates.append(Candidate(ref=ref, fields=fields))
     # Field NAMES only; values and the ref -> real-ID map are never logged.

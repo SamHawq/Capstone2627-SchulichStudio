@@ -12,6 +12,13 @@ CLAUDE.md
 CLAUDE.local.md
 .claude/
 
+# --- Real candidate data (raw files and the compiled store) ---
+candidate_data/*
+!candidate_data/README.md
+
+# --- Results pages (contain re-identified candidate IDs) ---
+results/
+
 # --- Logs (may contain pseudonymized applicant data) ---
 logs/
 *.log
