@@ -3,6 +3,11 @@
 Usage (from the repo root, with the venv active):
     python src/server.py                 # http://127.0.0.1:8000  (API docs at /docs)
     python src/server.py --port 8080
+    python src/server.py --reload        # restart automatically when code under src/ changes
+
+The web pages are read from disk on every load, but Python code only changes when the server
+restarts: after pulling or editing code, restart it (or run with --reload), or a new page may
+talk to an old API.
 
 Binds to 127.0.0.1 only: there is no login and the pages show real candidate IDs, so don't
 expose it on a network. Needs OPENAI_API_KEY in environment_vars.env. Logging uses
@@ -27,6 +32,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run the local hiring UI and API.")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--no-open", action="store_true", help="don't open the browser")
+    parser.add_argument("--reload", action="store_true",
+                        help="restart automatically when code under src/ changes (for development)")
     args = parser.parse_args()
 
     log_path = setup_logging(REPO / "logs")
@@ -36,7 +43,12 @@ def main() -> None:
     print(f"Open {url}  (API docs: {url}/docs). Ctrl+C to stop.")
     if not args.no_open:
         webbrowser.open(url)
-    uvicorn.run(create_app(), host="127.0.0.1", port=args.port, log_level="warning")
+    if args.reload:
+        # Reload needs the app as an import string; the factory builds it in the worker process.
+        uvicorn.run("hiring_agents.api:create_app", factory=True, reload=True,
+                    reload_dirs=[str(REPO / "src")], host="127.0.0.1", port=args.port, log_level="warning")
+    else:
+        uvicorn.run(create_app(), host="127.0.0.1", port=args.port, log_level="warning")
 
 
 if __name__ == "__main__":

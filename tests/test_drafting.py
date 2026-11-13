@@ -9,7 +9,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
-import hiring_agents.drafting as drafting
+import hiring_agents.agent_trace as agent_trace
 import hiring_agents.orchestrator as orchestrator
 import hiring_agents.planning as planning
 from hiring_agents.datastore import Store
@@ -21,13 +21,15 @@ from hiring_agents.drafting import validate_choices
 from hiring_agents.llm_agents import build_ranker
 from hiring_agents.registry import default_registry
 from hiring_agents.schemas import (
-    CourseSession, CriteriaCatalog, Criterion, CriterionChoice, HiringRequest, ManagerOutput, RequestBrief,
+    CourseSession, CriteriaCatalog, Criterion, CriterionChoice, DraftCriterion, FieldNote, HiringRequest,
+    ManagerOutput, RequestBrief,
 )
 from hiring_agents.service import (
     ServiceError, delete_document, draft_request, list_documents, rank, upload_documents, upload_files,
     validate_request,
 )
-from tests.test_service import APPS, _fake_ranker, _planner
+from tests.stubs import patch_review, patch_screen, runner_by_agent
+from tests.test_service import APPS, DRAFT, _fake_ranker, _planner
 
 AUTO = [
     Criterion(id="technical_skills", name="Technical Skills", description="d", scoring_guidance="g",
@@ -217,19 +219,22 @@ class RequestUseTests(unittest.TestCase):
 
 class DraftServiceTests(unittest.TestCase):
     def setUp(self):
+        screen = patch_screen()   # keep-all Header Screen, no LLM call
+        screen.start()
+        self.addCleanup(screen.stop)
         self.tmp = tempfile.TemporaryDirectory()
         d = Path(self.tmp.name)
         self.store = Store(d / "store")
         (d / "apps.csv").write_text(APPS)
-        with patch.object(planning.Runner, "run", _planner()):
+        with patch.object(agent_trace.Runner, "run", _planner()):
             asyncio.run(upload_files([d / "apps.csv"], store=self.store))
 
     def tearDown(self):
         self.tmp.cleanup()
 
     def manager(self, output):
-        return patch.object(drafting.Runner, "run",
-                            AsyncMock(return_value=SimpleNamespace(final_output_as=lambda *a, **k: output)))
+        # Drafting plans criteria for the instructions first (planner), then the Manager weights them.
+        return patch.object(agent_trace.Runner, "run", runner_by_agent({"Criteria Planner": DRAFT, "Manager": output}))
 
     def test_draft_then_rank(self):
         output = _output([_choice("technical_skills", 4, "Python matters most"), _choice("subject_knowledge", 1)])
@@ -238,7 +243,10 @@ class DraftServiceTests(unittest.TestCase):
         payload = json.loads(run.await_args.args[1])
         self.assertIn("technical_skills", [c["id"] for c in payload["criteria"]])   # auto criteria offered
         self.assertNotIn("candidates", payload)                                      # no candidate data
+        tech = next(c for c in payload["criteria"] if c["id"] == "technical_skills")
+        self.assertEqual(tech["fields"], [{"field": "python_skill", "holds": "self-rated level", "kind": "category"}])  # what it holds
         self.assertEqual(draft.request.instructions, {"technical_skills": "Python matters most"})
+        self.assertEqual(draft.request.client_instructions, "Python TA")   # kept for the final review
 
         seen = {}
 
@@ -246,10 +254,48 @@ class DraftServiceTests(unittest.TestCase):
             seen[criterion.id] = request.instructions.get(criterion.id)
             return await _fake_ranker(criterion, candidates, request)
 
-        with patch.object(orchestrator, "run_ranker", ranker):
+        with patch.object(orchestrator, "run_ranker", ranker), patch_review() as review:
             result = asyncio.run(rank(draft.request, self.store))
         self.assertEqual(seen, {"technical_skills": "Python matters most", "subject_knowledge": None})
         self.assertEqual({c.id for c in result.ranking.criteria}, {"technical_skills", "subject_knowledge"})
+        self.assertTrue(result.ranking.reviewed)
+        self.assertEqual(review.payloads[0]["client_instructions"], "Python TA")
+
+    def test_criteria_are_planned_from_the_instructions(self):
+        # The request's own plan: Python split out, as "Python matters most" asks.
+        plan = DRAFT.model_copy(update={"criteria": [DraftCriterion(
+            id="python_proficiency", name="Python", description="d", scoring_guidance="g",
+            fields=[FieldNote(field="python_skill", meaning="self-rated level")], importance=3, courses=[])]})
+        output = _output([_choice("python_proficiency", 5, "Python matters most")])
+        planner_and_manager = runner_by_agent({"Criteria Planner": plan, "Manager": output})
+        with patch.object(agent_trace.Runner, "run", planner_and_manager):
+            draft = asyncio.run(draft_request(RequestBrief(instructions="Python matters most for ENGG 233"), self.store))
+        calls = {c.args[0].name: json.loads(c.args[1]) for c in planner_and_manager.await_args_list}
+        self.assertIn("Python matters most for ENGG 233", calls["Criteria Planner"]["purpose"])
+        offered = [c["id"] for c in calls["Manager"]["criteria"]]
+        self.assertIn("python_proficiency", offered)                  # the request's own criterion
+        self.assertNotIn("technical_skills", offered)                 # not the store's general one
+        self.assertNotIn("teaching_experience", offered)              # no fields in this data: not offered
+        self.assertEqual({c.id for c in draft.criteria}, set(offered))
+        self.assertFalse(draft.request.auto_criteria)
+        self.assertEqual([c.id for c in draft.request.catalog.criteria], ["python_proficiency"])
+
+        # The saved request ranks with its own criteria, even if the store's catalog changes.
+        saved = HiringRequest.model_validate_json(draft.request.model_dump_json())
+        self.store.criteria.unlink()
+        seen = {}
+
+        async def ranker(criterion, candidates, request):
+            seen[criterion.id] = criterion.relevant_fields
+            return await _fake_ranker(criterion, candidates, request)
+
+        with patch.object(orchestrator, "run_ranker", ranker), patch_review():
+            asyncio.run(rank(saved, self.store))
+        self.assertEqual(seen, {"python_proficiency": ["python_skill"]})
+
+        # Redrafting the same text reuses the plan: no new planner call.
+        with patch.object(agent_trace.Runner, "run", runner_by_agent({"Manager": output})):
+            asyncio.run(draft_request(RequestBrief(instructions="Python matters most for ENGG 233"), self.store))
 
     def test_documents_reach_the_manager_scrubbed(self):
         outline = Path(self.tmp.name) / "ENGG233 outline.txt"

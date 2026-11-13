@@ -62,6 +62,44 @@ class IntakeReport(BaseModel):
     missing_fields: list[str]
 
 
+class ColumnDecision(BaseModel):
+    """The header screen's decision for one column header (see screening.py)."""
+
+    column: str = Field(description="The column header, spelled exactly as given.")
+    action: Literal["id", "drop", "keep"] = Field(
+        description="id = the candidate's unique ID column; drop = identifies a person or holds "
+                    "sensitive personal data; keep = anything else.")
+    reason: str = Field(description="A short reason; start it with 'Unsure:' if in doubt.")
+
+
+class HeaderScreenOutput(BaseModel):
+    """What the Header Screen agent returns: one decision per header it was given."""
+
+    columns: list[ColumnDecision]
+
+
+SCREEN_NOTE = ("Header screen: one decision per column header, made from the header text only. "
+               "drop = removed before any value reaches an AI; id = the candidate ID (replaced by "
+               "a code); keep = passed on. Edit an action to override it, then process the store "
+               "again. Headers not listed here are screened when they first appear. Delete this "
+               "file to screen every header again.")
+
+
+class HeaderScreen(BaseModel):
+    """The saved header screen (header_screen.json in the store), hand-editable.
+
+    Attributes:
+        note: How to read and edit the file.
+        columns: Every header screened so far, across all files.
+    """
+
+    note: str = SCREEN_NOTE
+    columns: list[ColumnDecision]
+
+    def decisions(self) -> dict[str, ColumnDecision]:
+        return {d.column: d for d in self.columns}
+
+
 class FieldNote(BaseModel):
     """How a ranker should read one data field (written by the criteria planner)."""
 
@@ -144,7 +182,14 @@ class HiringRequest(BaseModel):
             Weights are relative (0.4/0.4/0.2 and 2/2/1 give the same result). A weight of
             0 skips the criterion, and an auto criterion listed with 0 won't join on its own.
         top_x: How many candidates to return in the final ranking.
-        notes: Optional extra instructions from the client, given to every ranker.
+        notes: Guidance for the Manager's final review (e.g. a summary of the position and
+            preferences that cut across criteria). Not sent to rankers: each ranker gets only
+            the role and its own `instructions`, so it judges its criterion's fields alone.
+        client_instructions: The client's own words (the free text the request was drafted
+            from), for the final review. Not sent to rankers.
+        final_review: Let the Manager review the shortlist against the client's instructions
+            and notes and nudge each weighted score by at most review.MAX_ADJUSTMENT, with a
+            reason (see review.py). Skipped when there are no instructions or notes.
         instructions: Optional extra instructions for one ranker, keyed by criterion_id
             (e.g. {"technical_skills": "Python matters most; ignore CAD"}). The Manager agent
             writes these from free text and documents (see `drafting`), or the client sets them.
@@ -153,6 +198,9 @@ class HiringRequest(BaseModel):
         documents: Names of the store's documents the request was drafted from (a record only).
         custom_criteria: Client-defined bonus criteria, registered for this request only. They
             must still be listed in `criteria` with a weight to be used.
+        catalog: The criteria planned for this request from the client's instructions (see
+            service.draft_request). When set, ranking uses it instead of the store's
+            criteria.json, so a saved request re-ranks with exactly the same criteria.
         auto_criteria: Use the data's criteria catalog (see `planning`): requested built-in
             criteria also see the data fields fitted to them, and auto criteria that apply to
             the role join with their own rankers. Auto criteria can also be named in
@@ -163,12 +211,41 @@ class HiringRequest(BaseModel):
     criteria: dict[str, float]
     top_x: int = Field(default=5, ge=1)
     notes: str = ""
+    client_instructions: str = Field(default="", max_length=4000)
+    final_review: bool = True
     instructions: dict[str, str] = Field(default_factory=dict)
     custom_criteria: list[Criterion] = Field(default_factory=list)
     auto_criteria: bool = True
     sessions: list[CourseSession] = Field(default_factory=list)
     documents: list[str] = Field(default_factory=list)
+    catalog: "CriteriaCatalog | None" = None
 
+
+
+# --- Manager's final review (LLM structured output; see review.py) ---
+
+class CandidateReview(BaseModel):
+    """The Manager's review of one shortlisted candidate."""
+
+    candidate_ref: str
+    adjustment: float = Field(description="Added to the weighted score, from -0.10 to +0.10. 0 unless "
+                                          "the client's instructions call for a change.")
+    reason: str = Field(description="For a non-zero adjustment: the client's instruction it applies "
+                                    "and the ranker evidence it rests on. Empty for 0.")
+    justification: str = Field(description="One or two sentences: why this candidate ranks where they "
+                                           "do for this job, citing the rankers' evidence.")
+    tiebreak: float = Field(description="-1 to 1, from other_info only: how well the candidate's other "
+                                        "information fits this job. Only orders candidates whose final "
+                                        "scores are tied; 0 if there's no other information.")
+    tiebreak_reason: str = Field(description="One short sentence on what in other_info decided the "
+                                             "tiebreak value; empty for 0.")
+
+
+class ReviewOutput(BaseModel):
+    """What the final review returns."""
+
+    candidates: list[CandidateReview]
+    summary: str = Field(description="Two or three sentences on how the instructions shaped the result.")
 
 
 # --- Manager agent (LLM structured output; see llm_agents/manager.py and drafting.py) ---
@@ -222,6 +299,158 @@ class RequestBrief(BaseModel):
         return self
 
 
+# --- Job spreadsheets (jobs.py): Manager designs the columns, Data Agent maps data onto them ---
+
+FieldKind = Literal["number", "category", "yes_no", "text", "list"]
+MapMethod = Literal["copy", "value_map", "combine", "count_yes", "list_yes", "max", "sum"]
+
+
+class SchemaField(BaseModel):
+    """One column of a job spreadsheet."""
+
+    id: str = Field(description="snake_case column id.")
+    label: str = Field(description="Column header a person would read.")
+    description: str = Field(description="What the value holds, e.g. 'Self-rated Python skill'.")
+    kind: FieldKind = Field(description="number, category (one of `values`), yes_no, text, or list.")
+    values: list[str] = Field(description="For category only: the allowed values, lowest to highest "
+                                          "if they are levels. Empty otherwise.")
+
+
+class SchemaGroup(BaseModel):
+    """Columns that are evidence for the same quality; a draft ranking criterion."""
+
+    id: str = Field(description="snake_case group id.")
+    name: str
+    purpose: str = Field(description="One sentence: why this matters for the job.")
+    fields: list[SchemaField]
+
+
+class JobSchema(BaseModel):
+    """The spreadsheet designed for one job (the Manager's output, saved as schema.json)."""
+
+    role: str
+    summary: str = Field(description="One or two sentences on what the job needs.")
+    groups: list[SchemaGroup]
+
+    def columns(self) -> list[tuple[SchemaGroup, SchemaField]]:
+        return [(g, f) for g in self.groups for f in g.fields]
+
+
+class ValuePair(BaseModel):
+    source_value: str
+    value: str
+
+
+class FieldMapping(BaseModel):
+    """How code fills one column from the candidate data (see jobs.py for each method)."""
+
+    field_id: str = Field(description="The column's id from the job schema.")
+    sources: list[str] = Field(description="Data field names that feed the column, spelled exactly.")
+    method: MapMethod
+    value_map: list[ValuePair] = Field(description="For value_map only: source value -> column value.")
+    note: str = Field(description="One short sentence on why these sources fit.")
+
+
+class Gap(BaseModel):
+    name: str = Field(description="A column id (unfilled) or data field name (unplaced).")
+    reason: str
+
+
+class DataMapping(BaseModel):
+    """The Data Agent's output, saved as mapping.json (editable)."""
+
+    fields: list[FieldMapping]
+    unfilled: list[Gap] = Field(description="Columns no data field can fill.")
+    unplaced: list[Gap] = Field(description="Data fields relevant to the job that fit no column.")
+    other: list[str] = Field(description="Data fields to carry along as is, e.g. for tie-breaks.")
+    free_text: list[str] = Field(description="Data fields whose answers are written in the candidate's "
+                                             "or a reviewer's own words (reviews, comments, experience "
+                                             "descriptions), however short.")
+
+
+class FreeTextColumn(BaseModel):
+    """A column of the free-text sheet: its key in the job table and the header a reader sees."""
+
+    key: str = Field(description="Job table column id, or 'other.<field>'.")
+    header: str
+
+
+class FreeTextSheet(BaseModel):
+    """What the text extraction tool gets (and returns): a cut-down job table with only the
+    candidate's pseudonymous ref and the free-text columns (see text_extraction.py).
+
+    Attributes:
+        columns: The free-text columns, in order, with their headers.
+        rows: One per candidate with any text: {"candidate_ref": "C-...", <key>: text, ...}.
+            A cell is a string, or a list of strings for list columns; empty cells are left out.
+    """
+
+    columns: list[FreeTextColumn]
+    rows: list[dict[str, str | list[str]]]
+
+    def to_csv(self) -> str:
+        """The sheet as CSV: "Candidate" then each column's header; lists joined with "; "."""
+        import csv
+        import io
+        out = io.StringIO()
+        writer = csv.writer(out, lineterminator="\n")   # the file write adds the OS line ending
+        writer.writerow(["Candidate"] + [c.header for c in self.columns])
+        for row in self.rows:
+            cells = [row.get(c.key, "") for c in self.columns]
+            writer.writerow([row["candidate_ref"]] + ["; ".join(v) if isinstance(v, list) else v for v in cells])
+        return out.getvalue()
+
+
+class JobInfo(BaseModel):
+    """A job spreadsheet's metadata (job.json).
+
+    Attributes:
+        id: Folder name under the store's jobs/.
+        brief: What the client asked for.
+        candidates: Rows in the table.
+        revised: Whether the Manager revised the design after the Data Agent's report.
+        warnings: Problems found while designing, mapping or filling.
+        source: "store" (designed and mapped from the candidate store) or "import" (read from
+            a job workbook; its rows are kept in the job's source.json).
+    """
+
+    id: str
+    role: str
+    created_at: str
+    brief: RequestBrief
+    candidates: int
+    revised: bool
+    warnings: list[str]
+    source: Literal["store", "import"] = "store"
+
+
+class JobColumn(BaseModel):
+    """A column of the job table, with how it was filled."""
+
+    id: str
+    label: str
+    group: str
+    kind: FieldKind
+    sources: list[str]
+    method: str = Field(description="The mapping method, or '' if the column is unfilled.")
+    filled: int = Field(description="Candidates with a value.")
+    free_text: bool = Field(default=False, description="Fed by a free-text field, so it goes to text extraction.")
+
+
+class JobResult(BaseModel):
+    """A job spreadsheet: its design, mapping, column summary and where the table is."""
+
+    info: JobInfo
+    design: JobSchema
+    mapping: DataMapping
+    columns: list[JobColumn]
+    free_text_columns: list[str] = Field(
+        default_factory=list,
+        description="Table columns holding free text, sent to text extraction: column ids, and "
+                    "'other.<field>' for free-text fields carried in `other`.")
+    table_csv: str = Field(description="Path of table.csv (holds real IDs; local only).")
+
+
 class DocumentInfo(BaseModel):
     """A supporting document in the store.
 
@@ -257,12 +486,15 @@ class RequestDraft(BaseModel):
         reasons: Why each criterion got its weight, keyed by criterion_id.
         not_covered: Parts of the instructions the request can't act on.
         warnings: Fixes made to the Manager's output, and other things to check.
+        criteria: The criteria this request can weight (planned from the instructions; see
+            `request.catalog`), for a client to show.
     """
 
     request: HiringRequest
     reasons: dict[str, str]
     not_covered: list[str]
     warnings: list[str]
+    criteria: list["CriterionInfo"] = Field(default_factory=list)
 
 
 # --- Criteria planner (LLM structured output; see llm_agents/criteria_planner.py) ---
@@ -278,6 +510,10 @@ class FieldProfile(BaseModel):
         kind: "number", "category" (a few short repeated values), or "text" (free text).
         common_values: For categories only, values shared by several candidates
             (e.g. "Expert", "Yes"); rare values are never included.
+        avg_words: Average words per answer, over every answer (0 for numbers).
+        sentence_share: Share of answers that read like prose (planning.is_sentence: 6+
+            words, mostly ordinary lowercase words). Tells free-text answers from short codes
+            or lists.
     """
 
     field: str
@@ -285,6 +521,8 @@ class FieldProfile(BaseModel):
     filled: int
     kind: Literal["number", "category", "text"]
     common_values: list[str]
+    avg_words: float = 0.0
+    sentence_share: float = 0.0
 
 
 class CriterionExtension(BaseModel):
@@ -307,11 +545,38 @@ class DraftCriterion(BaseModel):
                                            "empty if it applies to any role")
 
 
-class SkippedField(BaseModel):
-    """A field the planner chose not to rank on, with the reason shown to the client."""
+SkipUse = Literal["tiebreak", "availability", "administrative", "protected", "identifying", "unusable"]
+# Skipped fields with these uses are never shown to any agent as "other" information.
+# "unreviewed" = a catalog planned before fields were labelled with a use: excluded to be safe.
+EXCLUDED_USES = {"availability", "administrative", "protected", "identifying", "unusable", "unreviewed"}
+
+
+class PlannedSkip(BaseModel):
+    """A field the planner leaves out of every criterion (LLM structured output)."""
 
     field: str
     reason: str
+    use: SkipUse = Field(description=(
+        "tiebreak = says something about the candidate but isn't evidence for any criterion "
+        "(e.g. motivation, general comments, unrelated skills): kept as other information for "
+        "breaking ties; availability = time slots or scheduling; administrative = timestamps, "
+        "consent, form metadata; protected = a protected characteristic or a proxy for one; "
+        "identifying = identifies a person; unusable = empty, shifted or garbled."))
+
+
+class SkippedField(BaseModel):
+    """A field no criterion uses, with the reason shown to the client.
+
+    Attributes:
+        use: What it's good for (see PlannedSkip): "tiebreak" fields are other information the
+            final review may use to order candidates whose scores are tied; every other use is
+            never shown to an agent. "unused_criterion" = its criterion didn't run for this request;
+            "unreviewed" = planned before uses existed (re-plan to label it).
+    """
+
+    field: str
+    reason: str
+    use: str = "unreviewed"
 
 
 class CriteriaDraft(BaseModel):
@@ -319,7 +584,7 @@ class CriteriaDraft(BaseModel):
 
     extensions: list[CriterionExtension]
     criteria: list[DraftCriterion]
-    skipped: list[SkippedField]
+    skipped: list[PlannedSkip]
 
 
 class CriteriaCatalog(BaseModel):
@@ -397,13 +662,25 @@ class RankedCandidate(BaseModel):
 
     Attributes:
         candidate_ref: Pseudonymous ID (map back using `ref_map`).
-        total_score: Weighted score from 0 to 1 across all criteria that ran.
+        total_score: The final score from 0 to 1: the weighted score plus the final review's
+            adjustment (equal to weighted_score when there was no review).
+        weighted_score: The plain weighted average of the ranker scores (aggregation.py).
+        adjustment: What the Manager's final review added or subtracted (at most
+            review.MAX_ADJUSTMENT either way), and adjustment_reason why.
+        justification: The Manager's summary of why the candidate ranks here for this job.
+        tiebreak_reason: Set when the candidate's final score tied with another's and the other
+            information (fields no criterion uses) decided their order.
         per_criterion: Raw 0-10 score from each ranker, keyed by criterion_id.
         rationales: Each ranker's explanation, keyed by criterion_id.
     """
 
     candidate_ref: str
     total_score: float
+    weighted_score: float | None = None
+    adjustment: float = 0.0
+    adjustment_reason: str = ""
+    justification: str = ""
+    tiebreak_reason: str = ""
     per_criterion: dict[str, int]
     rationales: dict[str, str]
 
@@ -420,10 +697,16 @@ class FinalRanking(BaseModel):
         intake: How the source columns were mapped, dropped or found missing.
         criteria: The criteria that ran, with their weights and fields.
         skipped_fields: Data fields the planner chose not to rank on, with reasons.
+        reviewed: Whether the Manager's final review ran, and review_summary its overview.
+        tiebreak_fields: The other-information fields (no criterion uses them) the review could
+            use to break ties.
     """
 
     role: str
     ranking: list[RankedCandidate]
+    reviewed: bool = False
+    review_summary: str = ""
+    tiebreak_fields: list[str] = Field(default_factory=list)
     excluded: list[ExcludedCandidate]
     warnings: list[str]
     intake: IntakeReport | None = None
@@ -505,3 +788,8 @@ class RankingResult(BaseModel):
     request: HiringRequest
     ranking: FinalRanking
     candidate_ids: dict[str, str]
+
+
+# Forward references (models used before they are defined).
+HiringRequest.model_rebuild()
+RequestDraft.model_rebuild()

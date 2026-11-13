@@ -1,15 +1,18 @@
 """Intake: maps candidate data from any column layout into the standard field format.
 
-Data sources name and arrange their columns differently ("UCID" vs "Student Number",
-"Courses & Grades" vs "relevant_courses"). Intake matches every source column to a standard
-field in the field catalog (`FieldSpec`s) and handles it by that field's rule:
+Data sources name and arrange their columns differently ("UCID" vs "Student Number").
+Intake matches every source column against the field catalog (`FieldSpec`s) and handles it
+by that field's rule:
 
     key   the real candidate ID, renamed to `ID_FIELD` so privacy.pseudonymize can replace it
     drop  sensitive (name, contact info, protected characteristics); removed here
     keep  rankable; kept only if an active criterion lists it in `relevant_fields`
 
-A column that matches nothing is dropped. This is an allowlist: an unexpected or misspelled
-sensitive column is removed by default instead of reaching an LLM.
+The default catalog has only the ID and the sensitive names. Every other column keeps its own
+(normalized) name, and the Criteria Planner decides by reasoning which criterion it is evidence
+for; no column is renamed to a guessed "standard" field. When preparing data for rankers, only
+the columns an active criterion lists are kept, so an unexpected or misspelled sensitive
+column is still never sent.
 
 Matching uses column NAMES only. Values pass through unchanged, so personal details written
 inside free text are not removed (see Known limitations in docs/ROADMAP.md).
@@ -30,7 +33,9 @@ from .schemas import ID_FIELD, FieldSpec, IntakeReport
 
 logger = logging.getLogger(__name__)
 
-# Standard fields for TA hiring. Other clients can pass their own catalog to `standardize`.
+# The ID and the sensitive names. Other columns are not renamed to guessed "standard" fields:
+# they keep their own normalized names and the Criteria Planner assigns them to criteria.
+# A client can still pass its own catalog (with "keep" fields) to `standardize`.
 DEFAULT_FIELDS = [
     FieldSpec(id=ID_FIELD, handling="key", description="The candidate's real unique ID",
               aliases=["ucid", "student_id", "student_number", "student_no", "applicant_id", "id"]),
@@ -46,24 +51,6 @@ DEFAULT_FIELDS = [
               aliases=["ethnicity", "race", "sex", "gender", "pronouns", "religion", "disability",
                        "citizenship", "nationality", "marital_status", "sin",
                        "social_insurance_number"]),
-
-    FieldSpec(id="program", handling="keep", description="Degree program",
-              aliases=["degree", "degree_program", "major", "program_of_study"]),
-    FieldSpec(id="year_of_study", handling="keep", description="Year in the program",
-              aliases=["year", "study_year", "year_in_program"]),
-    FieldSpec(id="relevant_courses", handling="keep", description="Relevant courses and grades",
-              aliases=["courses", "course_grades", "courses_grades", "courses_and_grades",
-                       "grades", "transcript"]),
-    FieldSpec(id="previous_ta_courses", handling="keep", description="Courses previously TAed",
-              aliases=["previous_ta_positions", "past_ta_courses", "prior_ta_positions",
-                       "ta_history"]),
-    FieldSpec(id="teaching_experience", handling="keep",
-              description="Teaching, tutoring or mentoring experience",
-              aliases=["teaching_background", "tutoring_experience"]),
-    FieldSpec(id="previous_ta_reviews", handling="keep",
-              description="Reviews of previous TA work from professors or students",
-              aliases=["ta_reviews", "reviews", "instructor_feedback", "ta_evaluations",
-                       "evaluations"]),
 ]
 
 
@@ -244,6 +231,36 @@ def report_warnings(report: IntakeReport, unmatched: bool = True, missing: bool 
     return warnings
 
 
+def _name_lookup(catalog) -> dict[str, FieldSpec]:
+    """Normalized field id or alias -> its field."""
+    return {normalize(name): f for f in catalog for name in [f.id, *f.aliases]}
+
+
+def _match_by_name(col: str, lookup: dict[str, FieldSpec]) -> FieldSpec | None:
+    # Grouped headers ("Student details / Student ID") also match on their last part.
+    return lookup.get(normalize(col)) or lookup.get(normalize(col.rsplit(" / ", 1)[-1]))
+
+
+def id_columns(
+    columns: list[str],
+    fields: list[FieldSpec] | None = None,
+    column_mapping: dict[str, str | None] | None = None,
+) -> list[str]:
+    """The columns `standardize` would take as the candidate ID: mapped to it in
+    `column_mapping`, or (if not mapped at all) named by the ID field's aliases."""
+    lookup = _name_lookup(fields or DEFAULT_FIELDS)
+    explicit = {normalize(col): target for col, target in (column_mapping or {}).items()}
+    found = []
+    for col in columns:
+        n = normalize(col)
+        spec = _match_by_name(col, lookup)
+        if spec is not None and spec.handling == "drop":
+            continue
+        if explicit.get(n) == ID_FIELD or (n not in explicit and spec is not None and spec.handling == "key"):
+            found.append(col)
+    return found
+
+
 def standardize(
     raw_records: list[dict[str, Any]],
     needed: set[str],
@@ -287,7 +304,7 @@ def standardize(
     catalog = {f.id: f for f in fields or DEFAULT_FIELDS}
     if [f.id for f in catalog.values() if f.handling == "key"] != [ID_FIELD]:
         raise ValueError(f"The field catalog needs exactly one 'key' field, with id '{ID_FIELD}'.")
-    lookup = {normalize(name): f for f in catalog.values() for name in [f.id, *f.aliases]}
+    lookup = _name_lookup(catalog.values())
     warnings: list[str] = []
 
     for fid in sorted(needed - catalog.keys()):
@@ -307,8 +324,7 @@ def standardize(
     # Union of columns across all records, in first-seen order (records may differ).
     for col in dict.fromkeys(k for r in raw_records for k in r):
         n = normalize(col)
-        # Grouped headers ("Student details / Student ID") also match on their last part.
-        by_name = lookup.get(n) or lookup.get(normalize(col.rsplit(" / ", 1)[-1]))
+        by_name = _match_by_name(col, lookup)
         if by_name is not None and by_name.handling == "drop":
             report.dropped_sensitive.append(col)
             continue

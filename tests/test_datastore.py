@@ -27,7 +27,7 @@ class CompileTests(unittest.TestCase):
         self.dir = Path(self.tmp.name)
         _xlsx(self.dir / "applications.xlsx", {
             "Instructions": [["One row per applicant."]],
-            "Fall": [["UCID", "First Name", "Major", "Shirt Size"],
+            "Fall": [["UCID", "First Name", "Program", "Shirt Size"],
                      [123, "A", "SE", "M"],
                      [456, "B", "CE", "L"]],
         })
@@ -49,7 +49,7 @@ class CompileTests(unittest.TestCase):
         records, reports, _ = self.compile()
         by_id = {r["candidate_id"]: r for r in records}
         self.assertEqual(set(by_id), {"00000123", "456", "789"})
-        self.assertEqual(by_id["00000123"]["previous_ta_reviews"], "Great")
+        self.assertEqual(by_id["00000123"]["instructor_feedback"], "Great")   # own name, not a guessed field
         self.assertEqual(by_id["00000123"]["program"], "SE")
         self.assertEqual(len(reports), 3)  # instructions sheet and lock file are not sources
 
@@ -74,7 +74,7 @@ class CompileTests(unittest.TestCase):
     def test_store_round_trip_feeds_intake_quietly(self):
         records, _, _ = self.compile()
         path = write_store(records, self.dir / "out" / "candidates.json")
-        again, report, _ = standardize(load_store(path), {"program", "previous_ta_reviews"})
+        again, report, _ = standardize(load_store(path), {"program", "instructor_feedback"})
         self.assertNotIn("shirt_size", again[0])        # extras never reach rankers unless needed
         self.assertEqual(report_warnings(report, unmatched=False), [])
 

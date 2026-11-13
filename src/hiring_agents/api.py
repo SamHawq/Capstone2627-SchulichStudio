@@ -12,7 +12,16 @@ the Schulich Studio website later) codes against.
     POST /api/documents       upload_documents (multipart: files, replace)
     DELETE /api/documents/{name}  delete_document
     POST /api/requests/draft  draft_request    (body: RequestBrief; free text + documents -> RequestDraft)
+    POST /api/jobs            create_job       (body: RequestBrief; ?revise=false for no revision round)
+    GET  /api/jobs            list_jobs
+    GET  /api/jobs/{id}       get_job
+    POST /api/jobs/{id}/apply reapply_job      (rebuild the table from the edited files; no LLM call)
+    GET  /api/jobs/{id}/export export_job      (the job as an .xlsx workbook: table + design)
+    POST /api/jobs/import     import_job       (multipart: file; a job workbook, no redesign)
     POST /api/rankings        rank             (body: HiringRequest)
+    GET  /api/traces          list_traces      (recorded runs; AGENT_TRACE=ON)
+    GET  /api/traces/{name}   get_trace        (one run's events, for the /runs page)
+    GET  /runs                the run viewer page (static/runs.html)
     GET  /results/{name}      a saved HTML results page
 
 Errors: a `ServiceError` (bad input) becomes 400 with {"detail": message}.
@@ -32,12 +41,13 @@ from pydantic import BaseModel
 
 from .datastore import Store
 from .schemas import (
-    CriterionInfo, DataStatus, DocumentInfo, DocumentsResult, HiringRequest, IntakeReport, RankingResult,
-    RequestBrief, RequestDraft, UploadResult,
+    CriterionInfo, DataStatus, DocumentInfo, DocumentsResult, HiringRequest, IntakeReport, JobInfo, JobResult,
+    RankingResult, RequestBrief, RequestDraft, UploadResult,
 )
 from .service import (
-    DEFAULT_PURPOSE, ServiceError, data_status, delete_document, draft_request, list_criteria,
-    list_documents, process_store, rank, save_result, upload_documents, upload_files,
+    DEFAULT_PURPOSE, ServiceError, create_job, data_status, delete_document, draft_request, export_job,
+    get_job, get_trace, import_job, list_criteria, list_documents, list_jobs, list_traces, process_store, rank, reapply_job,
+    save_result, upload_documents, upload_files,
 )
 
 STATIC = Path(__file__).parent / "static"
@@ -61,8 +71,10 @@ class RankingResponse(BaseModel):
     report_url: str
 
 
-def create_app(store: Store | None = None, results_dir: Path | None = None) -> FastAPI:
-    """Build the app for one store. Results pages are saved to `results_dir`."""
+def create_app(store: Store | None = None, results_dir: Path | None = None,
+               trace_dir: Path | None = None) -> FastAPI:
+    """Build the app for one store. Results pages are saved to `results_dir`; recorded runs
+    are read from `trace_dir` (default logs/)."""
     store = store or Store()
     results_dir = results_dir or Path(__file__).resolve().parents[2] / "results"
     write_lock = asyncio.Lock()   # one upload/processing run at a time
@@ -75,6 +87,18 @@ def create_app(store: Store | None = None, results_dir: Path | None = None) -> F
     @app.get("/", response_class=HTMLResponse, include_in_schema=False)
     async def index():
         return (STATIC / "index.html").read_text(encoding="utf-8")
+
+    @app.get("/runs", response_class=HTMLResponse, include_in_schema=False)
+    async def runs_page():
+        return (STATIC / "runs.html").read_text(encoding="utf-8")
+
+    @app.get("/api/traces")
+    async def get_traces():
+        return list_traces(trace_dir)
+
+    @app.get("/api/traces/{name}")
+    async def get_one_trace(name: str):
+        return get_trace(name, trace_dir)
 
     @app.get("/api/data", response_model=DataStatus)
     async def get_data():
@@ -132,6 +156,37 @@ def create_app(store: Store | None = None, results_dir: Path | None = None) -> F
     @app.post("/api/requests/draft", response_model=RequestDraft)
     async def post_draft(brief: RequestBrief):
         return await draft_request(brief, store)
+
+    @app.post("/api/jobs", response_model=JobResult)
+    async def post_job(brief: RequestBrief, revise: bool = True):
+        async with write_lock:
+            return await create_job(brief, store, revise)
+
+    @app.get("/api/jobs", response_model=list[JobInfo])
+    async def get_jobs():
+        return list_jobs(store)
+
+    @app.post("/api/jobs/import", response_model=JobResult)
+    async def post_job_import(file: UploadFile = File(...)):
+        with tempfile.TemporaryDirectory() as tmp:
+            [path] = await save_uploads([file], tmp)
+            async with write_lock:
+                return await import_job(path, store)
+
+    @app.get("/api/jobs/{job_id}/export", include_in_schema=True)
+    async def get_job_export(job_id: str):
+        path = export_job(job_id, store)
+        return FileResponse(path, filename=path.name,
+                            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+    @app.get("/api/jobs/{job_id}", response_model=JobResult)
+    async def get_one_job(job_id: str):
+        return get_job(job_id, store)
+
+    @app.post("/api/jobs/{job_id}/apply", response_model=JobResult)
+    async def post_job_apply(job_id: str):
+        async with write_lock:
+            return await reapply_job(job_id, store)
 
     @app.post("/api/rankings", response_model=RankingResponse)
     async def post_ranking(request: HiringRequest):
