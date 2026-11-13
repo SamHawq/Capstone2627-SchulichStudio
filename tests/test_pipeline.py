@@ -6,6 +6,7 @@ from hiring_agents.aggregation import aggregate
 from hiring_agents.orchestrator import resolve_criteria, validate_output
 from hiring_agents.privacy import pseudonymize, view_for
 from hiring_agents.registry import default_registry
+from tests.stubs import ta_registry
 from hiring_agents.report import render_html
 from hiring_agents.schemas import (
     CandidateScore, Criterion, ExcludedCandidate, FinalRanking, HiringRequest, RankedCandidate,
@@ -27,7 +28,7 @@ class PrivacyTests(unittest.TestCase):
 
     def test_view_only_includes_relevant_fields(self):
         candidates, _ = pseudonymize(RAW, id_field="ucid")
-        criterion = default_registry().get("teaching_experience")
+        criterion = ta_registry().get("teaching_experience")
         self.assertEqual(set(view_for(candidates[0], criterion)), {"candidate_ref", "previous_ta_courses"})
 
 

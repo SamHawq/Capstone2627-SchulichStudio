@@ -40,8 +40,7 @@ from pathlib import Path
 from statistics import mean
 from typing import Any
 
-from agents import Runner
-
+from .agent_trace import run_agent
 from .availability import AVAILABILITY_FIELD
 from .datastore import CATALOG_PATH, DATA_DIR
 from .intake import normalize
@@ -58,6 +57,7 @@ MAX_CATALOG_CRITERIA = 12  # auto criteria kept in a catalog
 MAX_AUTO_CRITERIA = 5      # auto criteria that join one request (bounds extra ranker calls)
 MIN_SHARED = 3             # a category value is shown to the planner only if this many candidates share it
 MAX_CATEGORIES = 12        # more distinct values than this -> treated as free text
+SENTENCE_WORDS = 6         # fewest words for an answer to count as a sentence (see is_sentence)
 PLAN_CACHE = DATA_DIR / "criteria_plans.json"
 MAX_ATTEMPTS = 2
 
@@ -119,9 +119,30 @@ def profile_fields(
         else:
             kind = "text"
         common = [v for v, n in counts.most_common(8) if n >= MIN_SHARED] if kind == "category" else []
-        profiles.append(FieldProfile(field=field, label=(labels or {}).get(field, ""),
-                                     filled=len(vals), kind=kind, common_values=common))
+        # Length statistics over every value (not just the first rows, which may be blank),
+        # so free-text answers can be told apart from short codes or lists.
+        texts = [str(x) for x in flat] if kind != "number" else []
+        profiles.append(FieldProfile(
+            field=field, label=(labels or {}).get(field, ""), filled=len(vals), kind=kind,
+            common_values=common,
+            avg_words=round(mean(len(t.split()) for t in texts), 1) if texts else 0.0,
+            sentence_share=round(sum(map(is_sentence, texts)) / len(texts), 2) if texts else 0.0))
     return profiles
+
+
+def is_sentence(text: str) -> bool:
+    """Whether an answer reads like prose: SENTENCE_WORDS+ words, at least half of them
+    ordinary lowercase words. "Clear explanations and well prepared for every lab." is;
+    a course list like "ENGG 233: A, ENSF 338: A-" is not."""
+    words = [w.strip(".,;:!?()'\"") for w in text.split()]
+    return len(words) >= SENTENCE_WORDS and sum(w.isalpha() and w.islower() for w in words) >= len(words) / 2
+
+
+def tiebreak_fields(catalog: CriteriaCatalog | None) -> list[str]:
+    """Fields no criterion uses that are other information about the candidate (use
+    "tiebreak"), for breaking ties in the final review. Excluded uses (availability,
+    administrative, protected, identifying, unusable) are never included."""
+    return [s.field for s in (catalog.skipped if catalog else []) if s.use == "tiebreak"]
 
 
 def base_fields(criteria: list[Criterion]) -> set[str]:
@@ -151,8 +172,7 @@ async def run_planner(
     for attempt in range(1, MAX_ATTEMPTS + 1):
         start = time.perf_counter()
         try:
-            result = await Runner.run(agent, payload)
-            draft = result.final_output_as(CriteriaDraft, raise_if_incorrect_type=True)
+            draft = await run_agent(agent, payload, CriteriaDraft)
             break
         except Exception as e:  # retry on API/parse failures
             last_error = e
@@ -229,9 +249,12 @@ def validate_draft(
             importance=min(3, max(1, d.importance)), courses=[c.strip() for c in d.courses if c.strip()],
         ))
 
-    skipped = [s for s in draft.skipped if s.field in offered and s.field not in used]
+    skipped = [SkippedField(field=s.field, reason=s.reason, use=s.use)
+               for s in draft.skipped if s.field in offered and s.field not in used]
     named = used | {s.field for s in skipped}
-    skipped += [SkippedField(field=f, reason="Not used by the planner.") for f in offered if f not in named]
+    # Fields the planner didn't mention are other information (they passed the header screen).
+    skipped += [SkippedField(field=f, reason="Not used by any criterion.", use="tiebreak")
+                for f in offered if f not in named]
     catalog = CriteriaCatalog(purpose=purpose, fields=offered, extensions=extensions,
                               criteria=criteria, skipped=skipped)
     logger.info("Catalog: extensions %s, criteria %s",
@@ -431,7 +454,7 @@ def add_auto_criteria(
              [(c.id, c.field_notes) for c in catalog.criteria] + [(e.criterion_id, e.fields) for e in catalog.extensions]
              for n in notes}
     skipped = list(catalog.skipped) + [
-        SkippedField(field=f, reason=f"Used by '{cid}', which didn't run: {left_out[cid]}.")
+        SkippedField(field=f, reason=f"Used by '{cid}', which didn't run: {left_out[cid]}.", use="unused_criterion")
         for f, cid in owner.items() if cid in left_out
     ]
     logger.info("Auto criteria joined: %s", {c.id: weights[c.id] for c in criteria if c.id not in request.criteria})

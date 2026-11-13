@@ -1,5 +1,8 @@
 # Compare keyword extraction models
 
+Benchmarking lives in `textagent_benchmark.py`; `textagent.py` is the production
+extractor used by `jobs.py`. Both use the same `extract_keywords()` function.
+
 Keep the Agents SDK for the current OpenAI extraction pipeline. Benchmark the
 models with the same prompt, schema, and rows. LangChain is an option if a unified
 interface to several providers becomes a requirement; changing frameworks does
@@ -8,7 +11,7 @@ not establish which model extracts better keywords.
 Run from the repository root with `OPENAI_API_KEY` set in `.env` or the shell:
 
 ```bash
-.venv/bin/python src/hiring_agents/textagent.py \
+.venv/bin/python src/hiring_agents/textagent_benchmark.py \
   "src/hiring_agents/sample_datacsv/Sample keyword extractor data(Sheet1).csv" \
   --benchmark-models gpt-5.6-luna gpt-6-luna \
   --reasoning-effort none \
@@ -58,7 +61,7 @@ before the error is reported, and subsequent groups are not started.
 Compare both models on the first 45 candidates, once per model:
 
 ```bash
-.venv/bin/python src/hiring_agents/textagent.py \
+.venv/bin/python src/hiring_agents/textagent_benchmark.py \
   "src/hiring_agents/sample_datacsv/Sample keyword extractor data(Sheet1).csv" \
   --benchmark-models gpt-5.6-luna gpt-6-luna \
   --reasoning-effort none --batch-size 15 \

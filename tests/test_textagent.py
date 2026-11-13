@@ -2,13 +2,21 @@
 
 import asyncio
 import json
+import csv
+import tempfile
 import unittest
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 import pandas as pd
 
-from src.hiring_agents.textagent import benchmark_models, extract_keywords, score_keywords
+from hiring_agents.textagent import extract_csv, extract_keywords
+from hiring_agents.textagent_benchmark import benchmark_models, score_keywords
+
+
+def _response(output):
+    return SimpleNamespace(final_output_as=lambda schema, **kwargs: schema.model_validate(output))
 
 
 HEADERS = [
@@ -20,6 +28,34 @@ HEADERS = [
 
 
 class TextAgentTests(unittest.TestCase):
+    def test_job_csv_preserves_refs_headers_and_literal_na_answers(self):
+        async def fake_run(agent, payload, **kwargs):
+            answers = json.loads(payload)
+            self.assertEqual(answers, {"Technical knowledge?": "NA", "Communication": "Explains circuits"})
+            self.assertNotIn("C-001", payload)
+            self.assertEqual(agent.model, "test-model")
+            return _response({"Technical knowledge?": [], "Communication": ["Explains circuits"]})
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "free_text.csv"
+            with path.open("w", encoding="utf-8-sig", newline="") as dest:
+                writer = csv.writer(dest)
+                writer.writerow(["Candidate", "Technical knowledge?", "Communication"])
+                writer.writerow(["C-001", "NA", "Explains circuits"])
+            with patch("hiring_agents.textagent.Runner.run", side_effect=fake_run):
+                result = asyncio.run(extract_csv(path, model="test-model", reasoning_effort="none", batch_size=15))
+        self.assertEqual(result, {"C-001": {"Technical knowledge?": [], "Communication": ["Explains circuits"]}})
+
+    def test_job_csv_rejects_duplicate_headers_and_missing_candidate_column(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "free_text.csv"
+            with patch("hiring_agents.textagent.Runner.run", new_callable=AsyncMock) as runner:
+                for content in ["Candidate,Answer,Answer\nC-1,a,b\n", "UCID,Answer\n1,a\n"]:
+                    path.write_text(content)
+                    with self.subTest(content=content), self.assertRaises(ValueError):
+                        asyncio.run(extract_csv(path))
+            runner.assert_not_awaited()
+
     def test_groups_answers_under_exact_headers_and_ids(self):
         df = pd.DataFrame([
             ["00123", "I use Python.", "I give presentations.", None, "Group work."],
@@ -35,9 +71,9 @@ class TextAgentTests(unittest.TestCase):
                       else ["no MATLAB experience"])
             output = dict(zip(HEADERS, [values, ["presentations"], ["invented"], ["group work"]]))
             # Exercise the actual structured output model with punctuation in aliases.
-            return SimpleNamespace(final_output=agent.output_type.model_validate(output))
+            return _response(agent.output_type.model_validate(output))
 
-        with patch("src.hiring_agents.textagent.Runner.run", side_effect=fake_run) as runner:
+        with patch("hiring_agents.textagent.Runner.run", side_effect=fake_run) as runner:
             result = asyncio.run(extract_keywords(df))
         self.assertEqual(runner.call_count, 2)
         self.assertEqual(result, {
@@ -49,7 +85,7 @@ class TextAgentTests(unittest.TestCase):
     def test_blank_rows_skip_model_calls(self):
         df = pd.DataFrame([["00123", None, float("nan"), pd.NA, "  "]],
                           columns=["UCID", *HEADERS])
-        with patch("src.hiring_agents.textagent.Runner.run", new_callable=AsyncMock) as runner:
+        with patch("hiring_agents.textagent.Runner.run", new_callable=AsyncMock) as runner:
             result = asyncio.run(extract_keywords(df))
         runner.assert_not_awaited()
         self.assertEqual(result, {"00123": {header: [] for header in HEADERS}})
@@ -64,7 +100,7 @@ class TextAgentTests(unittest.TestCase):
             pd.DataFrame({"UCID": ["123", " "], "answer": ["Python", "MATLAB"]}),
             pd.DataFrame({"UCID": ["123"], "answer": [42]}),
         ]
-        with patch("src.hiring_agents.textagent.Runner.run", new_callable=AsyncMock) as runner:
+        with patch("hiring_agents.textagent.Runner.run", new_callable=AsyncMock) as runner:
             for df in invalid:
                 with self.subTest(columns=list(df.columns)), self.assertRaises(ValueError):
                     asyncio.run(extract_keywords(df))
@@ -80,7 +116,7 @@ class TextAgentTests(unittest.TestCase):
 
     def test_model_errors_propagate(self):
         df = pd.DataFrame({"UCID": ["123"], "Question?": ["Python"]})
-        with patch("src.hiring_agents.textagent.Runner.run", new_callable=AsyncMock,
+        with patch("hiring_agents.textagent.Runner.run", new_callable=AsyncMock,
                    side_effect=RuntimeError("model unavailable")):
             with self.assertRaisesRegex(RuntimeError, "model unavailable"):
                 asyncio.run(extract_keywords(df))
@@ -88,9 +124,9 @@ class TextAgentTests(unittest.TestCase):
     def test_request_latency_is_collected(self):
         df = pd.DataFrame({"UCID": ["123", "456"], "Question?": ["Python", ""]})
         timings = []
-        response = SimpleNamespace(final_output={"Question?": ["Python"]})
-        with patch("src.hiring_agents.textagent.Runner.run", new_callable=AsyncMock,
-                   return_value=response), patch("src.hiring_agents.textagent.perf_counter",
+        response = _response({"Question?": ["Python"]})
+        with patch("hiring_agents.textagent.Runner.run", new_callable=AsyncMock,
+                   return_value=response), patch("hiring_agents.textagent.perf_counter",
                                                  side_effect=[10.0, 12.0]):
             asyncio.run(extract_keywords(df, request_seconds=timings))
         self.assertEqual(timings, [2.0])
@@ -101,9 +137,9 @@ class TextAgentTests(unittest.TestCase):
         async def fake_run(agent, payload, **kwargs):
             self.assertEqual(agent.model, "gpt-6-luna")
             self.assertEqual(agent.model_settings.reasoning.effort, "none")
-            return SimpleNamespace(final_output={"Technical": ["Python"]})
+            return _response({"Technical": ["Python"]})
 
-        with patch("src.hiring_agents.textagent.Runner.run", side_effect=fake_run):
+        with patch("hiring_agents.textagent.Runner.run", side_effect=fake_run):
             asyncio.run(extract_keywords(df, model="gpt-6-luna", reasoning_effort="none"))
 
     def test_batches_limit_concurrency_and_preserve_candidate_mapping(self):
@@ -132,9 +168,9 @@ class TextAgentTests(unittest.TestCase):
                     await asyncio.sleep(0)  # Deliberately complete out of input order.
                 active -= 1
                 completed.add(index)
-                return SimpleNamespace(final_output={"Technical": [answer]})
+                return _response({"Technical": [answer]})
 
-            with patch("src.hiring_agents.textagent.Runner.run", side_effect=fake_run):
+            with patch("hiring_agents.textagent.Runner.run", side_effect=fake_run):
                 result = await asyncio.wait_for(extract_keywords(df, batch_size=15), timeout=2)
             self.assertEqual(peak, 15)
             self.assertEqual(list(result), df["UCID"].tolist())
@@ -155,9 +191,9 @@ class TextAgentTests(unittest.TestCase):
                 await asyncio.sleep(0)
                 await asyncio.sleep(0)
                 completed.append(answer)
-                return SimpleNamespace(final_output={"Technical": [answer]})
+                return _response({"Technical": [answer]})
 
-            with patch("src.hiring_agents.textagent.Runner.run", side_effect=fake_run) as runner:
+            with patch("hiring_agents.textagent.Runner.run", side_effect=fake_run) as runner:
                 with self.assertRaisesRegex(RuntimeError, "model failed"):
                     await extract_keywords(df, batch_size=2)
                 self.assertEqual(completed, ["peer"])
@@ -167,7 +203,7 @@ class TextAgentTests(unittest.TestCase):
 
     def test_invalid_batch_size_fails_before_model_calls(self):
         df = pd.DataFrame({"UCID": ["123"], "Technical": ["Python"]})
-        with patch("src.hiring_agents.textagent.Runner.run", new_callable=AsyncMock) as runner:
+        with patch("hiring_agents.textagent.Runner.run", new_callable=AsyncMock) as runner:
             for size in [0, -1]:
                 with self.subTest(size=size), self.assertRaises(ValueError):
                     asyncio.run(extract_keywords(df, batch_size=size))
@@ -199,7 +235,7 @@ class BenchmarkTests(unittest.TestCase):
             request_seconds.append(2.0)
             return expected
 
-        with patch("src.hiring_agents.textagent.extract_keywords", side_effect=fake_extract):
+        with patch("hiring_agents.textagent_benchmark.extract_keywords", side_effect=fake_extract):
             report = asyncio.run(benchmark_models(
                 df, ["working", "unavailable"], repeats=2, expected=expected, batch_size=15,
             ))
@@ -232,7 +268,7 @@ class BenchmarkTests(unittest.TestCase):
             {"models": ["a"], "expected": {"123": {"Wrong header": []}}},
             {"models": ["a"], "expected": {"123": {"Technical": "Python"}}},
         ]
-        with patch("src.hiring_agents.textagent.extract_keywords", new_callable=AsyncMock) as extract:
+        with patch("hiring_agents.textagent_benchmark.extract_keywords", new_callable=AsyncMock) as extract:
             for option in options:
                 with self.subTest(option=option), self.assertRaises(ValueError):
                     asyncio.run(benchmark_models(df, **option))

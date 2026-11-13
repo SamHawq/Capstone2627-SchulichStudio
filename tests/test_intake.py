@@ -13,6 +13,7 @@ from hiring_agents.orchestrator import criteria_with_data
 from hiring_agents.privacy import pseudonymize
 from hiring_agents.registry import default_registry
 from hiring_agents.schemas import ID_FIELD
+from tests.stubs import TA_FIELDS, ta_registry
 
 NEEDED = {"program", "relevant_courses", "previous_ta_reviews"}
 
@@ -26,7 +27,7 @@ ALT = [
 
 class StandardizeTests(unittest.TestCase):
     def test_aliases_mapped_and_everything_else_dropped(self):
-        records, report, _ = standardize(ALT, NEEDED)
+        records, report, _ = standardize(ALT, NEEDED, fields=TA_FIELDS)
         self.assertEqual(report.column_mapping, {
             "Student Number": ID_FIELD, "Degree Program": "program",
             "Courses & Grades": "relevant_courses", "Instructor Feedback": "previous_ta_reviews",
@@ -38,26 +39,26 @@ class StandardizeTests(unittest.TestCase):
                                       "previous_ta_reviews": "Great"})
 
     def test_empty_values_are_left_out(self):
-        records, _, _ = standardize(ALT, NEEDED)
+        records, _, _ = standardize(ALT, NEEDED, fields=TA_FIELDS)
         self.assertNotIn("previous_ta_reviews", records[0])
 
     def test_explicit_mapping_but_sensitive_names_always_drop(self):
         mapping = {"Favourite Colour": "program", "Degree Program": None, "Full Name": "relevant_courses"}
-        _, report, _ = standardize(ALT, NEEDED, column_mapping=mapping)
+        _, report, _ = standardize(ALT, NEEDED, fields=TA_FIELDS, column_mapping=mapping)
         self.assertEqual(report.column_mapping["Favourite Colour"], "program")
         self.assertIn("Degree Program", report.dropped_unused)
         self.assertIn("Full Name", report.dropped_sensitive)
 
     def test_missing_id_duplicate_and_unknown_target_raise(self):
         with self.assertRaises(ValueError):
-            standardize([{"program": "SE"}], NEEDED)
+            standardize([{"program": "SE"}], NEEDED, fields=TA_FIELDS)
         with self.assertRaises(ValueError):
-            standardize([{"ucid": "1", "major": "SE", "degree": "SE"}], NEEDED)
+            standardize([{"ucid": "1", "major": "SE", "degree": "SE"}], NEEDED, fields=TA_FIELDS)
         with self.assertRaises(ValueError):
-            standardize(ALT, NEEDED, column_mapping={"Year": "nope"})
+            standardize(ALT, NEEDED, fields=TA_FIELDS, column_mapping={"Year": "nope"})
 
     def test_missing_needed_field_warns(self):
-        _, report, _ = standardize([{"ucid": "1", "major": "SE", "x": 1}], NEEDED)
+        _, report, _ = standardize([{"ucid": "1", "major": "SE", "x": 1}], NEEDED, fields=TA_FIELDS)
         self.assertEqual(report.missing_fields, ["previous_ta_reviews", "relevant_courses"])
         self.assertTrue(any("relevant_courses" in w for w in report_warnings(report)))
         self.assertEqual(len(report_warnings(report)), 3)
@@ -76,7 +77,7 @@ class StandardizeTests(unittest.TestCase):
         self.assertTrue(any("'email' is sensitive" in w for w in warnings))
 
     def test_pseudonymize_removes_id_column(self):
-        records, _, _ = standardize(ALT, NEEDED)
+        records, _, _ = standardize(ALT, NEEDED, fields=TA_FIELDS)
         candidates, ref_map = pseudonymize(records)
         self.assertNotIn(ID_FIELD, candidates[0].fields)
         self.assertEqual(sorted(ref_map.values()), ["1", "2"])
@@ -162,25 +163,44 @@ class ExcelTests(unittest.TestCase):
             load_records(self.path)
 
     def test_standardized_output_round_trips(self):
-        keep = {f.id for f in DEFAULT_FIELDS if f.handling == "keep"}
-        records, _, _ = standardize(load_records(self.path), keep)
+        keep = {f.id for f in TA_FIELDS if f.handling == "keep"}
+        records, _, _ = standardize(load_records(self.path), keep, fields=TA_FIELDS)
         out = Path(self.dir.name) / "out.json"
         out.write_text(json.dumps(records))
-        again, report, _ = standardize(load_records(out), keep)
+        again, report, _ = standardize(load_records(out), keep, fields=TA_FIELDS)
         self.assertEqual(again, records)
         self.assertEqual(set(report.column_mapping.values()), {"candidate_id", "program"})
 
 
 class CriteriaWithDataTests(unittest.TestCase):
     def test_criterion_without_any_data_sleeps(self):
-        records, _, _ = standardize([{"ucid": "1", "major": "SE"}], NEEDED)
+        records, _, _ = standardize([{"ucid": "1", "major": "SE"}], NEEDED, fields=TA_FIELDS)
         candidates, _ = pseudonymize(records)
-        reg = default_registry()
+        reg = ta_registry()
         active = [reg.get("subject_knowledge"), reg.get("past_performance")]
         runnable, warnings = criteria_with_data(active, candidates)
         self.assertEqual([c.id for c in runnable], ["subject_knowledge"])
         self.assertIn("ranked on ['program'] only", warnings[0])    # partly missing data
         self.assertIn("past_performance' skipped", warnings[1])
+
+    def test_built_in_criteria_get_no_fields_by_default(self):
+        # Built-ins describe what to judge; the planner assigns fields. Unplanned, they sleep.
+        reg = default_registry()
+        self.assertTrue(all(not reg.get(cid).relevant_fields for cid in reg.ids()))
+        candidates, _ = pseudonymize([{ID_FIELD: "1", "program": "SE"}])
+        runnable, warnings = criteria_with_data([reg.get("subject_knowledge")], candidates)
+        self.assertEqual(runnable, [])
+        self.assertIn("no data field was assigned", warnings[0])
+
+
+class DefaultCatalogTests(unittest.TestCase):
+    def test_no_column_is_renamed_to_a_guessed_field(self):
+        records, report, _ = standardize(ALT, set(), keep_unmatched=True)
+        self.assertEqual(report.column_mapping["Student Number"], ID_FIELD)
+        self.assertEqual(report.column_mapping["Degree Program"], "degree_program")      # not "program"
+        self.assertEqual(report.column_mapping["Courses & Grades"], "courses_grades")    # not "relevant_courses"
+        self.assertEqual(report.dropped_sensitive, ["Full Name", "Pronouns"])
+        self.assertEqual({f.id for f in DEFAULT_FIELDS if f.handling == "keep"}, set())
 
 
 if __name__ == "__main__":

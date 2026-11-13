@@ -26,8 +26,7 @@ import math
 import re
 import time
 
-from agents import Runner
-
+from .agent_trace import run_agent, trace_step, traced_operation
 from .availability import DAYS
 from .llm_agents import build_manager
 from .planning import applies_to
@@ -44,8 +43,18 @@ MAX_SESSIONS = 30
 _TIME = re.compile(r"^([01]?\d|2[0-3]):([0-5]\d)$")
 
 
+def _fields_of(criterion: Criterion, kinds: dict[str, str]) -> list[dict[str, str]]:
+    """Each field the criterion's ranker sees, with what it holds (the planner's note) and its
+    kind ("free text" = answers written in someone's own words), so the Manager can route an
+    instruction to the ranker whose fields carry the evidence. Names, notes and kinds only,
+    never values."""
+    notes = {n.field: n.meaning for n in criterion.field_notes}
+    return [{"field": f, "holds": notes.get(f, ""), "kind": kinds.get(f, "")} for f in criterion.relevant_fields]
+
+
 async def run_manager(
-    brief: RequestBrief, criteria: list[Criterion], documents: list[dict[str, str]] | None = None
+    brief: RequestBrief, criteria: list[Criterion], documents: list[dict[str, str]] | None = None,
+    field_kinds: dict[str, str] | None = None,
 ) -> ManagerOutput:
     """Ask the Manager to read the brief and any documents ({"name", "text"}, already scrubbed).
 
@@ -57,7 +66,7 @@ async def run_manager(
         "role_set_by_client": brief.role,
         "documents": documents or [],
         "criteria": [
-            {"id": c.id, "name": c.name, "description": c.description, "fields": c.relevant_fields,
+            {"id": c.id, "name": c.name, "description": c.description, "fields": _fields_of(c, field_kinds or {}),
              "type": "auto" if c.type == "auto" else "built-in", "courses": c.courses}
             for c in criteria
         ],
@@ -71,8 +80,7 @@ async def run_manager(
     for attempt in range(1, MAX_ATTEMPTS + 1):
         start = time.perf_counter()
         try:
-            result = await Runner.run(agent, payload)
-            output = result.final_output_as(ManagerOutput, raise_if_incorrect_type=True)
+            output = await run_agent(agent, payload, ManagerOutput)
             logger.info("[manager] Done in %.1fs (attempt %d)", time.perf_counter() - start, attempt)
             logger.debug("[manager] Output:\n%s", output.model_dump_json(indent=2))
             return output
@@ -166,6 +174,7 @@ def validate_choices(
     sessions, session_warnings = validate_sessions(output.sessions)
     warnings += session_warnings
     request = HiringRequest(role=role, criteria=weights, top_x=top_x, notes=_clip(output.notes, MAX_NOTES),
+                            client_instructions=brief.instructions,
                             instructions=instructions, sessions=sessions, documents=list(brief.documents))
     logger.info("[manager] Draft: role=%r, top_x=%d, weights=%s, instructions for %s, %d sessions",
                 role, top_x, {c: w for c, w in weights.items() if w > 0}, sorted(instructions), len(sessions))
@@ -174,9 +183,10 @@ def validate_choices(
                         warnings=warnings)
 
 
+@traced_operation("draft", lambda brief, *a, **k: brief.role or brief.instructions[:120])
 async def draft_request(
     brief: RequestBrief, criteria: list[Criterion], documents: list[dict[str, str]] | None = None,
-    document_warnings: list[str] | None = None,
+    document_warnings: list[str] | None = None, field_kinds: dict[str, str] | None = None,
 ) -> RequestDraft:
     """Turn free-text instructions (and documents) into a request draft (one Manager call).
 
@@ -192,7 +202,12 @@ async def draft_request(
         ValueError: See `validate_choices`.
         RuntimeError: If the Manager call fails.
     """
-    output = await run_manager(brief, criteria, documents)
+    output = await run_manager(brief, criteria, documents, field_kinds)
     draft = validate_choices(output, criteria, brief)
     draft.warnings[:0] = document_warnings or []
+    req = draft.request
+    trace_step("manager", "Draft validated", role=req.role, top_x=req.top_x,
+               weights={cid: w for cid, w in req.criteria.items() if w > 0},
+               instructions_for=sorted(req.instructions), sessions=len(req.sessions),
+               not_covered=len(draft.not_covered), documents=[d["name"] for d in documents or []])
     return draft
