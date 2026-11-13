@@ -1,0 +1,3536 @@
+{
+  "candidates": 45,
+  "nonblank_candidates": 45,
+  "repeats": 1,
+  "batch_size": 15,
+  "reasoning_effort": "none",
+  "quality_metric": null,
+  "models": {
+    "gpt-5.6-luna": {
+      "runs": [
+        {
+          "repeat": 1,
+          "status": "ok",
+          "elapsed_seconds": 11.331490249955095,
+          "request_seconds": [
+            2.791192292002961,
+            2.821308249956928,
+            2.8796744169667363,
+            2.8968612499302253,
+            2.990162333007902,
+            3.0201889579184353,
+            3.035554207977839,
+            3.0494650419568643,
+            3.1412004589801654,
+            3.151150207966566,
+            3.234351250110194,
+            3.421851334045641,
+            3.5099690420320258,
+            3.564279832993634,
+            3.761601083097048,
+            2.083560000057332,
+            2.115114208078012,
+            2.255349582992494,
+            2.3893252089619637,
+            2.4265157079789788,
+            2.6740257079945877,
+            2.6840677079744637,
+            2.795585042098537,
+            2.8206690000370145,
+            2.8328736670082435,
+            2.85298900003545,
+            2.903898583026603,
+            3.32787370798178,
+            3.514015708002262,
+            4.576788000063971,
+            2.044459917000495,
+            2.1806095839710906,
+            2.250334542011842,
+            2.4526392499683425,
+            2.5217518750578165,
+            2.541357707930729,
+            2.5739992080489174,
+            2.58423404104542,
+            2.6002477920847014,
+            2.603281667106785,
+            2.6380671670194715,
+            2.7325297920033336,
+            2.8125300840474665,
+            2.8184738750569522,
+            2.9831638749456033
+          ],
+          "keywords": {
+            "1": {
+              "skills, and technical knowledge check.": [
+                "teaching assistant experience",
+                "engineering courses",
+                "chemistry courses",
+                "physics courses",
+                "Fundamentals of Engineering Materials (ENGG 204)",
+                "Biomedical Signals, Systems and Instrumentation I (BMEN 388)",
+                "Fundamentals of Electrical Circuits and Machines (ENGG 225)",
+                "Introduction to Research in Kinesiology (KNES 213)",
+                "General Chemistry: Structure and Bonding (CHEM 201)",
+                "Problem-Based Biomedical Engineering Design II (BMEN 478)",
+                "Introductory Electromagnetism and Thermal Physics (PHYS 223)",
+                "electrical engineering proficiency",
+                "materials science proficiency",
+                "physics proficiency",
+                "chemistry proficiency"
+              ],
+              "verbal and written skills to communicate": [
+                "explaining laboratory procedures",
+                "explaining the purpose of procedures",
+                "explaining how to carry out procedures",
+                "laboratory instruction",
+                "tutorial instruction"
+              ],
+              "engaged learning, helped improved understanding": [
+                "responding to student questions",
+                "collaborative problem-solving",
+                "guiding questions",
+                "supporting independent lab completion"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "active learning environments",
+                "laboratory-based instruction",
+                "tutorial-based instruction",
+                "ENGG 204",
+                "ENGG 225",
+                "PHYS 223",
+                "CHEM 201",
+                "preparing for labs in advance",
+                "connecting procedures to previous course content",
+                "eliciting lecture learning through questions",
+                "promoting independent problem-solving",
+                "using prompts to guide students to solutions",
+                "helping students understand the bigger picture",
+                "clarifying questions and procedures"
+              ]
+            },
+            "2": {
+              "skills, and technical knowledge check.": [
+                "instrumentation design, fabrication, and evaluation",
+                "sensor sampling and filtering",
+                "data processing and storage",
+                "microcontroller use",
+                "equine biomechanics",
+                "directed study in biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "TA experience in circuits courses",
+                "verbal and written explanations",
+                "drawings to relate physical circuits to circuit diagrams"
+              ],
+              "engaged learning, helped improved understanding": [
+                "lab problem-solving assistance",
+                "explaining problem-solving processes",
+                "summary explanations",
+                "question-based skill development"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "hands-on circuits labs",
+                "circuit debugging support",
+                "multimeter demonstrations",
+                "guided tool use",
+                "oscilloscope use",
+                "signal generator use",
+                "relating circuit diagrams to breadboard connections"
+              ]
+            },
+            "4": {
+              "skills, and technical knowledge check.": [
+                "Biomedical engineering coursework",
+                "BMEN 468 and BMEN 478 projects",
+                "Hydration-monitoring wearable",
+                "Arduino",
+                "Coding",
+                "EDA sensors",
+                "Intellectual property research",
+                "BMEN 401",
+                "Biomedical engineering capstone",
+                "Lab, tutorial, and grading support",
+                "Understanding of common student challenges"
+              ],
+              "verbal and written skills to communicate": [
+                "Led team communication",
+                "Technical and non-technical presentations",
+                "Stakeholder presentations",
+                "Intubation model project"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Group study sessions",
+                "Explained signals and instrumentation",
+                "Controller operation",
+                "Lab group support",
+                "Topic breakdown"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Led BMEN study group",
+                "Problem-based discussions",
+                "Real exam question practice",
+                "Peer explanation of approaches",
+                "Collaboration",
+                "Critical thinking",
+                "Active learning in BMEN 488, BMEN 523, and BMEN 585",
+                "Improved confidence and performance"
+              ]
+            },
+            "8": {
+              "skills, and technical knowledge check.": [
+                "3rd-year PhD in biomedical engineering",
+                "medical imaging specialization",
+                "biomechanics specialization"
+              ],
+              "verbal and written skills to communicate": [
+                "Teaching assistant experience",
+                "Undergraduate mechanics courses",
+                "Explaining concepts in tutorials",
+                "Explaining concepts in laboratory settings"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Asking students to explain their reasoning",
+                "Identifying where students are going wrong",
+                "Mechanics courses"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Teaching assistant in a flipped classroom-style mechanics course",
+                "Facilitating problem-solving sessions",
+                "Students reviewing lecture materials in advance",
+                "Guiding students through real-time application of concepts",
+                "Challenging problem-solving activities"
+              ]
+            },
+            "261": {
+              "skills, and technical knowledge check.": [
+                "CAD design",
+                "SolidWorks",
+                "Fusion 360",
+                "Additive manufacturing",
+                "3D printing",
+                "CAM",
+                "Mastercam",
+                "Biomaterial synthesis",
+                "Mechanical characterization",
+                "Cell culturing",
+                "Manufacturing lab and lecture TA experience",
+                "Problem-based design",
+                "Project management",
+                "Physics teaching",
+                "Design and construction teaching",
+                "PhD candidate in stem cell regenerative medicine",
+                "Advanced stem cell biology"
+              ],
+              "verbal and written skills to communicate": [
+                "Individualized technical explanations",
+                "Translational communication",
+                "CAD design instruction",
+                "Project management instruction",
+                "Group facilitation",
+                "Product design communication"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Connecting material properties to manufacturing processes",
+                "Industry-contextualized learning",
+                "Safety-focused instruction",
+                "Efficiency-focused instruction",
+                "Innovation-focused instruction",
+                "Manufacturing engineering teaching assistant experience"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Design, construction, and fabrication shop management",
+                "Course design",
+                "Assessment",
+                "Project innovation",
+                "Applied skills training",
+                "Industrial woodworking equipment",
+                "Welding equipment",
+                "CWB SMAW (Stick) welding certification",
+                "CWB GMAW (MIG) welding certification",
+                "Permanent Alberta Education teacher status"
+              ]
+            },
+            "14": {
+              "skills, and technical knowledge check.": [
+                "BMEN 600 and BMEN 602 coursework",
+                "Machine learning research",
+                "Several machine learning courses in BSc",
+                "TA experience for ENGG 349",
+                "Clear, timely feedback",
+                "Troubleshooting support",
+                "Concept explanation",
+                "Group feedback meetings",
+                "Thoughtful questions and suggestions",
+                "Technical feedback tailored to different learning styles",
+                "Swim coaching",
+                "Biomedical engineering foundation",
+                "Machine learning",
+                "Effective communication"
+              ],
+              "verbal and written skills to communicate": [
+                "Presented data analysis results",
+                "Multidisciplinary team communication",
+                "Simple language",
+                "Clear visuals",
+                "Explained technical findings",
+                "Communication with clinicians and engineers"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Led paper presentation",
+                "Open-ended discussion questions",
+                "Analogies for complex ideas",
+                "Built on others’ points",
+                "Encouraged diverse perspectives",
+                "Facilitated discussion"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Swim coaching",
+                "Experimented with stroke adjustments",
+                "Hands-on learning",
+                "Reflective learning",
+                "Self-assessment of movement efficiency",
+                "Independent application of feedback",
+                "Guided coding and data analysis practice",
+                "Guiding questions",
+                "Student-led problem solving",
+                "Learning by doing"
+              ]
+            },
+            "15": {
+              "skills, and technical knowledge check.": [
+                "machine learning",
+                "Python",
+                "statistics",
+                "applying ML models to medical imaging datasets",
+                "image processing",
+                "scientific computing",
+                "statistical analysis in biomedical contexts",
+                "AI in healthcare",
+                "explaining complex concepts clearly",
+                "mentoring peers",
+                "communication and teaching skills"
+              ],
+              "verbal and written skills to communicate": [
+                "verbal explanations in meetings",
+                "clear written documentation",
+                "statistical model interpretation",
+                "ML workflows",
+                "helping peers understand and apply concepts"
+              ],
+              "engaged learning, helped improved understanding": [
+                "relatable examples",
+                "interactive questions",
+                "bias in machine learning models",
+                "guiding discussion",
+                "active participation",
+                "further analysis"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "peer study group for machine learning in biomedical applications",
+                "real-world datasets",
+                "hands-on exercises",
+                "data preprocessing",
+                "training models",
+                "interpreting results",
+                "group discussions",
+                "open-ended questions",
+                "peer-to-peer explanation",
+                "critical thinking",
+                "model evaluation",
+                "fairness in AI"
+              ]
+            },
+            "16": {
+              "skills, and technical knowledge check.": [
+                "TA experience: BMEN 488 (Fall 2024)",
+                "TA experience: Introduction in Engineering Design (Winter 2025)",
+                "Coding",
+                "Electrical circuits",
+                "Programming guidance",
+                "Hardware tasks",
+                "Completed BMEN 602 during PhD",
+                "BMEN 602 core topics",
+                "Project definition",
+                "Problem-solving",
+                "Hands-on design projects",
+                "Research projects"
+              ],
+              "verbal and written skills to communicate": [
+                "Step-by-step written guides",
+                "Verbal support during office hours",
+                "Coding lab project support",
+                "Explaining tools and logic"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Lab-based instruction",
+                "Real-time student support",
+                "Discussion-based learning",
+                "Step-by-step debugging guidance",
+                "Problem-solving guidance",
+                "Answering student questions"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on learning sessions",
+                "Applying concepts to real-world problems",
+                "Guiding questions instead of direct answers",
+                "Exploring solutions",
+                "Presenting ideas",
+                "Reflecting on feedback",
+                "Critical thinking",
+                "Teamwork",
+                "Student ownership of learning",
+                "Engineering principles application"
+              ]
+            },
+            "17": {
+              "skills, and technical knowledge check.": [
+                "biomedical signal processing",
+                "instrumentation design",
+                "human-centered machine learning",
+                "BME projects and research",
+                "technical skills",
+                "MSc foundation in biomedical engineering",
+                "active learning",
+                "grading",
+                "delivering lectures",
+                "supporting complex BME projects"
+              ],
+              "verbal and written skills to communicate": [
+                "supporting students in active learning environments",
+                "scientific article writing",
+                "public-facing communication",
+                "explaining complex concepts accessibly"
+              ],
+              "engaged learning, helped improved understanding": [
+                "guiding questions",
+                "student-discovered solutions",
+                "deepened understanding",
+                "strengthened problem-solving skills",
+                "Optimization course final project support"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "TA for ENGG200 and ENGG225 studio courses",
+                "hands-on class activities",
+                "guiding questions instead of direct answers",
+                "independent thinking",
+                "problem-solving",
+                "checking for clarity",
+                "reinforcing understanding",
+                "engaging all group members",
+                "TA for fully active-learning biological signals course",
+                "recording and analyzing biological signals",
+                "moving between groups",
+                "encouraging questions",
+                "addressing confusion",
+                "hands-on engagement"
+              ]
+            },
+            "18": {
+              "skills, and technical knowledge check.": [
+                "TA for Introduction to Programming",
+                "TA for Circuit Analysis II",
+                "Introduction to MATLAB workshops",
+                "Machine Learning workshops",
+                "Biomedical signal processing",
+                "7+ years of biomedical engineering experience",
+                "MATLAB",
+                "Python",
+                "Machine learning"
+              ],
+              "verbal and written skills to communicate": [
+                "Created supplemental materials",
+                "Held recursion workshop",
+                "Used analogies",
+                "Used coding demos",
+                "Explained coding concepts clearly"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Collaborative oscilloscope troubleshooting",
+                "Hands-on lab support",
+                "Guided students to discover oscilloscope features",
+                "Avoided giving direct answers"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on learning",
+                "Collaborative troubleshooting",
+                "Small-group discussions on Piazza",
+                "Encouraged exploration of multiple coding solutions",
+                "Students documented possible solutions",
+                "Class discussion of different problem-solving approaches",
+                "Built confidence and problem-solving skills"
+              ]
+            },
+            "19": {
+              "skills, and technical knowledge check.": [
+                "Biomedical Engineering master's research",
+                "Tissue biomechanics",
+                "Proteomics",
+                "Research methods",
+                "Electrical Engineering",
+                "Engineering design",
+                "Problem-solving",
+                "Technical communication",
+                "Tutoring experience",
+                "Student engagement",
+                "Active learning",
+                "First-year Schulich Studio support",
+                "Electrical engineering course support",
+                "BMEN course support"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining complex circuits",
+                "Real-life examples",
+                "Visual aids",
+                "Clear written summaries",
+                "Communicating science and math concepts"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Rehab clinic volunteering",
+                "Supporting a stroke patient",
+                "Native-language communication",
+                "Simple exercise explanations",
+                "Building trust",
+                "Encouraging active participation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "YMCA Duty Manager experience",
+                "Hands-on practice",
+                "Real-life scenarios",
+                "Role-play situations",
+                "Emergency procedures training",
+                "Conflict resolution training",
+                "Encouraging participation",
+                "Critical thinking",
+                "Building confidence",
+                "Feedback and reflection",
+                "Independent application of skills"
+              ]
+            },
+            "262": {
+              "skills, and technical knowledge check.": [
+                "PhD student in BME",
+                "BMEN 600 and 633",
+                "A+ grades in BMEN 600 and 633",
+                "years of biological concepts background",
+                "teaching basic biological concepts"
+              ],
+              "verbal and written skills to communicate": [
+                "drawing complex concepts on a whiteboard/blackboard",
+                "step-by-step explanation"
+              ],
+              "engaged learning, helped improved understanding": [
+                "post-grading review",
+                "explaining grade justifications",
+                "clarifying assessment decisions"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "questioning students periodically",
+                "sparking curiosity and interest"
+              ]
+            },
+            "20": {
+              "skills, and technical knowledge check.": [
+                "Bachelor's degree in Cellular, Molecular and Microbial Biology",
+                "Mentorship of iGEM UCalgary team",
+                "Prototype development guidance"
+              ],
+              "verbal and written skills to communicate": [
+                "Tutoring K–12 and first- and second-year students",
+                "Tutoring in Mathematics, Physics, and Biology",
+                "Explaining complex topics",
+                "Using flowcharts to communicate the big picture"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Tutoring K–12 and first- and second-year students",
+                "Tutoring in Mathematics, Physics, and Biology",
+                "Explaining complex topics",
+                "Using flowcharts to support understanding"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Tutoring K–12 and first- and second-year students",
+                "Tutoring in Mathematics, Physics, Chemistry, and Biology",
+                "Explaining complex topics",
+                "Using flowcharts to promote big-picture understanding"
+              ]
+            },
+            "263": {
+              "skills, and technical knowledge check.": [
+                "BSc in Biomedical Engineering",
+                "PhD specialization in data science",
+                "Machine learning",
+                "Sensor technologies",
+                "Human factors",
+                "Aging and dementia research",
+                "Algorithm development and validation",
+                "Large GPS and IMU dataset analysis",
+                "Multi-site interdisciplinary research leadership",
+                "Data Science Internship at Orpyx Medical Technologies",
+                "Healthcare solutions development",
+                "Team leadership"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining complex machine learning results",
+                "Communicating with technical and non-technical teams",
+                "Clear reports",
+                "Presentations",
+                "Making information easy to understand and apply"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Conflict resolution within a student team",
+                "Facilitating open discussion",
+                "Encouraging members to share perspectives",
+                "Improved communication",
+                "Restored collaboration",
+                "Maintaining student engagement"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Teaching Assistant experience",
+                "Encouraging student questions",
+                "Group discussion",
+                "Applying course concepts to real-world examples",
+                "Deep engagement",
+                "Critical thinking"
+              ]
+            },
+            "24": {
+              "skills, and technical knowledge check.": [
+                "five semesters of TA experience",
+                "mechanics",
+                "dynamics",
+                "CAD and design",
+                "led labs and tutorials",
+                "classes up to 950 students",
+                "clear explanations",
+                "timely feedback",
+                "interactive problem-solving",
+                "continuum mechanics",
+                "multiscale biomechanics",
+                "machine-learning-based modelling",
+                "Python",
+                "MATLAB",
+                "CAD",
+                "demonstrations",
+                "inquiry-driven projects",
+                "prompt communication",
+                "fully available for scheduled sessions"
+              ],
+              "verbal and written skills to communicate": [
+                "simplifying complex topics",
+                "viscoelastic material behaviour",
+                "introductory finite-element (FE) modelling",
+                "clear explanations"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Introduction to Engineering Design",
+                "first-year engineering students",
+                "planning, designing, and executing projects",
+                "active learning environment",
+                "guided students through conversations"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "ENGG 200",
+                "withheld direct advice",
+                "targeted questions",
+                "sparked reflection",
+                "challenged concepts from technical, user, and cost perspectives",
+                "student self-critique",
+                "surfaced hidden flaws",
+                "creative iteration"
+              ]
+            },
+            "29": {
+              "skills, and technical knowledge check.": [
+                "mechanical engineering foundation",
+                "mechanical testing techniques",
+                "robotics",
+                "movement biomechanics",
+                "biocompatible and biodegradable nanocomposites",
+                "stent implants",
+                "biomaterials",
+                "BMEN 301, 381, 511, and 619"
+              ],
+              "verbal and written skills to communicate": [
+                "explaining Python coding step-by-step",
+                "explaining Statics step-by-step",
+                "clear verbal guidance",
+                "written solutions",
+                "brief reviews of key concepts"
+              ],
+              "engaged learning, helped improved understanding": [
+                "debugging Python code",
+                "double-checking Statics worksheet answers",
+                "guiding questions",
+                "helping students identify mistakes themselves",
+                "active learning",
+                "deeper understanding"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "guiding students through Python debugging",
+                "verifying Engineering Statics worksheet answers",
+                "asking fundamental questions",
+                "encouraging critical thinking",
+                "helping students identify and correct their own mistakes",
+                "step-by-step verbal explanations",
+                "written support",
+                "strengthening problem-solving skills"
+              ]
+            },
+            "264": {
+              "skills, and technical knowledge check.": [
+                "TA for 11 courses at the University of Calgary",
+                "MEMS",
+                "Manufacturing & Production Processes",
+                "Transport Phenomena",
+                "Molecular and Tissue Engineering",
+                "Bio-inspired Design",
+                "Guest lectures on ceramics, biomaterials, and bio-interfaces",
+                "Mentored undergraduate capstone design team",
+                "Lead labs and tutorials",
+                "Classroom management",
+                "Interdisciplinary engineering courses"
+              ],
+              "verbal and written skills to communicate": [
+                "Explained complex technical topics",
+                "Organ-on-Chip",
+                "MEMS",
+                "Tissue engineering",
+                "Biomaterials",
+                "Lectures",
+                "Detailed protocols",
+                "One-on-one discussions",
+                "Research mentor to 9 undergraduate and graduate trainees"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Demonstrated Organ-on-Chips",
+                "Simplified technical details",
+                "Encouraged questions",
+                "Engaged diverse participants",
+                "Meaningful cross-disciplinary conversations"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Designed and managed labs, workshops, and tutorials",
+                "Hands-on experiments",
+                "Problem-solving activities",
+                "Facilitated group discussions",
+                "Encouraged questions",
+                "Guided students through complex procedures",
+                "Linked theory to practice",
+                "Enhanced student participation and understanding"
+              ]
+            },
+            "31": {
+              "skills, and technical knowledge check.": [
+                "PhD candidate",
+                "Thesis on XAI under label noise for WMH",
+                "3 years as TA for medical imaging",
+                "Medical imaging",
+                "Machine learning",
+                "Explainable AI (XAI)",
+                "Python",
+                "TensorFlow",
+                "PyTorch",
+                "HPC clusters",
+                "Master’s degree in physics",
+                "Guest lectures",
+                "Substitute German teaching",
+                "Clear communication",
+                "Active student engagement"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining complex MRI imaging modalities clearly",
+                "Presentation skills",
+                "Written Medium blog posts",
+                "Positive colleague feedback",
+                "Positive attention to blog posts"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Supported interdisciplinary understanding",
+                "Explained CT-specific imaging aspects in machine learning",
+                "Computer science and medical imaging knowledge integration",
+                "Interdisciplinary discussions"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Guest lecture on reproducible and responsible AI",
+                "Interactive session design",
+                "Explainable AI (XAI) presentation",
+                "Promoted discussion",
+                "Encouraged students to incorporate XAI into their work",
+                "Students actively considered XAI applications",
+                "Students sought research-specific technique recommendations",
+                "Positive student feedback"
+              ]
+            },
+            "265": {
+              "skills, and technical knowledge check.": [
+                "MSc in biomedical engineering",
+                "Medical imaging specialization",
+                "PhD in medical imaging",
+                "CT imaging guest lectures",
+                "Ran labs for OsNET Imaging workshop",
+                "Biomedical engineering coursework",
+                "Biomedical engineering projects",
+                "Mentored three summer students",
+                "Mentored one co-op student",
+                "Mentored one undergraduate thesis student",
+                "Student mentoring from start to finish"
+              ],
+              "verbal and written skills to communicate": [
+                "Held tutorials for KNES 363",
+                "Explained laboratory concepts and experiments",
+                "Used whiteboard to reinforce lecture concepts",
+                "Refreshed concepts from lectures"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Revisited force/displacement/time curves",
+                "Explained stress relaxation",
+                "Reviewed lecture and laboratory notes",
+                "Supported student in completing a cartilage deformation assignment"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Co-ran CT imaging workshop",
+                "Reinforced CT imaging basics",
+                "Allowed students to select specimens for scanning",
+                "Students positioned specimens in scanner",
+                "Students moved scanner gantry",
+                "Students attached radiation shields",
+                "Students viewed reconstructed images",
+                "Demonstrated effects of specimen positioning",
+                "Demonstrated effects of specimen density on image appearance",
+                "Demonstrated effects of image resolution",
+                "Connected concepts to hands-on practice"
+              ]
+            },
+            "33": {
+              "skills, and technical knowledge check.": [
+                "Biomedical Engineering specialization",
+                "Medical imaging",
+                "MRI",
+                "fMRI",
+                "Research projects",
+                "Data analysis",
+                "Technical principles of imaging"
+              ],
+              "verbal and written skills to communicate": [
+                "Presented research to engineers and clinicians",
+                "Simplified complex concepts",
+                "HRF modeling",
+                "Written summaries",
+                "Clinical relevance"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Two poster presentations",
+                "Explained fMRI and iEEG research",
+                "Adapted explanations for diverse audiences",
+                "Broke down complex imaging concepts",
+                "Encouraged questions"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Two poster presentations",
+                "Asked visitors questions",
+                "Invited interpretation of imaging results",
+                "Guided learners through fMRI and iEEG concepts",
+                "Encouraged active participation",
+                "Made material more memorable"
+              ]
+            },
+            "196": {
+              "skills, and technical knowledge check.": [
+                "civil engineering academic background",
+                "geotechnical engineering",
+                "environmental engineering",
+                "theoretical knowledge",
+                "laboratory techniques",
+                "relevant software proficiency",
+                "teaching undergraduate students",
+                "tutorial sessions",
+                "communication and instructional skills"
+              ],
+              "verbal and written skills to communicate": [
+                "clear lectures",
+                "geotechnical testing and design",
+                "examples to engage students",
+                "concise lab reports",
+                "lab guides",
+                "geotechnical laboratory"
+              ],
+              "engaged learning, helped improved understanding": [
+                "one-on-one discussions",
+                "simplifying complex concepts",
+                "shallow foundation design",
+                "explaining challenging terms",
+                "encouraging active participation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "active learning in soil mechanics labs",
+                "shallow foundation design",
+                "interactive group activities",
+                "bearing capacity calculations",
+                "real-world design scenarios",
+                "facilitated discussions",
+                "student questions",
+                "peer explanation",
+                "teamwork and collaboration",
+                "hands-on demonstrations",
+                "scaled models",
+                "visualizing soil behavior under load"
+              ]
+            },
+            "266": {
+              "skills, and technical knowledge check.": [
+                "structural design and analysis",
+                "verbal and communication skills",
+                "knowledge required to TA structural courses",
+                "ENCI 317",
+                "ENCI 513"
+              ],
+              "verbal and written skills to communicate": [
+                "TA for studio active learning",
+                "ENGG 204",
+                "twice"
+              ],
+              "engaged learning, helped improved understanding": [
+                "studios of ENGG 204"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "explaining for students in studios",
+                "full instructor three times",
+                "ENCI 317",
+                "explaining course material",
+                "engaging students with course material"
+              ]
+            },
+            "209": {
+              "skills, and technical knowledge check.": [
+                "civil engineering",
+                "structural engineering",
+                "Mechanics of Solids TA experience",
+                "marking quizzes and exams",
+                "troubleshooting student issues",
+                "academic support",
+                "bachelor’s degree in civil engineering",
+                "Building Engineering course",
+                "structural systems",
+                "technical knowledge"
+              ],
+              "verbal and written skills to communicate": [
+                "reviewing student notes",
+                "identifying confusion",
+                "using simple examples and drawings",
+                "clarifying concepts",
+                "exam support"
+              ],
+              "engaged learning, helped improved understanding": [
+                "providing small hints",
+                "step-by-step independent progress",
+                "supporting students through difficult projects",
+                "helping students complete projects"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "encouraging student initiative",
+                "independent information searching",
+                "directing students to useful resources",
+                "collaborative group work",
+                "teamwork",
+                "troubleshooting",
+                "problem-solving together",
+                "students sharing solutions"
+              ]
+            },
+            "211": {
+              "skills, and technical knowledge check.": [
+                "co-instructor for ENCI 413",
+                "laboratory session facilitation",
+                "sessional instructor for ENCI 607",
+                "teaching experience"
+              ],
+              "verbal and written skills to communicate": [
+                "delivered lectures",
+                "sustainability of civil engineering materials",
+                "engineering properties",
+                "detailed written feedback",
+                "group assignments"
+              ],
+              "engaged learning, helped improved understanding": [
+                "addressed students’ questions",
+                "group project progress",
+                "lecture concepts",
+                "additional resources",
+                "clarifications"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "fresh concrete laboratory session",
+                "student participation in testing",
+                "predicting results beforehand",
+                "effects of admixtures on concrete behaviour",
+                "hands-on learning"
+              ]
+            },
+            "267": {
+              "skills, and technical knowledge check.": [
+                "master's in civil engineering",
+                "sustainable construction materials",
+                "recycled aggregates and plastic waste in concrete",
+                "material behavior",
+                "mechanics of solids",
+                "structural design",
+                "ETABS",
+                "design projects",
+                "research activity management",
+                "published 8 papers",
+                "reviewed 4 research papers",
+                "cementitious materials",
+                "Civil Engineering Materials",
+                "Sustainable Communities",
+                "Design Project",
+                "Project Management"
+              ],
+              "verbal and written skills to communicate": [
+                "presenting complex research",
+                "using visuals",
+                "simplifying technical terms",
+                "communicating with diverse audiences",
+                "published 8 papers",
+                "reviewer feedback on 4 research papers"
+              ],
+              "engaged learning, helped improved understanding": [
+                "teaching assistant experience",
+                "explaining complex civil engineering concepts",
+                "explaining design concepts",
+                "real examples",
+                "interactive discussions",
+                "structural design principles"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "hands-on learning",
+                "civil engineering laboratory assistance",
+                "mixing concrete",
+                "testing concrete with various materials",
+                "student collaboration",
+                "improved understanding",
+                "better engagement and performance"
+              ]
+            },
+            "268": {
+              "skills, and technical knowledge check.": [
+                "Strong academic and practical experience",
+                "Teaching Assistant (TA) for Statics",
+                "Three years of Statics TA experience",
+                "Interactive worksheets",
+                "Group learning facilitation",
+                "Structural principles",
+                "Solid Mechanics TA experience",
+                "Transportation systems",
+                "Urban infrastructure",
+                "Graduate research and coursework",
+                "Urban Systems Engineering",
+                "Transportation Engineering II",
+                "Microsoft Project",
+                "Project planning",
+                "Project Control coursework"
+              ],
+              "verbal and written skills to communicate": [
+                "Verbal explanations",
+                "Relatable everyday examples",
+                "Written summaries",
+                "Diagrams",
+                "Explaining moments",
+                "Lab-session communication"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Guiding questions",
+                "Interactive tutoring",
+                "Free-body diagrams",
+                "Student engagement",
+                "Confidence building",
+                "Clearer conceptual understanding"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Group-based worksheet sessions",
+                "Collaborative problem-solving",
+                "Forces, equilibrium, and moments",
+                "Guiding questions",
+                "Peer learning",
+                "Critical thinking",
+                "Clarifying misconceptions",
+                "Hands-on learning",
+                "Interactive format",
+                "Connecting theory with practice",
+                "Independent problem-solving",
+                "Student confidence"
+              ]
+            },
+            "198": {
+              "skills, and technical knowledge check.": [
+                "PhD candidate in Geotechnical Engineering",
+                "Teaching assistant for Geotechnical Engineering I and II",
+                "Five consecutive terms since 2022",
+                "Grading",
+                "Laboratory sessions"
+              ],
+              "verbal and written skills to communicate": [
+                "Two-page visual guide",
+                "Labeled diagrams",
+                "Error tips",
+                "Live video sessions",
+                "Demonstrated test parameters",
+                "Triaxial shear-test protocol"
+              ],
+              "engaged learning, helped improved understanding": [
+                "One-on-one guidance",
+                "Particle-size analysis",
+                "Real soil samples",
+                "Targeted questions",
+                "Peer explanation of methods",
+                "Dialogue-based approach",
+                "Procedure mastery",
+                "Confidence building"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Jigsaw activity",
+                "Soil Mechanics lab",
+                "Small-group expert teams",
+                "Consolidation testing",
+                "Permeability testing",
+                "Shear testing",
+                "Peer teaching",
+                "Rotating stations",
+                "Hands-on troubleshooting",
+                "Question-and-answer engagement",
+                "Student ownership of learning",
+                "Applied understanding"
+              ]
+            },
+            "269": {
+              "skills, and technical knowledge check.": [
+                "MSc Civil Engineering student",
+                "5 years of hands-on experience",
+                "sustainable community development",
+                "cost estimation",
+                "technical project coordination",
+                "smart construction planning",
+                "regulatory adherence",
+                "efficient resource use",
+                "environmental impact considerations",
+                "streamlining construction processes",
+                "Project Construction Management coursework"
+              ],
+              "verbal and written skills to communicate": [
+                "explaining complex concepts in simple steps",
+                "using diagrams",
+                "clear written summaries",
+                "team alignment",
+                "supporting informed decisions"
+              ],
+              "engaged learning, helped improved understanding": [
+                "guiding a classmate through a difficult project concept",
+                "using real-life examples",
+                "asking questions",
+                "promoting discussion",
+                "boosting confidence",
+                "deepening engagement"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "study group facilitation",
+                "encouraging students to explain concepts in their own words",
+                "collaborative problem-solving",
+                "using real-world examples",
+                "open-ended questions",
+                "discussion and critical thinking",
+                "increased participation",
+                "building confidence in independent application",
+                "collaborative discovery"
+              ]
+            },
+            "193": {
+              "skills, and technical knowledge check.": [
+                "TA experience in environmental hydraulics",
+                "TA experience in undergraduate projects",
+                "Software modeling in structural and water engineering",
+                "Industry experience",
+                "Research publications",
+                "Professional development knowledge"
+              ],
+              "verbal and written skills to communicate": [
+                "Fluid mechanics tutorials and lab sessions",
+                "Step-by-step explanation",
+                "Interactive communication",
+                "Articulating solutions to challenging problems"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Real-world examples",
+                "Plain-language explanations",
+                "Making engineering theory accessible"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Guiding students to discover solutions",
+                "Socratic questioning",
+                "MATLAB/Python code snippets",
+                "Teaching robust coding practices",
+                "Student-selected tutorial problems",
+                "Addressing students’ challenging areas",
+                "Classroom engagement"
+              ]
+            },
+            "270": {
+              "skills, and technical knowledge check.": [
+                "Completed Professional Development I (601)",
+                "Completed Professional Development II (603)",
+                "Completed Sustainable Materials for Civil Engineering (607)",
+                "Three years of Teaching Assistant experience",
+                "Three years of Research Assistant experience",
+                "Civil Engineering",
+                "Two publications on sustainable concrete",
+                "Research on sustainable, low-cost, lightweight concrete"
+              ],
+              "verbal and written skills to communicate": [
+                "Assisted six undergraduate students with projects",
+                "Guided concrete mixing, casting, and testing",
+                "Reviewed written methodologies",
+                "Provided feedback"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Group assignments",
+                "Cross-cultural collaboration with students from Egypt, Iran, India, and Sudan",
+                "Zoom-based topic discussions",
+                "Extensive discussions",
+                "Continuous improvement"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Conducted Engineering Materials review classes",
+                "Assigned group report on use of waste materials in the concrete industry",
+                "Divided class into five groups",
+                "Created question set from student reports",
+                "Administered 10-mark quiz",
+                "True/false questions",
+                "Fill-in-the-blank questions",
+                "Multiple-choice questions",
+                "Peer grading",
+                "Cross-checked answers",
+                "Explained correct responses",
+                "Encouraged student questions",
+                "Clarified doubts in detail"
+              ]
+            },
+            "186": {
+              "skills, and technical knowledge check.": [
+                "prior TA experience",
+                "Studio TA experience",
+                "course delivery support",
+                "leading discussions",
+                "grading",
+                "office hours",
+                "student feedback",
+                "analytical skills",
+                "design skills",
+                "communication skills",
+                "student engagement",
+                "learning support"
+              ],
+              "verbal and written skills to communicate": [
+                "explaining complex design critique frameworks",
+                "breaking concepts into clear steps",
+                "studio discussions",
+                "concise written feedback",
+                "helping students apply concepts"
+              ],
+              "engaged learning, helped improved understanding": [
+                "guiding questions",
+                "student reflection",
+                "visual examples",
+                "interactive learning",
+                "applying design principles",
+                "building student confidence"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "collaborative peer reviews",
+                "evaluating work using design principles",
+                "student questioning",
+                "constructive feedback",
+                "discussion and reflection",
+                "supportive learning environment",
+                "active student engagement",
+                "improved participation",
+                "thoughtful design decisions"
+              ]
+            },
+            "192": {
+              "skills, and technical knowledge check.": [
+                "PhD student in Structural Engineering",
+                "specializing in steel structures",
+                "2.5 years of industry experience as a bridge engineer",
+                "strong grasp of mechanics and structural behavior",
+                "structural design",
+                "graduate concrete courses",
+                "steel bridge team mentorship",
+                "SAP2000 workshops",
+                "Excel workshops",
+                "AutoCAD workshops",
+                "informal project assistance",
+                "Teaching Assistant Readiness Program"
+              ],
+              "verbal and written skills to communicate": [
+                "explaining load paths using real-life examples",
+                "visual explanations",
+                "step-by-step guidance",
+                "reinforcing concepts through workshops"
+              ],
+              "engaged learning, helped improved understanding": [
+                "explaining tributary area concepts for column design",
+                "engaging conversation",
+                "improved understanding of a non-straightforward problem"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "building and testing bridge models",
+                "hands-on exploration of structural behavior",
+                "encouraging questions",
+                "hands-on SAP2000 practice",
+                "hands-on AutoCAD practice",
+                "small design projects",
+                "modeling and analyzing bridge components",
+                "independent experimentation",
+                "problem-solving",
+                "practical project-based learning",
+                "increased student confidence"
+              ]
+            },
+            "206": {
+              "skills, and technical knowledge check.": [
+                "10 years’ experience in water production",
+                "Water and wastewater treatment",
+                "Pollution control",
+                "Sustainability",
+                "Graduate Teaching Assistant for Project Management",
+                "Preparing slides",
+                "Recording tutorials",
+                "Grading",
+                "Teaching",
+                "Communication",
+                "Time management",
+                "Active student engagement",
+                "Constructive feedback",
+                "Hands-on, real-world examples",
+                "Responsive student support"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining complex concepts in simple, relatable language",
+                "Using analogies",
+                "Solar water systems",
+                "Water systems",
+                "Community participation"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Intern mentoring",
+                "Water quality procedures",
+                "Breaking procedures into clear steps",
+                "Encouraging questions",
+                "Connecting tasks to real-world impacts",
+                "Deeper understanding"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "UNLEASH Innovation Lab facilitator, Rwanda, 2023",
+                "Guiding 12 young talents",
+                "Hands-on innovation exercises",
+                "Group challenges",
+                "Brainstorming",
+                "Prototyping",
+                "Peer learning",
+                "Reflection",
+                "Ownership of learning",
+                "Engagement",
+                "Critical thinking",
+                "Teamwork",
+                "Sustainability issues"
+              ]
+            },
+            "189": {
+              "skills, and technical knowledge check.": [
+                "structural engineering courses",
+                "teaching",
+                "marking",
+                "tutorials",
+                "office hours",
+                "answering student questions"
+              ],
+              "verbal and written skills to communicate": [
+                "analogies for explaining complex concepts",
+                "stress flow in solids",
+                "simple written summaries",
+                "reinforcing understanding before lab experiments"
+              ],
+              "engaged learning, helped improved understanding": [
+                "writing on the board",
+                "answering questions during lab sessions",
+                "active participation",
+                "critical thinking",
+                "discussion",
+                "immediate feedback"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "ENCI 317 labs",
+                "hands-on experiments",
+                "compression",
+                "tension",
+                "bending",
+                "torsion",
+                "stress",
+                "strain",
+                "Poisson’s ratio",
+                "buckling",
+                "running tests",
+                "recording data",
+                "performing analysis",
+                "engaging with physical behavior of materials",
+                "connecting theory with practice",
+                "mechanics of solids"
+              ]
+            },
+            "195": {
+              "skills, and technical knowledge check.": [
+                "time management",
+                "analytical skills",
+                "communication skills",
+                "Engineering Ethics",
+                "Environmental Engineering",
+                "technical writing assessment",
+                "efficient and fair marking",
+                "evaluating large volumes of material",
+                "environmental systems",
+                "sustainability principles",
+                "explaining complex ideas clearly"
+              ],
+              "verbal and written skills to communicate": [
+                "conference presentations",
+                "well-designed slide decks",
+                "concise posters",
+                "communicating complex geospatial methods",
+                "communicating statistical methods",
+                "expert and non-expert audiences"
+              ],
+              "engaged learning, helped improved understanding": [
+                "teaching wildfire modelling in Python",
+                "breaking code into simple steps",
+                "real-world fire scenarios",
+                "encouraging questions",
+                "interactive coding",
+                "improved student understanding"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "hands-on wildfire modelling activity",
+                "editing code blocks",
+                "simulating fire spread",
+                "weather and terrain inputs",
+                "experimenting with variables",
+                "visualizing outcomes in real time",
+                "guiding student experimentation",
+                "encouraging questions",
+                "making predictions",
+                "reflecting on changes",
+                "direct model interaction",
+                "understanding Python logic",
+                "real-world implications of wildfire behaviour",
+                "strong student engagement"
+              ]
+            },
+            "271": {
+              "skills, and technical knowledge check.": [
+                "TA experience in Ethics",
+                "professional standards",
+                "Design Project support",
+                "creative and collaborative thinking",
+                "sustainability",
+                "water infrastructure experience",
+                "transportation infrastructure experience",
+                "PhD research in transportation",
+                "analytical and technical skills",
+                "Transportation Engineering support",
+                "leadership",
+                "adaptability",
+                "inclusive, applied learning environments"
+              ],
+              "verbal and written skills to communicate": [
+                "clear communication",
+                "real cases",
+                "open discussions",
+                "clarifying abstract topics",
+                "written feedback",
+                "improving final deliverables"
+              ],
+              "engaged learning, helped improved understanding": [
+                "TA experience in Statics",
+                "mini bridge model",
+                "interactive free-body diagrams",
+                "moment balance",
+                "hands-on demonstration",
+                "engaging discussion",
+                "student improvement of over 20% on final exam"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "transportation course lab",
+                "interactive intersection simulation",
+                "role-playing vehicles, pedestrians, and signal controllers",
+                "real-time decisions based on traffic signals and flow rules",
+                "recording traffic performance",
+                "analyzing bottlenecks and delays",
+                "teamwork",
+                "active, gamified learning",
+                "improved understanding and retention of traffic dynamics"
+              ]
+            },
+            "204": {
+              "skills, and technical knowledge check.": [
+                "structural and civil materials engineering",
+                "mechanics tutorials",
+                "structural systems",
+                "construction materials",
+                "undergraduate lab supervision",
+                "ETABS",
+                "SAFE",
+                "AutoCAD",
+                "MATLAB",
+                "analysis and design",
+                "test-result interpretation",
+                "technical documentation",
+                "curriculum quality review",
+                "student mentoring"
+              ],
+              "verbal and written skills to communicate": [
+                "explaining stress-strain behavior",
+                "analogies",
+                "visual aids",
+                "connecting theory with practical testing",
+                "improving comprehension and lab-analysis performance"
+              ],
+              "engaged learning, helped improved understanding": [
+                "step-by-step guidance",
+                "prompting questions",
+                "reviewing student logic",
+                "structural-analysis problem solving",
+                "building clarity and confidence"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "active learning in labs and tutorials",
+                "concrete testing lab",
+                "predicting compressive strength from mix design",
+                "comparing predictions with actual test results",
+                "discussions on material variability and design expectations",
+                "group problem-solving",
+                "peer explanation",
+                "reflection on outcomes",
+                "hands-on learning",
+                "collaborative learning",
+                "deeper thinking",
+                "improved participation",
+                "core engineering principles"
+              ]
+            },
+            "272": {
+              "skills, and technical knowledge check.": [
+                "co-instructor for ENGG 601",
+                "TA-ed ENGG 601 once",
+                "strong interpersonal skills",
+                "labs and tutorials",
+                "in-person interactions",
+                "grading",
+                "grading huge classes is daunting"
+              ],
+              "verbal and written skills to communicate": [
+                "written communication to resolve a student-TA conflict",
+                "verbal communication",
+                "explaining complex concepts",
+                "Schulich Studio sessions",
+                "ENGG 204",
+                "first-year students"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Schulich Studio seminar presentations",
+                "capturing student attention",
+                "physical activities",
+                "competitions",
+                "Top Hat",
+                "other websites",
+                "topic-related games"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "previous TA-ing for ENGG 204",
+                "TA-ed ENGG 204 twice"
+              ]
+            },
+            "199": {
+              "skills, and technical knowledge check.": [
+                "over six years of teaching experience",
+                "Lecturer and Assistant Professor at MIST",
+                "Mechanics of Solids",
+                "Mechanics of Solids and Structures",
+                "Structural Concrete Design",
+                "Structural Engineering II",
+                "TA for ENCI 461 and ENCI 557 at UCalgary",
+                "PhD research on innovative reinforced concrete structures",
+                "published research on sustainable materials",
+                "supporting course delivery, labs, and student learning"
+              ],
+              "verbal and written skills to communicate": [
+                "explaining moment-curvature",
+                "simple sketches",
+                "real-life analogies",
+                "clear handouts",
+                "improved student understanding and performance"
+              ],
+              "engaged learning, helped improved understanding": [
+                "one-on-one support",
+                "visual aids",
+                "guided questioning",
+                "shear diagrams",
+                "boosted student understanding and confidence",
+                "improved assignment performance"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "active learning project: Design and Testing of a Concrete Mix",
+                "group-based design scenarios",
+                "material testing",
+                "calculating mix proportions",
+                "preparing trial batches",
+                "compressive strength testing",
+                "designing concrete mixes for seawater cast-in-situ piles",
+                "30 MPa target strength",
+                "75–100 mm slump",
+                "CEM-II cement",
+                "G+14 residential building concrete mix",
+                "practical applications of concrete properties"
+              ]
+            },
+            "202": {
+              "skills, and technical knowledge check.": [
+                "transportation engineering",
+                "project management",
+                "logistics",
+                "project coordination",
+                "planning and control",
+                "MS Project",
+                "Excel",
+                "Python",
+                "GIS",
+                "spatial analysis",
+                "optimization modeling",
+                "network design",
+                "real-world examples"
+              ],
+              "verbal and written skills to communicate": [
+                "teaching Excel and MS Project",
+                "simplifying scheduling and budgeting tasks",
+                "guiding undergraduate students",
+                "practical examples",
+                "clear verbal explanations",
+                "clear written explanations"
+              ],
+              "engaged learning, helped improved understanding": [
+                "mentoring junior students",
+                "Operations Research",
+                "optimization",
+                "discussion",
+                "supply chain examples",
+                "Python code",
+                "GAMS code",
+                "improved understanding"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "hands-on MS Project sessions",
+                "small-team activities",
+                "real-life project cases",
+                "work breakdown structures",
+                "setting timelines",
+                "allocating resources",
+                "peer discussions",
+                "question-based critical thinking",
+                "applying theoretical concepts",
+                "increased technical skills and engagement",
+                "increased confidence",
+                "deeper understanding of project planning and control"
+              ]
+            },
+            "173": {
+              "skills, and technical knowledge check.": [
+                "Project management course experience: ENCI 471 and ENGG 515",
+                "Coordinating industry projects",
+                "Power BI for project tracking and reporting",
+                "PhD research in geotechnical engineering",
+                "Unsaturated soil behavior",
+                "Slope stability under rainfall",
+                "Theoretical and practical geotechnical engineering",
+                "Geotechnical laboratory experience",
+                "TA experience for geotechnical labs",
+                "ENCI 317 lab sessions",
+                "Exam grading"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining complex geotechnical engineering and mechanics of solids concepts",
+                "Writing key equations and concepts on the board",
+                "Explaining laboratory test purposes and procedures"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Guiding questions",
+                "Discussion-based learning",
+                "Using simple examples to explain the compaction test",
+                "Supporting student understanding of geotechnical laboratory concepts"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Asking students to explain the physical meaning behind formulas",
+                "Mechanics of Solids laboratory instruction",
+                "Bending stress formula",
+                "Guiding students through strain gauge data",
+                "Step-by-step questioning",
+                "Active student participation",
+                "Improved engagement and conceptual understanding"
+              ]
+            },
+            "190": {
+              "skills, and technical knowledge check.": [
+                "Environmental Engineering",
+                "Chemical Engineering",
+                "offshore wind turbines",
+                "hydrogen technologies",
+                "hydrogen production technologies",
+                "research",
+                "sustainability initiatives",
+                "teaching assistance",
+                "communication and mentoring skills"
+              ],
+              "verbal and written skills to communicate": [
+                "Teaching assistant for Environmental Engineering and Thermodynamics courses",
+                "research assistant in a biofuel lab",
+                "team leadership",
+                "international business development",
+                "offshore wind projects",
+                "hydrogen projects",
+                "tutoring MSc students"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Supported over 72 students",
+                "verbal and written communication",
+                "simplifying complex concepts",
+                "tutoring MSc students",
+                "supporting student transition",
+                "building confidence and motivation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Prezi interactive flowcharts",
+                "visualizing complex thermodynamics concepts",
+                "real-life examples",
+                "Q&A sessions",
+                "active participation",
+                "real-world cases",
+                "critical thinking",
+                "student-led discussions",
+                "collaboration",
+                "reflection discussions",
+                "student-led topic explanations"
+              ]
+            },
+            "183": {
+              "skills, and technical knowledge check.": [
+                "Civil Engineering degree",
+                "structural engineering",
+                "geotechnical engineering",
+                "structural design",
+                "construction management",
+                "mechanics of solids",
+                "design, construction, and research experience",
+                "analysis skills",
+                "engineering codes",
+                "engineering software",
+                "teaching since 2017"
+              ],
+              "verbal and written skills to communicate": [
+                "guest lecture in ENGG 202",
+                "clear visuals",
+                "written examples",
+                "real-life applications",
+                "explaining equilibrium of forces and moments",
+                "clear communication"
+              ],
+              "engaged learning, helped improved understanding": [
+                "ENGG 202 studio sessions",
+                "solving statics problems",
+                "asking questions",
+                "encouraging discussion",
+                "providing hints",
+                "active participation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "ENGG 202 studio sessions",
+                "small-group problem solving",
+                "discussion",
+                "targeted questions",
+                "constructive feedback",
+                "critical thinking",
+                "explaining reasoning",
+                "connecting concepts to real-world examples",
+                "interactive and supportive learning environment",
+                "peer learning",
+                "practical understanding"
+              ]
+            },
+            "187": {
+              "skills, and technical knowledge check.": [
+                "geotechnical engineering foundation",
+                "Geotechnical Engineering 2 teaching assistant experience",
+                "soil analysis",
+                "site assessment",
+                "geotechnical testing methods",
+                "triaxial tests",
+                "evaluating soil properties",
+                "project management",
+                "organizational skills",
+                "leadership skills",
+                "managing multidisciplinary teams",
+                "engineering projects"
+              ],
+              "verbal and written skills to communicate": [
+                "explaining soil mechanics principles",
+                "providing direct explanations",
+                "providing guidance during lab sessions"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Contaminated Soil Remediation teaching assistant experience",
+                "explaining soil contamination principles",
+                "providing direct explanations",
+                "providing guidance"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Geotechnical Engineering 2 teaching assistant experience",
+                "teaching lab experiment concepts",
+                "detailed explanations",
+                "demonstrations",
+                "hands-on guidance",
+                "emphasizing procedural steps",
+                "explaining underlying theories",
+                "accurate data recording",
+                "preparing students for experiments",
+                "building student confidence",
+                "deepening understanding"
+              ]
+            },
+            "178": {
+              "skills, and technical knowledge check.": [
+                "ENCI 513 Structural Concrete Design instructional experience",
+                "Co-instructor experience",
+                "Sessional instructor experience",
+                "Two teaching awards",
+                "ENCI 317 Mechanics of Solids",
+                "ENCI 551 Structural Engineering II",
+                "Ph.D. specialization in structural and solid mechanics",
+                "Structural analysis",
+                "Material behavior",
+                "Student problem-solving guidance",
+                "Core concept reinforcement"
+              ],
+              "verbal and written skills to communicate": [
+                "Clear explanations",
+                "Simplifying complex topics",
+                "Summarizing prerequisite courses",
+                "Three teaching awards in 2025"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Office-hour support",
+                "Sketches and real examples",
+                "Guided problem-solving",
+                "Column design instruction",
+                "Improved conceptual understanding"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "TA experience in ENGG 202 five times",
+                "Active learning environment",
+                "Critical-thinking-based guidance",
+                "Reflective questioning",
+                "Peer discussion",
+                "Small-group collaboration",
+                "Explaining reasoning to peers",
+                "Collaborative understanding",
+                "Independent problem-solving",
+                "Two teaching awards"
+              ]
+            }
+          }
+        }
+      ],
+      "summary": {
+        "successful_runs": 1,
+        "failed_runs": 0,
+        "median_dataset_seconds": 11.331490249955095,
+        "median_request_seconds": 2.8184738750569522,
+        "p95_request_seconds": 3.564279832993634,
+        "mean_f1": null
+      }
+    },
+    "gpt-6-luna": {
+      "runs": [
+        {
+          "repeat": 1,
+          "status": "ok",
+          "elapsed_seconds": 12.480880542076193,
+          "request_seconds": [
+            2.722206332953647,
+            2.738475500023924,
+            2.797277541947551,
+            2.945813874946907,
+            2.9757452909834683,
+            3.2335124160163105,
+            3.250228916062042,
+            3.29126049997285,
+            3.366785665974021,
+            3.3651187909999862,
+            3.370354791986756,
+            3.3837064169347286,
+            3.3826950419461355,
+            3.4629889170173556,
+            3.5172679169336334,
+            2.5909924170700833,
+            2.6599925420014188,
+            3.1420637080445886,
+            3.152878124965355,
+            3.21213445905596,
+            3.269412999972701,
+            3.4135671659605578,
+            3.498830166994594,
+            3.5381507920101285,
+            3.5562608749605715,
+            3.8034249170450494,
+            4.128038165974431,
+            4.2179950419813395,
+            4.559740999946371,
+            4.741036333027296,
+            2.4585329169640318,
+            2.5260503749595955,
+            2.5375542080728337,
+            2.747360000037588,
+            2.9453296249266714,
+            2.9854861249914393,
+            3.005458625033498,
+            3.1250763329444453,
+            3.1315455000149086,
+            3.1463950000470504,
+            3.1564757500309497,
+            3.1785182500025257,
+            3.1918311250628904,
+            3.242854541982524,
+            4.20914770802483
+          ],
+          "keywords": {
+            "1": {
+              "skills, and technical knowledge check.": [
+                "Teaching assistant experience across engineering, chemistry, and physics",
+                "Electrical engineering",
+                "Materials science",
+                "Physics",
+                "Chemistry"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining procedures",
+                "Explaining the purpose of procedures",
+                "Guiding students through laboratory and tutorial activities"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Asking guiding questions",
+                "Collaborative problem-solving",
+                "Helping students complete lab work independently"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Active learning in lab and tutorial sessions",
+                "Practicing labs in advance",
+                "Connecting lab work to previous course content",
+                "Asking students to recall lecture learning",
+                "Guiding students with prompts",
+                "Helping students reach solutions independently",
+                "Encouraging students to interpret questions fully"
+              ]
+            },
+            "2": {
+              "skills, and technical knowledge check.": [
+                "Instrumentation design, fabrication, and evaluation",
+                "Sensor sampling and filtering",
+                "Data processing and storage",
+                "Microcontroller",
+                "Equine biomechanics",
+                "Directed study in biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "TA experience in circuits courses",
+                "Combines verbal and written explanations",
+                "Drawings to relate physical circuits to circuit diagrams"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Explains problem-solving processes",
+                "Summarizes processes after assisting students",
+                "Uses questions to develop student skills"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on circuits labs",
+                "Supports independent circuit debugging",
+                "Demonstrates multimeter features",
+                "Guides students in using debugging tools",
+                "Oscilloscope and signal generator",
+                "Relates circuit diagrams to breadboard connections"
+              ]
+            },
+            "4": {
+              "skills, and technical knowledge check.": [
+                "Biomedical engineering coursework",
+                "BMEN 468 and BMEN 478 projects",
+                "Hydration-monitoring wearable",
+                "Arduino",
+                "Coding",
+                "EDA sensors",
+                "In-depth research on IP",
+                "BMEN 401",
+                "BME capstone project",
+                "Hands-on experience",
+                "Familiarity with course structure",
+                "Lab, tutorial, and grading support"
+              ],
+              "verbal and written skills to communicate": [
+                "Led team communication",
+                "Presented to stakeholders",
+                "Communicated technical and non-technical information",
+                "Intubation model project"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Explained signals and instrumentation",
+                "Group study sessions",
+                "BMEN 488",
+                "Helped peers understand controller signals and instrumentation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Led a BMEN study group",
+                "Problem-based discussions",
+                "Collaborative exam-question solving",
+                "Explained problem-solving approaches to the group",
+                "Encouraged collaboration and critical thinking",
+                "Improved confidence and performance",
+                "BMEN 488, BMEN 523, and BMEN 585"
+              ]
+            },
+            "8": {
+              "skills, and technical knowledge check.": [
+                "3rd-year PhD in biomedical engineering",
+                "medical imaging",
+                "biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "teaching assistant in undergraduate mechanics courses",
+                "explaining concepts in tutorials and lab settings"
+              ],
+              "engaged learning, helped improved understanding": [
+                "asking students to explain their reasoning",
+                "identifying where students are going wrong"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "flipped classroom-style mechanics course",
+                "facilitating problem-solving sessions",
+                "students review lecture materials in advance",
+                "guiding students in applying concepts to challenging problems in real time"
+              ]
+            },
+            "261": {
+              "skills, and technical knowledge check.": [
+                "CAD design",
+                "SolidWorks",
+                "Fusion 360",
+                "additive manufacturing (3D printing)",
+                "automation manufacturing",
+                "CAM",
+                "Mastercam",
+                "biomaterial synthesis",
+                "mechanical characterization",
+                "cell culturing",
+                "manufacturing lab and lecture TA",
+                "problem-based design",
+                "project management",
+                "high school teaching",
+                "physics",
+                "design and construction",
+                "PhD candidate in stem cell regenerative medicine",
+                "advanced stem cell biology"
+              ],
+              "verbal and written skills to communicate": [
+                "individualized technical explanations",
+                "translating technical concepts for product design",
+                "group project work",
+                "CAD design",
+                "project management"
+              ],
+              "engaged learning, helped improved understanding": [
+                "connecting material properties and context to manufacturing processes",
+                "industry applications",
+                "safety",
+                "efficiency",
+                "innovation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "ran a design, construction, and fabrication shop for 3 years",
+                "course design",
+                "assessment",
+                "project innovation",
+                "applied skills training",
+                "industrial woodworking equipment",
+                "welding equipment",
+                "CWB welding certificates: SMAW (Stick) and GMAW (MIG)",
+                "permanent Alberta Education teacher status"
+              ]
+            },
+            "14": {
+              "skills, and technical knowledge check.": [
+                "BMEN 600 and 602",
+                "machine learning",
+                "ML coursework",
+                "TA experience: ENGG 349",
+                "clear, timely feedback",
+                "troubleshooting support",
+                "explaining concepts",
+                "group feedback meetings",
+                "thoughtful questions and suggestions",
+                "swim coaching",
+                "technical feedback tailored to learning styles",
+                "biomedical engineering"
+              ],
+              "verbal and written skills to communicate": [
+                "presenting data analysis results",
+                "multidisciplinary team communication",
+                "simple language",
+                "clear visuals",
+                "explaining technical findings"
+              ],
+              "engaged learning, helped improved understanding": [
+                "leading a paper presentation",
+                "open-ended discussion questions",
+                "analogies to clarify complex ideas",
+                "building on others’ points",
+                "encouraging diverse perspectives"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "swim coaching",
+                "hands-on stroke experimentation",
+                "reflective learning",
+                "guiding questions",
+                "student-led coding and data analysis",
+                "learning by doing",
+                "independent problem-solving"
+              ]
+            },
+            "15": {
+              "skills, and technical knowledge check.": [
+                "Machine learning",
+                "Python",
+                "Statistics",
+                "Medical imaging datasets",
+                "Applying ML models",
+                "Image processing",
+                "Scientific computing",
+                "Statistical analysis",
+                "Biomedical contexts",
+                "AI in healthcare",
+                "Explaining complex concepts",
+                "Peer mentoring",
+                "Communication and teaching skills"
+              ],
+              "verbal and written skills to communicate": [
+                "Verbal explanations in meetings",
+                "Written documentation",
+                "Statistical model interpretation",
+                "ML workflows",
+                "Explaining concepts clearly"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Relatable examples",
+                "Interactive questions",
+                "Guided discussion",
+                "Bias in machine learning models",
+                "Active participation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Peer study group",
+                "Hands-on exercises with real-world datasets",
+                "Data preprocessing",
+                "Training models",
+                "Interpreting results",
+                "Group discussions and reflection",
+                "Open-ended questions",
+                "Peer-to-peer concept explanations",
+                "Critical thinking",
+                "Model evaluation",
+                "Fairness in AI"
+              ]
+            },
+            "16": {
+              "skills, and technical knowledge check.": [
+                "TA experience: BMEN 488 and Introduction in Engineering Design",
+                "Coding",
+                "Electrical circuits",
+                "BMEN 602 coursework",
+                "Project definition",
+                "Problem-solving",
+                "Hands-on design and research projects"
+              ],
+              "verbal and written skills to communicate": [
+                "Step-by-step written guides",
+                "Verbal help during office hours",
+                "Supporting coding lab projects"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Real-time student engagement",
+                "Answering questions during lab sessions",
+                "Discussion-based learning",
+                "Step-by-step debugging and problem-solving guidance"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on sessions",
+                "Applying concepts to real-world problems",
+                "Guiding questions instead of direct answers",
+                "Exploring solutions",
+                "Presenting ideas",
+                "Reflecting on feedback",
+                "Critical thinking",
+                "Teamwork",
+                "Student ownership of learning"
+              ]
+            },
+            "17": {
+              "skills, and technical knowledge check.": [
+                "Biomedical signal processing",
+                "Instrumentation design",
+                "Human-centered machine learning",
+                "Biomedical engineering projects and research",
+                "Teaching assistant experience",
+                "Active learning",
+                "Grading",
+                "Lecture delivery",
+                "Teaching and communication"
+              ],
+              "verbal and written skills to communicate": [
+                "Student support during studio activities",
+                "Scientific article writing",
+                "Public-facing communication",
+                "Explaining complex concepts accessibly"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Guiding questions",
+                "Student-led problem solving",
+                "Supporting final projects",
+                "Deepening understanding"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on class activities",
+                "Guiding questions instead of direct answers",
+                "Independent thinking",
+                "Problem-solving",
+                "Following up to clarify and reinforce understanding",
+                "Engaging all group members",
+                "Recording and analyzing biological signals",
+                "Moving between groups",
+                "Encouraging questions",
+                "Addressing confusion"
+              ]
+            },
+            "18": {
+              "skills, and technical knowledge check.": [
+                "TA for Introduction to Programming",
+                "TA for Circuit Analysis II",
+                "Introduction to MATLAB workshops",
+                "Machine Learning workshops",
+                "Biomedical signal processing workshops",
+                "Biomedical engineering",
+                "7+ years of experience",
+                "MATLAB",
+                "Python",
+                "Machine learning"
+              ],
+              "verbal and written skills to communicate": [
+                "Created supplemental materials",
+                "Led a workshop",
+                "Used analogies",
+                "Coding demonstrations",
+                "Explained recursion"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Collaborative troubleshooting",
+                "Oscilloscope use",
+                "Explored additional oscilloscope features"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on learning",
+                "Collaborative troubleshooting",
+                "Exploring oscilloscope features",
+                "Small-group discussions on Piazza",
+                "Exploring multiple assignment solutions",
+                "Writing down possible coding solutions",
+                "Sharing different problem-solving approaches",
+                "Built student confidence and problem-solving skills"
+              ]
+            },
+            "19": {
+              "skills, and technical knowledge check.": [
+                "Thesis-based master's in Biomedical Engineering",
+                "Tissue biomechanics",
+                "Proteomics",
+                "Research methods",
+                "Undergraduate degree in Electrical Engineering",
+                "Engineering design",
+                "Problem-solving",
+                "Technical communication",
+                "Prior tutoring experience",
+                "Communication skills",
+                "Student engagement",
+                "Active learning",
+                "Support for first-year Schulich Studio and electrical engineering courses"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining complex topics",
+                "Real-life examples",
+                "Visual aids",
+                "Clear written summaries",
+                "Teaching circuits",
+                "Explaining challenging science and math concepts"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Rehab clinic volunteering",
+                "Communicating in a patient's native language",
+                "Simple explanations",
+                "Building trust",
+                "Encouraging active participation in therapy"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on practice",
+                "Real-life scenarios",
+                "Role-play",
+                "Emergency procedures",
+                "Conflict resolution",
+                "Encouraging participation",
+                "Critical thinking",
+                "Building confidence",
+                "Feedback and reflection",
+                "Supporting independent application of skills"
+              ]
+            },
+            "262": {
+              "skills, and technical knowledge check.": [
+                "PhD student in BME",
+                "BMEN 600",
+                "BMEN 633",
+                "A+ in BMEN 600 and 633",
+                "background in biological concepts",
+                "confidence TAing basic biological concepts"
+              ],
+              "verbal and written skills to communicate": [
+                "explaining complex concepts using a whiteboard or blackboard",
+                "step-by-step explanations"
+              ],
+              "engaged learning, helped improved understanding": [
+                "post-grading review",
+                "explaining grade justifications",
+                "helping students understand grading decisions"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "questioning students",
+                "sparking curiosity and interest"
+              ]
+            },
+            "20": {
+              "skills, and technical knowledge check.": [
+                "Bachelor's degree in Cellular, Molecular and Microbial Biology",
+                "Mentoring",
+                "iGEM UCalgary team",
+                "Prototype development guidance"
+              ],
+              "verbal and written skills to communicate": [
+                "Tutoring K–12 and first- and second-year students",
+                "Maths, Physics, and Biology",
+                "Explaining complex topics",
+                "Flowcharts",
+                "Big-picture explanations"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Tutoring K–12 and first- and second-year students",
+                "Maths, Physics, and Biology",
+                "Explaining complex topics",
+                "Flowcharts",
+                "Big-picture explanations"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Tutoring K–12 and first- and second-year students",
+                "Maths, Physics, Chemistry, and Biology",
+                "Explaining complex topics",
+                "Flowcharts",
+                "Big-picture explanations"
+              ]
+            },
+            "263": {
+              "skills, and technical knowledge check.": [
+                "BSc in Biomedical Engineering",
+                "PhD in data science",
+                "machine learning",
+                "sensor technologies",
+                "human factors related to aging and dementia",
+                "algorithm development and validation",
+                "large GPS and IMU dataset analysis",
+                "multi-site, interdisciplinary research",
+                "team leadership",
+                "healthcare solutions development"
+              ],
+              "verbal and written skills to communicate": [
+                "explaining complex machine learning results",
+                "communicating with technical and non-technical teams",
+                "clear reports",
+                "presentations"
+              ],
+              "engaged learning, helped improved understanding": [
+                "facilitating open discussion",
+                "encouraging team members to share perspectives",
+                "conflict resolution",
+                "restoring collaboration",
+                "supporting team engagement"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "encouraging students to ask questions",
+                "group discussions",
+                "applying course concepts to real-world examples",
+                "active learning",
+                "critical thinking"
+              ]
+            },
+            "24": {
+              "skills, and technical knowledge check.": [
+                "five semesters of TA experience",
+                "mechanics, dynamics, CAD and design",
+                "led labs and tutorials",
+                "classes up to 950 students",
+                "clear explanations",
+                "timely feedback",
+                "interactive problem-solving",
+                "continuum mechanics",
+                "multiscale biomechanics",
+                "machine-learning-based modelling",
+                "Python",
+                "MATLAB",
+                "CAD",
+                "demonstrations",
+                "inquiry-driven projects",
+                "prompt communication",
+                "fully available for all scheduled sessions"
+              ],
+              "verbal and written skills to communicate": [
+                "simplifying challenging topics",
+                "viscoelastic material behaviour",
+                "introductory finite-element (FE) modelling"
+              ],
+              "engaged learning, helped improved understanding": [
+                "guided first-year engineering students",
+                "planning, designing and executing projects",
+                "active learning environment",
+                "conversations"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "withheld direct advice",
+                "targeted questions",
+                "sparked reflection",
+                "challenged concepts from technical, user, and cost perspectives",
+                "student self-critique",
+                "surfaced hidden flaws",
+                "creative iteration"
+              ]
+            },
+            "29": {
+              "skills, and technical knowledge check.": [
+                "Mechanical engineering",
+                "Mechanical testing techniques",
+                "Robotics",
+                "Movement biomechanics",
+                "Biocompatible and biodegradable nanocomposites",
+                "Biomaterial stent implants",
+                "PhD research",
+                "Master’s research"
+              ],
+              "verbal and written skills to communicate": [
+                "Step-by-step verbal explanations",
+                "Written solutions",
+                "Brief concept reviews",
+                "Python coding support",
+                "Statics problem support"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Python code debugging",
+                "Statics worksheet checking",
+                "Guiding questions",
+                "Student self-correction",
+                "Active learning",
+                "Deeper understanding"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Guided Python code debugging",
+                "Engineering Statics worksheet verification",
+                "Critical-thinking questions",
+                "Student-led error identification and correction",
+                "Step-by-step verbal explanations",
+                "Written support",
+                "Problem-solving skills",
+                "Active learning environment"
+              ]
+            },
+            "264": {
+              "skills, and technical knowledge check.": [
+                "TA for 11 courses",
+                "MEMS",
+                "Manufacturing & Production Processes",
+                "Transport Phenomena",
+                "Molecular and Tissue Engineering",
+                "Bio-inspired Design",
+                "guest lectures on ceramics, biomaterials, and bio-interfaces",
+                "mentored an undergraduate capstone design team",
+                "lead labs and tutorials",
+                "classroom management"
+              ],
+              "verbal and written skills to communicate": [
+                "explained complex topics",
+                "lectures",
+                "detailed protocols",
+                "one-on-one discussions",
+                "Organ-on-Chip",
+                "MEMS",
+                "tissue engineering",
+                "biomaterials",
+                "research mentor to 9 undergraduate and graduate trainees"
+              ],
+              "engaged learning, helped improved understanding": [
+                "demonstrated Organ-on-Chips",
+                "simplified technical details",
+                "encouraged questions",
+                "engaged diverse participants",
+                "improved understanding across disciplines"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "designed and managed labs, workshops, and tutorials",
+                "hands-on experiments",
+                "problem-solving activities",
+                "facilitated group discussions",
+                "encouraged questions",
+                "guided students through complex procedures",
+                "linked theory to practice",
+                "enhanced student participation"
+              ]
+            },
+            "31": {
+              "skills, and technical knowledge check.": [
+                "PhD candidate",
+                "thesis defense planned for fall",
+                "medical imaging TA experience (3 years)",
+                "guest lectures on machine learning and explainable AI",
+                "substitute German teacher",
+                "Python",
+                "TensorFlow",
+                "PyTorch",
+                "HPC clusters",
+                "master’s degree in physics"
+              ],
+              "verbal and written skills to communicate": [
+                "clearly explained complex imaging modalities",
+                "MRI",
+                "positive feedback on presentation style",
+                "Medium blog posts"
+              ],
+              "engaged learning, helped improved understanding": [
+                "helped a computer science lab mate understand CT-specific imaging aspects in machine learning",
+                "interdisciplinary discussions"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "interactive guest lecture on explainable AI",
+                "promoted discussion",
+                "encouraged students to incorporate XAI into their work",
+                "positive student feedback",
+                "students approached for research-specific XAI technique recommendations"
+              ]
+            },
+            "265": {
+              "skills, and technical knowledge check.": [
+                "MSc in biomedical engineering",
+                "PhD in medical imaging",
+                "medical imaging specialization",
+                "CT imaging guest lectures",
+                "OsNET Imaging workshop labs",
+                "biomedical engineering coursework",
+                "biomedical engineering projects",
+                "mentored three summer students",
+                "mentored one co-op student",
+                "mentored one undergraduate thesis student from start to finish"
+              ],
+              "verbal and written skills to communicate": [
+                "tutorials explaining concepts and experiments",
+                "whiteboard instruction",
+                "reinforced and refreshed lecture concepts"
+              ],
+              "engaged learning, helped improved understanding": [
+                "individual support with cartilage deformation question",
+                "reviewed force/displacement/time curves",
+                "reviewed stress relaxation",
+                "used lecture and lab notes",
+                "guided student to complete question correctly"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "hands-on CT imaging workshop",
+                "reinforced CT imaging basics",
+                "student-selected specimens for scanning",
+                "hands-on specimen placement and positioning",
+                "scanner gantry positioning",
+                "attached radiation shields",
+                "viewed reconstructed images",
+                "explored effects of positioning, specimen density, and image resolution"
+              ]
+            },
+            "33": {
+              "skills, and technical knowledge check.": [
+                "Biomedical Engineering specialization",
+                "Medical Imaging coursework",
+                "Working knowledge of medical imaging",
+                "MRI",
+                "fMRI",
+                "Research projects",
+                "Data analysis",
+                "Technical principles of medical imaging"
+              ],
+              "verbal and written skills to communicate": [
+                "Presented research to engineers and clinicians",
+                "Simplified complex concepts",
+                "HRF modeling",
+                "Written summary focused on clinical relevance"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Two poster presentations",
+                "Explained fMRI and iEEG research to diverse audiences",
+                "Broke down complex imaging concepts",
+                "Encouraged questions"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Two poster presentations",
+                "Asked visitors questions",
+                "Invited visitors to interpret imaging results",
+                "Guided visitors through fMRI and iEEG concepts",
+                "Active learning"
+              ]
+            },
+            "196": {
+              "skills, and technical knowledge check.": [
+                "Civil engineering",
+                "Geotechnical engineering",
+                "Environmental engineering",
+                "Theoretical knowledge",
+                "Laboratory techniques",
+                "Relevant software proficiency",
+                "Teaching undergraduate students",
+                "Tutorial sessions"
+              ],
+              "verbal and written skills to communicate": [
+                "Clear lectures",
+                "Geotechnical testing and design",
+                "Examples to engage students",
+                "Concise lab reports",
+                "Geotechnical lab guides"
+              ],
+              "engaged learning, helped improved understanding": [
+                "One-on-one discussions",
+                "Simplifying complex concepts",
+                "Explaining challenging terms",
+                "Encouraging active participation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Interactive group activities",
+                "Shallow foundation design",
+                "Bearing capacity calculations",
+                "Real-world design scenarios",
+                "Facilitated discussions",
+                "Student questions and peer explanation",
+                "Teamwork and collaboration",
+                "Hands-on demonstrations with scaled models",
+                "Visualizing soil behavior under load"
+              ]
+            },
+            "266": {
+              "skills, and technical knowledge check.": [
+                "structural design",
+                "structural analysis",
+                "verbal communication skills",
+                "knowledge for TA work in structural courses",
+                "ENCI 317",
+                "ENCI 513"
+              ],
+              "verbal and written skills to communicate": [
+                "TA for studio active learning",
+                "ENGG 204",
+                "twice"
+              ],
+              "engaged learning, helped improved understanding": [
+                "ENGG 204 studios"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "explaining concepts to students in studios",
+                "full instructor for ENCI 317",
+                "three times",
+                "engaging students with course material"
+              ]
+            },
+            "209": {
+              "skills, and technical knowledge check.": [
+                "Civil engineering",
+                "Structural engineering",
+                "Bachelor’s degree in civil engineering",
+                "Building Engineering course",
+                "Structural systems",
+                "Teaching assistant for Mechanics of Solids",
+                "Marking quizzes and exams",
+                "Troubleshooting student issues",
+                "Academic support"
+              ],
+              "verbal and written skills to communicate": [
+                "Reviewed student’s notes to identify confusion",
+                "Simple examples",
+                "Drawings to clarify concepts"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Step-by-step hints",
+                "Supported independent progress",
+                "Helped students complete a difficult lab project"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Encouraged students to search for answers independently",
+                "Directed students to useful resources",
+                "Collaborative group work",
+                "Peer sharing of solutions",
+                "Troubleshooting",
+                "Collaborative problem-solving",
+                "Teamwork"
+              ]
+            },
+            "211": {
+              "skills, and technical knowledge check.": [
+                "Co-instructor for ENCI 413",
+                "Ran laboratory sessions",
+                "Sessional instructor for ENCI 607"
+              ],
+              "verbal and written skills to communicate": [
+                "Delivered lectures on sustainability in civil engineering materials",
+                "Explained engineering properties of materials",
+                "Provided detailed written feedback on group assignments"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Dedicated time after lectures to address questions",
+                "Discussed group project progress and feedback",
+                "Clarified lecture concepts",
+                "Provided additional resources"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Encouraged participation in fresh concrete testing",
+                "Asked students to predict test results",
+                "Prompted students to consider how admixtures influence concrete behaviour"
+              ]
+            },
+            "267": {
+              "skills, and technical knowledge check.": [
+                "Master’s in civil engineering",
+                "Sustainable construction materials",
+                "Recycled aggregates and plastic waste in concrete",
+                "Material behavior",
+                "Mechanics of solids",
+                "Structural design using ETABS",
+                "Design project contributions",
+                "Research activity management",
+                "Published 8 papers",
+                "Reviewed 4 research papers on cementitious materials",
+                "Project management"
+              ],
+              "verbal and written skills to communicate": [
+                "Presented complex research using visuals and simplified terms",
+                "Communicated with diverse audiences",
+                "Published 8 papers",
+                "Provided reviewer feedback on 4 research papers"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Teaching assistant at the University of Khartoum",
+                "Explained complex concepts using real examples",
+                "Interactive discussions",
+                "Supported understanding of structural design principles"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on civil engineering lab activities",
+                "Students mixed and tested concrete with various materials",
+                "Active learning",
+                "Encouraged collaboration",
+                "Improved student understanding and engagement"
+              ]
+            },
+            "268": {
+              "skills, and technical knowledge check.": [
+                "TA experience in Statics (three years)",
+                "TA experience in Solid Mechanics",
+                "group learning",
+                "interactive worksheets",
+                "structural principles",
+                "transportation systems",
+                "urban infrastructure",
+                "graduate research and coursework",
+                "Microsoft Project",
+                "Project Control coursework"
+              ],
+              "verbal and written skills to communicate": [
+                "verbal explanations",
+                "everyday examples",
+                "written summaries",
+                "diagrams",
+                "explaining moments"
+              ],
+              "engaged learning, helped improved understanding": [
+                "guiding questions",
+                "free-body diagrams",
+                "interactive tutoring",
+                "student engagement",
+                "building confidence"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "group-based worksheet sessions",
+                "collaborative problem-solving",
+                "forces, equilibrium, and moments",
+                "guided discussion",
+                "guiding questions",
+                "clarifying misconceptions",
+                "peer learning",
+                "critical thinking",
+                "hands-on, interactive learning",
+                "connecting theory with practice",
+                "independent problem-solving"
+              ]
+            },
+            "198": {
+              "skills, and technical knowledge check.": [
+                "PhD candidate in Geotechnical Engineering",
+                "Teaching assistant for Geotechnical Engineering I and II",
+                "Five consecutive terms since 2022",
+                "Grading",
+                "Laboratory sessions"
+              ],
+              "verbal and written skills to communicate": [
+                "Two-page visual guide",
+                "Labeled diagrams",
+                "Error tips",
+                "Live video demonstrations",
+                "Explaining test parameters"
+              ],
+              "engaged learning, helped improved understanding": [
+                "One-on-one guidance",
+                "Particle-size analysis",
+                "Real soil samples",
+                "Targeted questions",
+                "Peer explanation",
+                "Dialogue-based learning"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Soil Mechanics lab",
+                "Jigsaw activity",
+                "Small-group learning",
+                "Rotating stations",
+                "Peer teaching",
+                "Hands-on troubleshooting",
+                "Question and answer",
+                "Student ownership of learning"
+              ]
+            },
+            "269": {
+              "skills, and technical knowledge check.": [
+                "MSc Civil Engineering student",
+                "5 years of hands-on experience",
+                "Sustainable community development",
+                "Civil engineering",
+                "Cost estimation",
+                "Technical project coordination",
+                "Urban infrastructure",
+                "Smart construction planning",
+                "Regulatory adherence",
+                "Efficient resource use",
+                "Environmental impact consideration",
+                "Construction process streamlining",
+                "Project Construction Management coursework"
+              ],
+              "verbal and written skills to communicate": [
+                "Breaking complex concepts into simple steps",
+                "Using diagrams",
+                "Clear written summaries",
+                "Team alignment",
+                "Supporting informed decisions"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Guiding a classmate through a difficult project concept",
+                "Real-life examples",
+                "Question-led discussion",
+                "Building confidence",
+                "Deepening engagement with material"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Study group facilitation",
+                "Encouraging students to explain concepts in their own words",
+                "Collaborative problem-solving",
+                "Real-world examples",
+                "Open-ended questions",
+                "Discussion and critical thinking",
+                "Increasing participation",
+                "Building confidence in independent application",
+                "Collaborative discovery"
+              ]
+            },
+            "193": {
+              "skills, and technical knowledge check.": [
+                "Teaching assistant experience",
+                "Environmental hydraulics",
+                "Software modeling",
+                "Structural and water engineering",
+                "Industry experience",
+                "Research publications",
+                "Professional development"
+              ],
+              "verbal and written skills to communicate": [
+                "Tutorial and lab session instruction",
+                "Step-by-step explanations",
+                "Interactive communication",
+                "Explaining tough problems"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Real-world examples",
+                "Plain-language explanations",
+                "Making engineering theory accessible"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Guiding students to solutions with questions",
+                "Matlab/Python code snippets",
+                "Robust coding for assignments",
+                "Student choice of tutorial problems",
+                "Targeting areas where students face challenges",
+                "Classroom engagement"
+              ]
+            },
+            "270": {
+              "skills, and technical knowledge check.": [
+                "Professional Development I (601)",
+                "Professional Development II (603)",
+                "Sustainable Materials for Civil Engineering (607)",
+                "three years of Teaching Assistant and Research Assistant experience",
+                "Civil Engineering",
+                "two publications related to sustainable concrete",
+                "research on sustainable, low-cost, lightweight concrete"
+              ],
+              "verbal and written skills to communicate": [
+                "assisted six undergraduate students with projects",
+                "guided students through concrete mixing, casting, and testing",
+                "reviewed written methodologies",
+                "provided feedback"
+              ],
+              "engaged learning, helped improved understanding": [
+                "group assignments",
+                "Zoom sessions",
+                "topic-focused discussions",
+                "continuous improvements"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "conducted review classes for Engineering Materials",
+                "group report on use of waste materials in the concrete industry",
+                "created a combined question set",
+                "10-mark quiz",
+                "true/false, fill-in-the-blanks, and MCQs",
+                "peer grading",
+                "cross-checked answers",
+                "explained correct responses",
+                "encouraged student questions",
+                "clarified doubts in detail"
+              ]
+            },
+            "186": {
+              "skills, and technical knowledge check.": [
+                "TA and Studio TA experience",
+                "course delivery support",
+                "leading discussions",
+                "grading",
+                "office hours",
+                "student feedback",
+                "analytical skills",
+                "design skills",
+                "communication skills",
+                "student engagement",
+                "learning support"
+              ],
+              "verbal and written skills to communicate": [
+                "explaining complex design critique frameworks",
+                "breaking concepts into clear steps",
+                "studio discussions",
+                "concise written feedback"
+              ],
+              "engaged learning, helped improved understanding": [
+                "guiding questions",
+                "student reflection",
+                "visual examples",
+                "interactive teaching",
+                "applying design principles"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "collaborative peer reviews",
+                "evaluating work using design principles",
+                "student questions",
+                "constructive feedback",
+                "discussion and reflection",
+                "supportive learning environment",
+                "improved participation",
+                "thoughtful design decisions"
+              ]
+            },
+            "192": {
+              "skills, and technical knowledge check.": [
+                "PhD student in Structural Engineering",
+                "Specialization in steel structures",
+                "2.5 years of industry experience as a bridge engineer",
+                "Teaching Assistant for ENCI 461",
+                "Mechanics and structural behavior",
+                "Designing",
+                "Graduate concrete courses",
+                "Mentor for UCalgary Steel Bridge Team",
+                "SAP2000",
+                "Excel",
+                "AutoCAD",
+                "Informal assistance with Popsicle Bridge, DIALOG Bridge, and Capstone projects",
+                "Familiarity with undergraduate students",
+                "Teaching Assistant Readiness Program"
+              ],
+              "verbal and written skills to communicate": [
+                "Explained load paths using real-life examples",
+                "Visuals",
+                "Step-by-step guidance"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Explained tributary area concept for column design",
+                "Guided understanding of a challenging ENCI 451 problem",
+                "Engaging conversation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on bridge model building and testing",
+                "Encouraged students to ask questions",
+                "Hands-on software practice",
+                "SAP2000 and AutoCAD modeling and analysis",
+                "Small design projects",
+                "Independent experimentation and problem-solving",
+                "Practical, project-based learning"
+              ]
+            },
+            "206": {
+              "skills, and technical knowledge check.": [
+                "10 years’ experience in water production",
+                "Water and wastewater treatment",
+                "Pollution control",
+                "Sustainability",
+                "Teaching and communication",
+                "Time management",
+                "Preparing slides",
+                "Recording tutorials",
+                "Grading",
+                "Constructive feedback",
+                "Hands-on, real-world examples"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining complex concepts in simple, relatable language",
+                "Analogies",
+                "Encouraging community participation"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Mentoring interns",
+                "Breaking down water quality procedures into clear steps",
+                "Encouraging questions",
+                "Connecting tasks to real-world impacts"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Facilitating hands-on innovation exercises",
+                "Group challenges",
+                "Brainstorming",
+                "Prototyping",
+                "Peer learning",
+                "Reflection",
+                "Critical thinking",
+                "Teamwork",
+                "Sustainability issues"
+              ]
+            },
+            "189": {
+              "skills, and technical knowledge check.": [
+                "structural engineering courses",
+                "teaching",
+                "marking",
+                "tutorials",
+                "office hours"
+              ],
+              "verbal and written skills to communicate": [
+                "analogies to explain complex concepts",
+                "waterfall analogy for stress flow in solids",
+                "simple written summaries",
+                "reinforcing understanding before lab experiments"
+              ],
+              "engaged learning, helped improved understanding": [
+                "board work",
+                "answering questions during lab sessions",
+                "active participation",
+                "critical thinking",
+                "discussion",
+                "immediate feedback"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "ENCI 317 labs",
+                "hands-on experiments",
+                "compression, tension, bending, and torsion",
+                "stress, strain, Poisson’s ratio, and buckling",
+                "students running their own tests",
+                "recording data",
+                "performing analysis",
+                "connecting theory with practice",
+                "critical thinking"
+              ]
+            },
+            "195": {
+              "skills, and technical knowledge check.": [
+                "Time management",
+                "Analytical skills",
+                "Communication skills",
+                "Critical assessment of technical writing",
+                "Efficient and fair paper marking",
+                "Accurate evaluation of large volumes of material",
+                "Environmental systems",
+                "Sustainability principles",
+                "Explaining complex ideas clearly"
+              ],
+              "verbal and written skills to communicate": [
+                "Conference presentations",
+                "Slide decks",
+                "Concise posters",
+                "Communicating complex geospatial and statistical methods to expert and non-expert audiences"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Teaching wildfire modelling in Python",
+                "Breaking code into simple steps",
+                "Real-world fire scenarios",
+                "Encouraging questions",
+                "Interactive coding"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on wildfire modelling activity",
+                "Students edited code blocks",
+                "Simulating fire spread with weather and terrain inputs",
+                "Experimenting with variables",
+                "Visualizing outcomes in real time",
+                "Encouraging questions and predictions",
+                "Student reflection",
+                "Direct interaction with the model"
+              ]
+            },
+            "271": {
+              "skills, and technical knowledge check.": [
+                "TA experience in Ethics",
+                "professional standards",
+                "creative and collaborative thinking",
+                "sustainability",
+                "water and transportation infrastructure industry experience",
+                "PhD research in transportation",
+                "analytical and technical skills",
+                "leadership",
+                "adaptability",
+                "inclusive, applied learning"
+              ],
+              "verbal and written skills to communicate": [
+                "clear communication",
+                "real cases",
+                "open discussions",
+                "clarifying abstract topics",
+                "written feedback",
+                "improving final deliverables"
+              ],
+              "engaged learning, helped improved understanding": [
+                "mini bridge model",
+                "interactive free-body diagrams",
+                "moment balance",
+                "hands-on demonstration",
+                "engaging discussion",
+                "student improved final exam score by over 20%"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "interactive transportation simulation",
+                "role-play as vehicles, pedestrians, and signal controllers",
+                "real-time decisions based on traffic signals and flow rules",
+                "recording and analyzing traffic performance",
+                "analyzing bottlenecks and delays",
+                "active, gamified learning",
+                "curiosity and teamwork",
+                "improved understanding and retention of traffic dynamics"
+              ]
+            },
+            "204": {
+              "skills, and technical knowledge check.": [
+                "Structural and civil materials engineering",
+                "Mechanics",
+                "Structural systems",
+                "Construction materials",
+                "ETABS",
+                "SAFE",
+                "AutoCAD",
+                "MATLAB",
+                "Structural analysis and design",
+                "Test result interpretation",
+                "Technical documentation",
+                "Curriculum quality review",
+                "Student mentoring",
+                "Tutorial delivery",
+                "Undergraduate lab supervision"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining stress-strain behavior",
+                "Analogies",
+                "Visual aids",
+                "Connecting theory with practical testing"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Step-by-step guidance",
+                "Prompting questions",
+                "Collaborative logic review",
+                "Structural analysis problem-solving"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Active learning in labs and tutorials",
+                "Concrete testing lab",
+                "Predicting compressive strength from mix design",
+                "Comparing predictions with test results",
+                "Group problem-solving",
+                "Peer explanation",
+                "Reflection on outcomes",
+                "Hands-on learning",
+                "Collaborative learning"
+              ]
+            },
+            "272": {
+              "skills, and technical knowledge check.": [
+                "Co-instructor for ENGG 601",
+                "TA experience for ENGG 601",
+                "Strong interpersonal skills",
+                "Labs and tutorials",
+                "In-person interactions",
+                "Grading experience",
+                "Grading large classes is daunting"
+              ],
+              "verbal and written skills to communicate": [
+                "Written communication to resolve a student–TA conflict",
+                "Verbal communication",
+                "Explaining complex concepts",
+                "Schulich Studio sessions",
+                "ENGG 204",
+                "First-year students"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Schulich Studio seminar presentations",
+                "Physical activities",
+                "Competitions",
+                "Top Hat",
+                "Other websites",
+                "Topic-related games"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Active learning in ENGG 204",
+                "TA experience for ENGG 204 twice"
+              ]
+            },
+            "199": {
+              "skills, and technical knowledge check.": [
+                "Six years of teaching experience",
+                "Lecturer and Assistant Professor",
+                "Mechanics of Solids",
+                "Mechanics of Solids and Structures",
+                "Structural Concrete Design",
+                "Structural Engineering II",
+                "Teaching assistant experience",
+                "Structural Engineering",
+                "Reinforced concrete structures",
+                "Sustainable materials",
+                "Course delivery",
+                "Laboratory instruction"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining moment-curvature",
+                "Simple sketches",
+                "Real-life analogies",
+                "Clear handouts"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Visual aids",
+                "Guided questioning",
+                "One-on-one interaction",
+                "Shear diagrams"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Active learning project",
+                "Group work",
+                "Concrete mix design",
+                "Material testing",
+                "Mix proportion calculations",
+                "Trial batch preparation",
+                "Compressive strength testing",
+                "Practical applications"
+              ]
+            },
+            "202": {
+              "skills, and technical knowledge check.": [
+                "Transportation engineering",
+                "Project management",
+                "Logistics",
+                "Project coordination",
+                "Planning and control",
+                "Python",
+                "GIS",
+                "Spatial analysis",
+                "Optimization modeling",
+                "Network design",
+                "MS Project",
+                "Excel",
+                "Teaching project management courses",
+                "Assisting with assignments and software tools",
+                "Scheduling techniques",
+                "Real-world examples"
+              ],
+              "verbal and written skills to communicate": [
+                "Teaching Excel and MS Project",
+                "Simplifying scheduling and budgeting tasks",
+                "Guiding undergraduate students",
+                "Practical examples",
+                "Clear verbal explanations",
+                "Clear written explanations"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Mentoring junior students in Operations Research",
+                "Encouraging discussion",
+                "Supply chain examples",
+                "Python code",
+                "GAMS code",
+                "Guided practice with optimization"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on MS Project sessions",
+                "Small-team activities",
+                "Real-life project cases",
+                "Creating work breakdown structures",
+                "Setting timelines",
+                "Allocating resources",
+                "Guided software practice",
+                "Peer discussions",
+                "Questions to prompt critical thinking",
+                "Applying theoretical concepts",
+                "Project planning and control"
+              ]
+            },
+            "173": {
+              "skills, and technical knowledge check.": [
+                "Project coordination",
+                "Industry project management experience",
+                "Power BI",
+                "Project tracking and reporting",
+                "PhD research in geotechnical engineering",
+                "Unsaturated soil behavior",
+                "Slope stability under rainfall",
+                "Theoretical and practical geotechnical knowledge",
+                "Geotechnical lab TA",
+                "ENCI 317 TA",
+                "Lab sessions",
+                "Exam grading"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining complex concepts",
+                "Writing equations and concepts on the board",
+                "Clarifying lab test purpose and process"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Guiding questions",
+                "Discussion-based engagement",
+                "Explaining concepts with simple examples",
+                "Compaction test"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Encouraging students to explain the physical meaning of formulas",
+                "Questioning students during experiments",
+                "Guiding students through strain gauge data",
+                "Active participation in Mechanics of Solids lab",
+                "Connecting formulas to physical concepts"
+              ]
+            },
+            "190": {
+              "skills, and technical knowledge check.": [
+                "Environmental Engineering",
+                "Chemical Engineering",
+                "offshore wind turbines",
+                "hydrogen technologies",
+                "hydrogen production technologies",
+                "research",
+                "sustainability initiatives",
+                "teaching assistant",
+                "communication",
+                "mentoring"
+              ],
+              "verbal and written skills to communicate": [
+                "teaching assistant for two courses",
+                "thermodynamics",
+                "research assistant in a biofuel lab",
+                "team leadership",
+                "international business development",
+                "offshore wind projects",
+                "hydrogen projects",
+                "tutoring MSc students"
+              ],
+              "engaged learning, helped improved understanding": [
+                "supported over 72 students",
+                "teaching assistant",
+                "verbal and written communication",
+                "simplifying complex concepts",
+                "tutoring MSc students",
+                "supporting student transition",
+                "building confidence",
+                "motivating students"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Prezi",
+                "interactive flowcharts",
+                "visualizing complex thermodynamics concepts",
+                "real-life examples",
+                "Q&A",
+                "active participation",
+                "real-world cases",
+                "critical thinking",
+                "student-led discussions",
+                "collaboration",
+                "reflection discussions",
+                "student-led explanations"
+              ]
+            },
+            "183": {
+              "skills, and technical knowledge check.": [
+                "Civil Engineering degree",
+                "structural engineering",
+                "geotechnical engineering",
+                "structural design",
+                "construction management",
+                "mechanics of solids",
+                "design, construction, and research experience",
+                "analysis",
+                "codes",
+                "software"
+              ],
+              "verbal and written skills to communicate": [
+                "guest lecture",
+                "clear visuals",
+                "written examples",
+                "real-life applications",
+                "clear communication"
+              ],
+              "engaged learning, helped improved understanding": [
+                "guided problem-solving",
+                "asking questions",
+                "encouraging discussion",
+                "providing hints",
+                "active participation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "small-group problem-solving",
+                "fostering discussion",
+                "targeted questions",
+                "constructive feedback",
+                "critical thinking",
+                "explaining reasoning",
+                "connecting concepts to real-world examples",
+                "interactive and supportive learning environment",
+                "peer learning"
+              ]
+            },
+            "187": {
+              "skills, and technical knowledge check.": [
+                "Geotechnical engineering",
+                "Geotechnical Engineering 2 teaching assistant",
+                "Soil analysis",
+                "Site assessment",
+                "Geotechnical testing methods",
+                "Triaxial tests",
+                "Soil property evaluation",
+                "Project management",
+                "Organizational skills",
+                "Leadership skills",
+                "Multidisciplinary team management"
+              ],
+              "verbal and written skills to communicate": [
+                "Direct explanations",
+                "Guidance"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Direct explanations",
+                "Guidance"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Lab experiment instruction",
+                "Preparation for experiments",
+                "Procedural steps",
+                "Underlying theories",
+                "Accurate data recording",
+                "Detailed explanations",
+                "Demonstrations",
+                "Hands-on guidance"
+              ]
+            },
+            "178": {
+              "skills, and technical knowledge check.": [
+                "ENCI 513 Structural Concrete Design",
+                "co-instructor twice",
+                "sessional instructor",
+                "two teaching awards",
+                "Ph.D. candidate specializing in structural and solid mechanics",
+                "structural analysis",
+                "material behavior",
+                "student problem-solving",
+                "reinforcing core concepts"
+              ],
+              "verbal and written skills to communicate": [
+                "clear explanations",
+                "simplifying complex topics",
+                "explained a concept in 5 minutes",
+                "summarized a prerequisite course in 1 lecture",
+                "3 teaching awards in 2025"
+              ],
+              "engaged learning, helped improved understanding": [
+                "office hours",
+                "sketches",
+                "real examples",
+                "guided students through a similar problem",
+                "column design"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "TA’d ENGG 202 five times",
+                "active learning environment",
+                "guiding students through critical thinking",
+                "reflective questions",
+                "student self-correction",
+                "peer discussion",
+                "small-group work",
+                "explaining reasoning to peers",
+                "collaborative learning",
+                "independent problem-solving",
+                "two teaching awards"
+              ]
+            }
+          }
+        }
+      ],
+      "summary": {
+        "successful_runs": 1,
+        "failed_runs": 0,
+        "median_dataset_seconds": 12.480880542076193,
+        "median_request_seconds": 3.21213445905596,
+        "p95_request_seconds": 4.2179950419813395,
+        "mean_f1": null
+      }
+    }
+  }
+}

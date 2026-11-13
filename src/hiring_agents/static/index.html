@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hiring Agents</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1d2330; --muted: #5d6677; --line: #e2e5ea;
+    --accent: #2f5bd3; --accent-soft: #e8eefc; --good: #1d7a46; --warn: #9a5b00; --warn-soft: #fff4e0;
+    --bad: #b42318; --bad-soft: #fdecea; --bar: #dfe4ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12151b; --card: #1b1f27; --text: #e6e9ef; --muted: #9aa3b2; --line: #2c323d;
+      --accent: #7c9cf5; --accent-soft: #232c45; --good: #5cc28a; --warn: #f0b45a; --warn-soft: #3a2c14;
+      --bad: #f2827a; --bad-soft: #3d1d1b; --bar: #2c323d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { padding: 18px 24px; border-bottom: 1px solid var(--line); background: var(--card);
+           display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  header h1 { margin: 0; font-size: 19px; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  main { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 16px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .card + .card { margin-top: 16px; }
+  h2 { margin: 0 0 12px; font-size: 16px; }
+  h3 { margin: 16px 0 8px; font-size: 14px; color: var(--muted); font-weight: 600; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 4px; }
+  input[type=text], input[type=number], textarea {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px;
+    background: var(--bg); color: var(--text); font: inherit; }
+  textarea { min-height: 56px; resize: vertical; }
+  .check { display: flex; align-items: center; gap: 8px; color: var(--text); font-size: 14px; margin: 8px 0; }
+  .check input { margin: 0; }
+  button { font: inherit; border: 1px solid var(--accent); background: var(--accent); color: #fff;
+           padding: 8px 14px; border-radius: 7px; cursor: pointer; }
+  button.secondary { background: transparent; color: var(--accent); }
+  button:disabled { opacity: .55; cursor: progress; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .pill { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 999px;
+          background: var(--accent-soft); color: var(--accent); }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .pill.good { background: transparent; border: 1px solid var(--good); color: var(--good); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+  .stat { background: var(--bg); border-radius: 8px; padding: 8px 10px; }
+  .stat b { display: block; font-size: 18px; }
+  .stat span { font-size: 12px; color: var(--muted); }
+  .msg { border-radius: 8px; padding: 9px 12px; margin-top: 10px; font-size: 14px; }
+  .msg.err { background: var(--bad-soft); color: var(--bad); }
+  .msg.warn { background: var(--warn-soft); color: var(--warn); }
+  .msg.ok { background: var(--accent-soft); color: var(--text); }
+  ul.plain { margin: 6px 0 0; padding-left: 18px; }
+  ul.plain li { margin: 2px 0; }
+  details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+  .crit { display: grid; grid-template-columns: auto minmax(0, 1fr) 150px 54px 46px; gap: 10px;
+          align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+  .crit:first-of-type { border-top: 0; }
+  .crit .name b { font-weight: 600; }
+  .crit .name .meta { font-size: 12px; color: var(--muted); }
+  .crit input[type=range] { width: 100%; }
+  .crit input[type=number] { padding: 4px 6px; }
+  .crit .share { text-align: right; font-variant-numeric: tabular-nums; font-size: 13px; color: var(--muted); }
+  .crit.off .name, .crit.off .share { opacity: .6; }
+  .crit .extra { grid-column: 1 / -1; padding-left: 26px; }
+  .crit:not(.picked) .extra { display: none; }
+  .crit .extra input { padding: 5px 8px; font-size: 13px; }
+  .crit .why { font-size: 12px; color: var(--muted); margin: 0 0 4px; }
+  @media (max-width: 600px) {
+    .crit { grid-template-columns: auto minmax(0, 1fr) 54px; }
+    .crit input[type=range], .crit .share { display: none; }
+  }
+  .result { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-top: 10px; }
+  .result .head { display: flex; align-items: center; gap: 12px; }
+  .rank { width: 32px; height: 32px; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+          display: grid; place-items: center; font-weight: 700; flex: none; }
+  .who { flex: 1; min-width: 0; }
+  .who b { font-size: 15px; }
+  .ref { font-size: 12px; color: var(--muted); }
+  .total { text-align: right; }
+  .total b { font-size: 20px; font-variant-numeric: tabular-nums; }
+  .bar { height: 6px; background: var(--bar); border-radius: 3px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--accent); }
+  .scores { margin-top: 10px; display: grid; gap: 8px; }
+  .score .top { display: flex; justify-content: space-between; font-size: 13px; }
+  .score .why { font-size: 13px; color: var(--muted); margin: 3px 0 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--line); border-top-color: var(--accent);
+             border-radius: 50%; animation: spin .8s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hidden { display: none !important; }
+  .doc { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 14px; }
+  .doc .meta { color: var(--muted); font-size: 12px; flex: 1; min-width: 0; }
+  .doc button { padding: 2px 8px; font-size: 12px; }
+  .doc.bad .meta { color: var(--bad); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Hiring Agents</h1>
+  <span class="sub">Local · data stays on this machine; only pseudonymized fields reach the LLMs</span>
+  <a href="/runs" style="margin-left:auto;color:var(--accent)">Run viewer →</a>
+</header>
+
+<main>
+  <div class="grid">
+    <!-- Data -->
+    <section>
+      <div class="card">
+        <h2>Candidate data</h2>
+        <div class="stats">
+          <div class="stat"><b id="st-cands">–</b><span>candidates</span></div>
+          <div class="stat"><b id="st-files">–</b><span>files</span></div>
+          <div class="stat"><b id="st-crit">–</b><span>criteria planned</span></div>
+        </div>
+        <div class="muted" id="st-when"></div>
+        <div id="st-stale" class="msg warn hidden">Files changed since the store was last processed. Process it to use the new data.</div>
+        <details id="st-list" class="hidden" style="margin-top:8px"><summary>Files in the store</summary><ul class="plain" id="st-filelist"></ul></details>
+      </div>
+
+      <div class="card">
+        <h2>Upload files</h2>
+        <input type="file" id="up-files" multiple accept=".xlsx,.xlsm,.csv,.json">
+        <label class="check"><input type="checkbox" id="up-replace"> Replace files with the same name</label>
+        <label class="check"><input type="checkbox" id="up-plan" checked> Plan criteria if the fields changed (one LLM call)</label>
+        <div class="row"><button id="up-btn">Upload &amp; process</button><span id="up-busy" class="hidden"><span class="spinner"></span></span></div>
+        <div id="up-out"></div>
+      </div>
+
+      <div class="card">
+        <h2>Reprocess the store</h2>
+        <p class="muted" style="margin:0 0 6px">Recompile the files already uploaded, e.g. after changing them.</p>
+        <label class="check"><input type="checkbox" id="pr-rebuild"> Re-plan criteria even if the fields are the same</label>
+        <div class="row"><button class="secondary" id="pr-btn">Process</button><span id="pr-busy" class="hidden"><span class="spinner"></span></span></div>
+        <div id="pr-out"></div>
+      </div>
+    </section>
+
+    <!-- Request -->
+    <section>
+      <div class="card">
+        <h2>Describe the hire</h2>
+        <p class="muted" style="margin:0 0 6px">Write what you're looking for. The Manager agent turns it into the request below (weights and instructions for each ranker) for you to review before ranking. One LLM call; no candidate data is sent.</p>
+        <textarea id="mg-text" style="min-height:80px" placeholder="e.g. TA for ENGG 233 this fall. Python and Arduino skills matter most, prior TA experience is a plus, and they should be good at explaining to first-years. Give me the top 8."></textarea>
+        <h3>Documents for the Manager</h3>
+        <p class="muted" style="margin:0 0 6px">Course outline, job description, … (.pdf, .docx, .txt, .md). Ticked ones are read when drafting: they shape the weights, the instructions each ranker gets, and the session times kept for scheduling. Emails, phone numbers and ID numbers are removed first.</p>
+        <div id="doc-list"></div>
+        <div class="row" style="margin-top:6px">
+          <input type="file" id="doc-files" multiple accept=".pdf,.docx,.txt,.md" style="flex:1;min-width:0">
+          <button class="secondary" id="doc-btn">Add</button>
+        </div>
+        <div id="doc-out"></div>
+        <div class="row" style="margin-top:12px">
+          <button id="mg-btn">Draft request</button>
+          <span id="mg-busy" class="hidden row"><span class="spinner"></span><span class="muted">Drafting…</span></span>
+        </div>
+        <div id="mg-out"></div>
+      </div>
+
+      <div class="card">
+        <h2>Ranking request</h2>
+        <label for="rq-role">Role</label>
+        <input type="text" id="rq-role" placeholder="e.g. TA for ENGG 204, Fall 2026">
+        <div class="row" style="align-items:flex-end">
+          <div style="width:140px"><label for="rq-top">Candidates to return</label><input type="number" id="rq-top" min="1" value="5"></div>
+          <label class="check" style="margin-bottom:10px"><input type="checkbox" id="rq-auto" checked> Let fitting auto criteria join</label>
+        </div>
+        <label for="rq-notes">Notes for the Manager's final review (optional)</label>
+        <textarea id="rq-notes" placeholder="e.g. Between similar candidates, prefer ones who have run labs."></textarea>
+
+        <h3>Criteria and weights</h3>
+        <p class="muted" style="margin:0 0 6px">Tick a criterion to weight it. Weights are relative; the share column shows each one's part of the total, including auto criteria expected to join. A ticked criterion can also get instructions for its ranker.</p>
+        <div id="crit-source" class="muted" style="margin:0 0 6px"></div>
+        <div id="crit-list"><p class="muted">Loading…</p></div>
+
+        <div class="row" style="margin-top:14px">
+          <button id="rk-btn">Rank candidates</button>
+          <button id="rk-latest" class="secondary">Show latest saved ranking</button>
+          <span id="rk-busy" class="hidden row"><span class="spinner"></span><span class="muted">Ranking: one LLM call per criterion, usually under a minute…</span></span>
+        </div>
+        <div id="rk-err"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Job spreadsheets -->
+  <section class="card" style="margin-top:16px">
+    <h2>Job spreadsheets</h2>
+    <p class="muted" style="margin:0 0 8px">A spreadsheet designed for one job: the Manager picks the columns (grouped by what they show about a candidate) from the text in <b>Describe the hire</b> and the ticked documents, and the Data Agent fills them from the candidate data (2–4 LLM calls). Download it as an Excel workbook to review or edit, and import it later to skip the design and mapping.</p>
+    <div class="row">
+      <button id="jb-create">Create from the description above</button>
+      <span id="jb-busy" class="hidden row"><span class="spinner"></span><span class="muted" id="jb-busy-text">Designing…</span></span>
+      <span style="flex:1"></span>
+      <input type="file" id="jb-file" accept=".xlsx">
+      <button class="secondary" id="jb-import">Import workbook</button>
+    </div>
+    <div id="jb-out"></div>
+    <h3>Saved jobs</h3>
+    <div id="jb-list"><p class="muted">Loading…</p></div>
+    <div id="jb-detail"></div>
+  </section>
+
+  <!-- Results -->
+  <section id="results" class="card hidden" style="margin-top:16px">
+    <div class="row" style="justify-content:space-between">
+      <h2 id="rs-title" style="margin:0">Results</h2>
+      <a id="rs-report" target="_blank" rel="noopener">Open full report ↗</a>
+    </div>
+    <p id="rs-status" class="muted"></p>
+    <h3>Criteria that ran</h3>
+    <div class="chips" id="rs-criteria"></div>
+    <h3>Ranking</h3>
+    <div id="rs-list"></div>
+    <div id="rs-excluded"></div>
+    <div id="rs-warnings"></div>
+  </section>
+</main>
+
+<script>
+const $ = (s) => document.querySelector(s);
+
+// Build DOM nodes; text always goes in as text nodes, never as HTML.
+function el(tag, attrs = {}, ...children) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of children.flat()) if (c != null) e.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  return e;
+}
+
+function detailText(detail) {
+  if (Array.isArray(detail)) return detail.map((d) => `${(d.loc || []).slice(1).join(".")}: ${d.msg}`).join("; ");
+  return detail || "";
+}
+
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  const body = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(detailText(body.detail) || `${r.status} ${r.statusText}`);
+  return body;
+}
+
+function busy(btn, spinner, on) { btn.disabled = on; spinner.classList.toggle("hidden", !on); }
+
+function message(kind, text) { return el("div", { class: `msg ${kind}` }, text); }
+
+function warningsBlock(warnings) {
+  if (!warnings || !warnings.length) return null;
+  return el("details", { class: "msg warn" }, el("summary", {}, `${warnings.length} warning(s)`),
+    el("ul", { class: "plain" }, warnings.map((w) => el("li", {}, w))));
+}
+
+// Per-viewer conveniences only; the page works without storage.
+const saved = (() => { try { return JSON.parse(localStorage.getItem("hiring-request") || "{}"); } catch { return {}; } })();
+function remember(data) { try { localStorage.setItem("hiring-request", JSON.stringify(data)); } catch {} }
+
+// ---------- Data ----------
+async function loadStatus() {
+  const s = await api("/api/data");
+  $("#st-cands").textContent = s.candidates;
+  $("#st-files").textContent = s.files.length;
+  $("#st-crit").textContent = s.criteria_planned ? "yes" : "no";
+  $("#st-when").textContent = s.compiled_at ? `Processed ${s.compiled_at.replace("T", " ")}` : "Not processed yet. Upload files to start.";
+  $("#st-stale").classList.toggle("hidden", !s.stale);
+  $("#st-list").classList.toggle("hidden", !s.files.length);
+  $("#st-filelist").replaceChildren(...s.files.map((f) => el("li", {}, f)));
+}
+
+function sourcesBlock(sources) {
+  const rows = Object.entries(sources).map(([label, r]) =>
+    el("li", {}, `${label}: ${Object.keys(r.column_mapping).length} columns kept, ${r.dropped_sensitive.length} sensitive dropped`));
+  return rows.length ? el("details", {}, el("summary", {}, `${rows.length} source(s) processed`), el("ul", { class: "plain" }, rows)) : null;
+}
+
+async function afterProcessing(out, summary, result) {
+  out.replaceChildren(message("ok", summary), sourcesBlock(result.sources) || "", warningsBlock(result.warnings) || "");
+  if (fromDraft.catalog) { fromDraft.catalog = null; saved.draftCriteria = null; $("#rq-auto").checked = true; }
+  await Promise.all([loadStatus(), loadCriteria()]);
+}
+
+$("#up-btn").addEventListener("click", async () => {
+  const out = $("#up-out"), files = $("#up-files").files;
+  if (!files.length) { out.replaceChildren(message("err", "Choose one or more files first.")); return; }
+  const form = new FormData();
+  for (const f of files) form.append("files", f);
+  form.append("replace", $("#up-replace").checked);
+  form.append("plan_criteria", $("#up-plan").checked);
+  busy($("#up-btn"), $("#up-busy"), true);
+  try {
+    const r = await api("/api/data/files", { method: "POST", body: form });
+    const parts = [];
+    if (r.added.length) parts.push(`Added ${r.added.join(", ")}`);
+    if (r.replaced.length) parts.push(`replaced ${r.replaced.join(", ")}`);
+    parts.push(r.criteria_planned ? "criteria planned" : "criteria unchanged");
+    await afterProcessing(out, parts.join("; ") + ".", r);
+    $("#up-files").value = "";
+  } catch (e) { out.replaceChildren(message("err", e.message)); }
+  finally { busy($("#up-btn"), $("#up-busy"), false); }
+});
+
+$("#pr-btn").addEventListener("click", async () => {
+  const out = $("#pr-out");
+  busy($("#pr-btn"), $("#pr-busy"), true);
+  try {
+    const r = await api("/api/data/process", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rebuild_criteria: $("#pr-rebuild").checked }) });
+    await afterProcessing(out, `Processed: ${r.status.candidates} candidates; ${r.criteria_planned ? "criteria planned" : "criteria unchanged"}.`, r);
+  } catch (e) { out.replaceChildren(message("err", e.message)); }
+  finally { busy($("#pr-btn"), $("#pr-busy"), false); }
+});
+
+// ---------- Criteria and weights ----------
+let criteria = [];
+const choice = {};   // id -> { on, weight }
+
+const code = (t) => t.toLowerCase().replace(/[^a-z0-9]/g, "");
+// Mirrors planning.applies_to and add_auto_criteria (max 5 join, most important first).
+function expectedAutoJoins(weights) {
+  if (!$("#rq-auto").checked) return {};
+  const vals = Object.values(weights);
+  if (!vals.length) return {};
+  const base = vals.reduce((a, b) => a + b, 0) / vals.length, role = code($("#rq-role").value);
+  const joins = {};
+  criteria.filter((c) => c.type === "auto" && !(c.id in weights))
+    .filter((c) => !c.courses.length || c.courses.some((x) => role.includes(code(x))))
+    .sort((a, b) => b.suggested_weight - a.suggested_weight).slice(0, 5)
+    .forEach((c) => { joins[c.id] = base * c.suggested_weight; });
+  return joins;
+}
+
+function requestedWeights() {
+  const w = {};
+  for (const c of criteria) if (choice[c.id].on && choice[c.id].weight > 0) w[c.id] = choice[c.id].weight;
+  return w;
+}
+
+// The request body's weights. With auto joins off, unticked auto criteria are sent with weight 0,
+// which keeps them out while the catalog's fields still reach the built-in criteria.
+function requestCriteria() {
+  const w = requestedWeights();
+  if (!$("#rq-auto").checked) for (const c of criteria) if (c.type === "auto" && !(c.id in w)) w[c.id] = 0;
+  return w;
+}
+
+function requestInstructions() {
+  const out = {};
+  for (const c of criteria) {
+    const st = choice[c.id], text = (st.instr || "").trim();
+    if (st.on && st.weight > 0 && text) out[c.id] = text;
+  }
+  return out;
+}
+
+function updateShares() {
+  const weights = requestedWeights(), joins = expectedAutoJoins(weights);
+  const total = Object.values(weights).concat(Object.values(joins)).reduce((a, b) => a + b, 0);
+  for (const c of criteria) {
+    const row = document.getElementById(`crit-${c.id}`), share = row.querySelector(".share");
+    const w = weights[c.id] ?? joins[c.id];
+    row.classList.toggle("off", w == null);
+    row.classList.toggle("picked", choice[c.id].on);
+    share.textContent = w == null || !total ? "–" : `${Math.round((100 * w) / total)}%`;
+    share.title = c.id in joins ? "Auto criterion expected to join" : "";
+  }
+  remember({ role: $("#rq-role").value, top: $("#rq-top").value, notes: $("#rq-notes").value,
+             auto: $("#rq-auto").checked, choice, criteriaKey: criteriaKey(criteria), brief: $("#mg-text").value,
+             docs: [...pickedDocs], fromDraft, draftCriteria: fromDraft.catalog ? criteria : null });
+}
+
+const criteriaKey = (list) => list.map((c) => c.id).sort().join("|");
+
+// The criteria shown: the ones planned for the drafted description if there is a draft,
+// otherwise the data's general criteria.
+async function loadCriteria() {
+  if (fromDraft.catalog && saved.draftCriteria) renderCriteria(saved.draftCriteria, true);
+  else renderCriteria(await api("/api/criteria"), true);
+}
+
+function useGeneralCriteria() {
+  fromDraft.catalog = null;
+  saved.draftCriteria = null;
+  $("#rq-auto").checked = true;
+  loadCriteria().catch((e) => $("#crit-list").replaceChildren(message("err", e.message)));
+}
+
+function renderCriteria(list, restore, preset = null) {
+  criteria = list;
+  for (const k of Object.keys(choice)) delete choice[k];
+  // Saved ticks belong to one criteria list; a different list (re-planned data, a new draft)
+  // starts fresh, so stale ticks never carry over by id.
+  const same = restore && saved.criteriaKey === criteriaKey(list);
+  $("#crit-source").replaceChildren(...(fromDraft.catalog
+    ? ["Criteria planned for your description. ", el("a", { href: "#", onclick: (e) => { e.preventDefault(); useGeneralCriteria(); } },
+        "Use the data's general criteria instead")]
+    : ["The data's general criteria. Draft a request above to plan criteria for your description."]));
+  const listEl = $("#crit-list");
+  if (!criteria.length) { listEl.replaceChildren(el("p", { class: "muted" }, "No criteria yet.")); return; }
+  listEl.replaceChildren(...criteria.map((c) => {
+    const usable = c.fields.length > 0;
+    const prev = same ? (saved.choice || {})[c.id] : null;
+    choice[c.id] = (preset && preset[c.id]) || prev || { on: usable && !c.courses.length, weight: c.suggested_weight };
+    if (!usable) choice[c.id].on = false;
+    const st = choice[c.id];
+    const box = el("input", { type: "checkbox", checked: st.on, disabled: !usable, "aria-label": `Use ${c.name}`,
+                              title: usable ? "" : "No data fields for this criterion in this data" });
+    const range = el("input", { type: "range", min: "0", max: "5", step: "0.1", value: st.weight, "aria-label": `${c.name} weight` });
+    const num = el("input", { type: "number", min: "0", step: "0.1", value: st.weight, "aria-label": `${c.name} weight` });
+    const set = (v, from) => {
+      const w = Math.max(0, Number(v) || 0);
+      st.weight = w;
+      if (from !== range) range.value = w;
+      if (from !== num) num.value = w;
+      if (w > 0 && !st.on && usable) { st.on = true; box.checked = true; }
+      updateShares();
+    };
+    const instr = el("input", { type: "text", value: st.instr || "", placeholder: "Instructions for this ranker (optional)",
+                                "aria-label": `${c.name} instructions` });
+    const why = el("p", { class: "why" }, st.reason || "");
+    box.addEventListener("change", () => { st.on = box.checked; updateShares(); });
+    range.addEventListener("input", () => set(range.value, range));
+    num.addEventListener("input", () => set(num.value, num));
+    instr.addEventListener("input", () => { st.instr = instr.value; updateShares(); });
+    const meta = [c.type === "auto" ? "auto" : "built-in", usable ? `${c.fields.length} field(s)` : "no fields in this data"]
+      .concat(c.courses.length ? [`only for ${c.courses.join(", ")}`] : []).join(" · ");
+    return el("div", { class: "crit", id: `crit-${c.id}` }, box,
+      el("div", { class: "name", title: `${c.description}\n\nFields: ${c.fields.join(", ")}` },
+        el("b", {}, c.name), el("div", { class: "meta" }, `${c.id} · ${meta}`)),
+      range, num, el("div", { class: "share" }, "–"),
+      el("div", { class: "extra" }, why, instr));
+  }));
+  updateShares();
+}
+
+// ---------- Documents for the Manager ----------
+const pickedDocs = new Set(saved.docs || []);
+// Sessions (for the Scheduler) and document names from the last draft, sent with the ranking.
+let fromDraft = saved.fromDraft || { sessions: [], documents: [] };
+
+function renderDocuments(docs) {
+  const list = $("#doc-list");
+  for (const name of [...pickedDocs]) if (!docs.some((d) => d.name === name)) pickedDocs.delete(name);
+  if (!docs.length) { list.replaceChildren(el("p", { class: "muted", style: "margin:0" }, "None yet.")); return; }
+  list.replaceChildren(...docs.map((d) => {
+    const box = el("input", { type: "checkbox", checked: pickedDocs.has(d.name), disabled: !!d.problem,
+                              "aria-label": `Use ${d.name}` });
+    box.addEventListener("change", () => { box.checked ? pickedDocs.add(d.name) : pickedDocs.delete(d.name); updateShares(); });
+    const meta = d.problem || `${d.kind} · ${d.chars.toLocaleString()} characters${d.truncated ? " · only the start is read" : ""}`;
+    const remove = el("button", { class: "secondary", title: `Remove ${d.name}` }, "Remove");
+    remove.addEventListener("click", async () => {
+      try { pickedDocs.delete(d.name); renderDocuments(await api(`/api/documents/${encodeURIComponent(d.name)}`, { method: "DELETE" })); }
+      catch (e) { $("#doc-out").replaceChildren(message("err", e.message)); }
+    });
+    return el("div", { class: d.problem ? "doc bad" : "doc" }, box, el("b", {}, d.name), el("span", { class: "meta" }, meta), remove);
+  }));
+}
+
+async function loadDocuments() { renderDocuments(await api("/api/documents")); }
+
+$("#doc-btn").addEventListener("click", async () => {
+  const out = $("#doc-out"), files = $("#doc-files").files;
+  if (!files.length) { out.replaceChildren(message("err", "Choose one or more documents first.")); return; }
+  const form = new FormData();
+  for (const f of files) form.append("files", f);
+  form.append("replace", true);
+  try {
+    const r = await api("/api/documents", { method: "POST", body: form });
+    for (const name of r.added.concat(r.replaced)) pickedDocs.add(name);
+    renderDocuments(r.documents);
+    out.replaceChildren();
+    $("#doc-files").value = "";
+    updateShares();
+  } catch (e) { out.replaceChildren(message("err", e.message)); }
+});
+
+// ---------- Drafting a request from free text (Manager agent) ----------
+function applyDraft(draft) {
+  const r = draft.request;
+  $("#rq-role").value = r.role;
+  $("#rq-top").value = r.top_x;
+  $("#rq-notes").value = r.notes;
+  // The draft weights every criterion, so nothing else should join on its own.
+  $("#rq-auto").checked = false;
+  // A draft carries the criteria planned for it. An older server sends none: then keep the
+  // criteria already shown, and say the server needs a restart.
+  const planned = Array.isArray(draft.criteria) && draft.criteria.length && r.catalog;
+  const list = planned ? draft.criteria : criteria;
+  fromDraft = { sessions: r.sessions, documents: r.documents, catalog: planned ? r.catalog : null };
+  saved.draftCriteria = planned ? draft.criteria : null;
+  const preset = {};
+  for (const c of list) {
+    const w = r.criteria[c.id] ?? 0;
+    preset[c.id] = { on: w > 0, weight: w > 0 ? w : c.suggested_weight,
+                     instr: r.instructions[c.id] || "", reason: draft.reasons[c.id] || "" };
+  }
+  renderCriteria(list, false, preset);
+  return planned;
+}
+
+$("#mg-btn").addEventListener("click", async () => {
+  const out = $("#mg-out"), text = $("#mg-text").value.trim(), documents = [...pickedDocs];
+  if (!text && !documents.length) { out.replaceChildren(message("err", "Describe what you're looking for, tick a document, or both.")); return; }
+  busy($("#mg-btn"), $("#mg-busy"), true);
+  try {
+    const draft = await api("/api/requests/draft", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ instructions: text, documents }) });
+    const planned = applyDraft(draft);
+    const n = Object.values(draft.request.criteria).filter((w) => w > 0).length;
+    const from = documents.length ? ` from ${documents.length} document(s)` : "";
+    const parts = [message("ok", `Drafted${from}: ${n} criteria weighted${planned ? ", planned for your description" : ""}. `
+                                 + "Review the request below, then rank.")];
+    if (!planned) parts.push(message("warn", "The server didn't send criteria planned for this description: it's "
+                                     + "probably running older code. Restart it (python src/server.py) and draft again."));
+    if (draft.request.sessions.length) parts.push(el("details", { class: "msg ok" },
+      el("summary", {}, `${draft.request.sessions.length} session(s) to cover, kept for scheduling (not used for ranking yet)`),
+      el("ul", { class: "plain" }, draft.request.sessions.map((s) => el("li", {}, `${s.label}: ${s.day} ${s.start}–${s.end}`)))));
+    if (draft.not_covered.length) parts.push(el("div", { class: "msg warn" }, "Not covered by any criterion:",
+      el("ul", { class: "plain" }, draft.not_covered.map((t) => el("li", {}, t)))));
+    if (draft.warnings.length) parts.push(warningsBlock(draft.warnings));
+    out.replaceChildren(...parts);
+  } catch (e) { out.replaceChildren(message("err", e.message)); }
+  finally { busy($("#mg-btn"), $("#mg-busy"), false); }
+});
+
+for (const id of ["#rq-role", "#rq-top", "#rq-notes", "#mg-text"]) $(id).addEventListener("input", updateShares);
+$("#rq-auto").addEventListener("change", updateShares);
+
+// ---------- Ranking ----------
+let rankingVersion = 0;
+
+async function loadLatestRanking({ scroll = true, quiet = false } = {}) {
+  const version = rankingVersion;
+  const response = await api("/api/rankings/latest");
+  if (version !== rankingVersion) return; // A new ranking started while this request was pending.
+  if (!response) {
+    if (!quiet) $("#rk-err").replaceChildren(message("ok", "No completed rankings have been saved yet."));
+    return;
+  }
+  showResults(response, { saved: true, scroll });
+}
+
+$("#rk-latest").addEventListener("click", async () => {
+  $("#rk-err").replaceChildren();
+  $("#rk-latest").disabled = true;
+  try { await loadLatestRanking(); }
+  catch (e) { $("#rk-err").replaceChildren(message("err", e.message)); }
+  finally { $("#rk-latest").disabled = false; }
+});
+
+$("#rk-btn").addEventListener("click", async () => {
+  const err = $("#rk-err"), weights = requestedWeights();
+  const role = $("#rq-role").value.trim(), top = parseInt($("#rq-top").value, 10);
+  if (!role) { err.replaceChildren(message("err", "Enter the role you're hiring for.")); return; }
+  if (!Object.keys(weights).length) { err.replaceChildren(message("err", "Tick at least one criterion with a weight above 0.")); return; }
+  if (!(top >= 1)) { err.replaceChildren(message("err", "Candidates to return must be at least 1.")); return; }
+  err.replaceChildren();
+  rankingVersion += 1;
+  $("#rk-latest").disabled = true;
+  busy($("#rk-btn"), $("#rk-busy"), true);
+  try {
+    const r = await api("/api/rankings", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role, criteria: requestCriteria(), top_x: top, notes: $("#rq-notes").value,
+                             client_instructions: $("#mg-text").value, catalog: fromDraft.catalog || null,
+                             instructions: requestInstructions(), sessions: fromDraft.sessions,
+                             documents: fromDraft.documents }) });
+    showResults(r);
+  } catch (e) { err.replaceChildren(message("err", e.message)); }
+  finally { busy($("#rk-btn"), $("#rk-busy"), false); $("#rk-latest").disabled = false; }
+});
+
+function showResults({ result, report_url }, { saved = false, scroll = true } = {}) {
+  const f = result.ranking, ids = result.candidate_ids;
+  rankingVersion += 1;
+  $("#rs-status").textContent = saved ? "Latest saved ranking" : "Ranking complete";
+  const names = Object.fromEntries(f.criteria.map((c) => [c.id, c.name]));
+  $("#rs-title").textContent = `Top ${f.ranking.length}: ${f.role}`;
+  $("#rs-report").href = report_url;
+  $("#rs-criteria").replaceChildren(...f.criteria.map((c) =>
+    el("span", { class: c.source === "auto" ? "pill good" : "pill", title: `Fields: ${c.fields.join(", ")}` },
+      `${c.name} · ${Math.round(c.weight * 100)}%${c.source === "auto" ? " · auto" : ""}`)));
+  $("#rs-list").replaceChildren(...(f.ranking.length ? f.ranking.map((c, i) => el("div", { class: "result" },
+    el("div", { class: "head" },
+      el("div", { class: "rank" }, i + 1),
+      el("div", { class: "who" }, el("b", {}, ids[c.candidate_ref] || "?"), el("div", { class: "ref" }, c.candidate_ref)),
+      el("div", { class: "total" }, el("b", {}, c.total_score.toFixed(2)), el("div", { class: "ref" },
+        c.adjustment ? `weighted ${(c.weighted_score ?? c.total_score).toFixed(2)} ${c.adjustment > 0 ? "+" : ""}${c.adjustment.toFixed(2)}`
+                     : f.reviewed ? "final score" : "weighted score"))),
+    el("div", { class: "bar", style: "margin-top:8px" }, el("i", { style: `width:${Math.round(c.total_score * 100)}%` })),
+    c.justification ? el("p", { class: "why", style: "margin:8px 0 0" }, el("b", {}, "Manager: "), c.justification) : "",
+    c.adjustment ? el("p", { class: "why", style: "margin:4px 0 0" },
+      el("b", {}, `Adjusted ${c.adjustment > 0 ? "+" : ""}${c.adjustment.toFixed(2)}: `), c.adjustment_reason) : "",
+    c.tiebreak_reason ? el("p", { class: "why", style: "margin:4px 0 0" },
+      el("b", {}, "Tie broken by other information: "), c.tiebreak_reason) : "",
+    el("details", { style: "margin-top:8px" }, el("summary", {}, "Scores and reasons"),
+      el("div", { class: "scores" }, Object.entries(c.per_criterion).map(([cid, s]) => el("div", { class: "score" },
+        el("div", { class: "top" }, el("span", {}, names[cid] || cid), el("span", {}, `${s}/10`)),
+        el("div", { class: "bar" }, el("i", { style: `width:${s * 10}%` })),
+        el("p", { class: "why" }, c.rationales[cid] || "")))))
+  )) : [el("p", { class: "muted" }, "No candidates ranked.")]));
+  $("#rs-excluded").replaceChildren(...(f.excluded.length ? [el("h3", {}, "Excluded"),
+    el("ul", { class: "plain" }, f.excluded.map((e) => el("li", {}, `${ids[e.candidate_ref] || e.candidate_ref}: ${e.reason}`)))] : []));
+  $("#rs-warnings").replaceChildren(...(f.reviewed && f.review_summary
+    ? [message("ok", `Manager's final review: ${f.review_summary}`)] : []),
+    ...(f.tiebreak_fields.length ? [el("p", { class: "muted" },
+      `Other information (no criterion uses it; only breaks ties): ${f.tiebreak_fields.join(", ")}`)] : []),
+    warningsBlock(f.warnings) || "");
+  $("#results").classList.remove("hidden");
+  if (scroll) $("#results").scrollIntoView({ behavior: "smooth" });
+}
+
+// ---------- Job spreadsheets ----------
+function jobLink(id) { return `/api/jobs/${encodeURIComponent(id)}/export`; }
+
+async function loadJobs() {
+  const jobs = await api("/api/jobs");
+  $("#jb-list").replaceChildren(...(jobs.length ? jobs.map((j) => el("div", { class: "result", style: "padding:8px 12px" },
+    el("div", { class: "row", style: "justify-content:space-between" },
+      el("div", {}, el("b", {}, j.role || j.id), " ",
+        el("span", { class: j.source === "import" ? "pill good" : "pill" }, j.source === "import" ? "imported" : "designed"),
+        el("div", { class: "muted" }, `${j.candidates} candidates · ${j.created_at.replace("T", " ")} · ${j.id}`)),
+      el("div", { class: "row" },
+        el("button", { class: "secondary", onclick: () => showJob(j.id) }, "View"),
+        el("a", { href: jobLink(j.id) }, "Download .xlsx"))))) : [el("p", { class: "muted" }, "No jobs yet.")]));
+}
+
+function renderJob(job) {
+  const byId = Object.fromEntries(job.columns.map((c) => [c.id, c]));
+  const parts = [el("div", { class: "row", style: "justify-content:space-between;margin-top:12px" },
+      el("h3", { style: "margin:0" }, job.design.role || job.info.id),
+      el("a", { href: jobLink(job.info.id) }, "Download .xlsx")),
+    job.design.summary ? el("p", { class: "muted" }, job.design.summary) : ""];
+  for (const g of job.design.groups) {
+    parts.push(el("div", { class: "result" },
+      el("b", {}, g.name), el("div", { class: "muted" }, g.purpose),
+      el("ul", { class: "plain" }, g.fields.map((f) => {
+        const c = byId[f.id] || {};
+        return el("li", {}, el("b", {}, f.label), ` · ${f.kind}${f.values.length ? ` (${f.values.join(" < ")})` : ""} · `,
+          `${c.filled ?? 0} of ${job.info.candidates} filled · `,
+          c.method ? `${c.method}(${c.sources.join(", ")})` : el("span", { class: "pill warn" }, "no data"),
+          c.free_text ? el("span", { class: "pill", style: "margin-left:6px" }, "free text") : "");
+      }))));
+  }
+  if (job.mapping.unplaced.length) parts.push(message("warn", "Relevant data with no column: " +
+    job.mapping.unplaced.map((g) => `${g.name} (${g.reason})`).join("; ")));
+  const w = warningsBlock(job.info.warnings);
+  if (w) parts.push(w);
+  $("#jb-detail").replaceChildren(...parts);
+}
+
+async function showJob(id) {
+  try { renderJob(await api(`/api/jobs/${encodeURIComponent(id)}`)); }
+  catch (e) { $("#jb-detail").replaceChildren(message("err", e.message)); }
+}
+
+$("#jb-create").addEventListener("click", async () => {
+  const text = $("#mg-text").value.trim(), documents = [...pickedDocs];
+  if (!text && !documents.length) { $("#jb-out").replaceChildren(message("err", "Describe the hire above (or tick a document) first.")); return; }
+  $("#jb-out").replaceChildren(); $("#jb-busy-text").textContent = "Designing and filling… (2–4 LLM calls)";
+  busy($("#jb-create"), $("#jb-busy"), true);
+  try {
+    const job = await api("/api/jobs", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ instructions: text, documents, role: $("#rq-role").value.trim() }) });
+    $("#jb-out").replaceChildren(message("ok", `Created ${job.info.id}.`));
+    renderJob(job); await loadJobs();
+  } catch (e) { $("#jb-out").replaceChildren(message("err", e.message)); }
+  finally { busy($("#jb-create"), $("#jb-busy"), false); }
+});
+
+$("#jb-import").addEventListener("click", async () => {
+  const file = $("#jb-file").files[0];
+  if (!file) { $("#jb-out").replaceChildren(message("err", "Choose a job workbook (.xlsx) first.")); return; }
+  const form = new FormData(); form.append("file", file);
+  $("#jb-out").replaceChildren(); $("#jb-busy-text").textContent = "Importing…";
+  busy($("#jb-import"), $("#jb-busy"), true);
+  try {
+    const job = await api("/api/jobs/import", { method: "POST", body: form });
+    $("#jb-out").replaceChildren(message("ok", `Imported as ${job.info.id}: no redesign or re-mapping needed.`));
+    renderJob(job); await loadJobs();
+  } catch (e) { $("#jb-out").replaceChildren(message("err", e.message)); }
+  finally { busy($("#jb-import"), $("#jb-busy"), false); }
+});
+
+// ---------- Start ----------
+if (saved.role) $("#rq-role").value = saved.role;
+if (saved.top) $("#rq-top").value = saved.top;
+if (saved.notes) $("#rq-notes").value = saved.notes;
+if (saved.auto === false) $("#rq-auto").checked = false;
+if (saved.brief) $("#mg-text").value = saved.brief;
+loadStatus().catch((e) => $("#st-when").replaceChildren(message("err", e.message)));
+loadCriteria().catch((e) => $("#crit-list").replaceChildren(message("err", e.message)));
+loadDocuments().catch((e) => $("#doc-list").replaceChildren(message("err", e.message)));
+loadJobs().catch((e) => $("#jb-list").replaceChildren(message("err", e.message)));
+loadLatestRanking({ scroll: false, quiet: true }).catch((e) => $("#rk-err").replaceChildren(message("err", e.message)));
+</script>
+</body>
+</html>

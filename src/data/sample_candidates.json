@@ -1,0 +1,46 @@
+[
+  {
+    "ucid": "00000001",
+    "name": "Sample Candidate A",
+    "email": "a@example.com",
+    "program": "Software Engineering",
+    "year_of_study": 4,
+    "relevant_courses": {"ENGG 233 (Computing for Engineers)": "A+", "ENSF 337": "A"},
+    "previous_ta_courses": ["ENGG 233 (Fall 2025)", "ENGG 233 (Winter 2026)"],
+    "teaching_experience": "Ran weekly lab sections for two terms; volunteer coding tutor.",
+    "previous_ta_reviews": "Professor: 'Excellent, reliable, students loved the lab walkthroughs.'"
+  },
+  {
+    "ucid": "00000002",
+    "name": "Sample Candidate B",
+    "email": "b@example.com",
+    "program": "Mechanical Engineering",
+    "year_of_study": 3,
+    "relevant_courses": {"ENGG 233 (Computing for Engineers)": "B", "ENGG 202": "A"},
+    "previous_ta_courses": [],
+    "teaching_experience": "High school math tutor for one year.",
+    "previous_ta_reviews": ""
+  },
+  {
+    "ucid": "00000003",
+    "name": "Sample Candidate C",
+    "email": "c@example.com",
+    "program": "Computer Engineering (MSc)",
+    "year_of_study": 6,
+    "relevant_courses": {"ENGG 233 (Computing for Engineers)": "A", "ENCM 369": "A-"},
+    "previous_ta_courses": ["ENCM 369 (Fall 2025)"],
+    "teaching_experience": "One term TAing a computer architecture course.",
+    "previous_ta_reviews": "Student survey: average 3.4/5, 'knowledgeable but sometimes hard to follow.'"
+  },
+  {
+    "ucid": "00000004",
+    "name": "Sample Candidate D",
+    "email": "d@example.com",
+    "program": "Electrical Engineering",
+    "year_of_study": 2,
+    "relevant_courses": {"ENGG 233 (Computing for Engineers)": "A-"},
+    "previous_ta_courses": [],
+    "teaching_experience": "",
+    "previous_ta_reviews": ""
+  }
+]
