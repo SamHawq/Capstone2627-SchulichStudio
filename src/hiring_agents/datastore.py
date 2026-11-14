@@ -5,11 +5,16 @@ Layout (at the repo root, gitignored because it holds real candidate data):
     candidate_data/
         raw/              drop the sponsor's Excel / CSV / JSON files here
         candidates.json   the compiled store; rank_candidates reads it by default
+        header_screen.json  which column headers were dropped before any value reached an LLM
+                          (see screening.py); editable
         criteria.json     the criteria planned for the store (see planning.py); editable
+        field_labels.json each field's original column header (for the job agents)
+        jobs/<id>/        job spreadsheets designed for one job each (see jobs.py)
         documents/        course outlines, job descriptions, ... for the Manager (see documents.py)
 
-`compile_sources` reads every sheet of every file, maps each sheet's columns to the standard
-fields (intake.standardize), and merges rows that share a candidate ID. So the files can hold
+`compile_sources` reads every sheet of every file, removes the columns the header screen
+dropped (screening.apply_screen), maps each sheet's remaining columns to the standard fields
+(intake.standardize), and merges rows that share a candidate ID. So the files can hold
 different candidates (e.g. one per term), different information about the same candidates
 (applications in one file, grades or reviews in another), or both.
 
@@ -36,7 +41,8 @@ from typing import Any
 
 from .availability import AVAILABILITY_FIELD, extract_availability, merge_availability, term_of
 from .intake import DEFAULT_FIELDS, NoIdColumnError, load_records, load_sources, standardize
-from .schemas import ID_FIELD, FieldSpec, IntakeReport
+from .schemas import ID_FIELD, FieldSpec, HeaderScreen, IntakeReport
+from .screening import apply_screen, headers_of
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +82,18 @@ class Store:
         return self.root / "column_mapping.json"
 
     @property
+    def field_labels(self) -> Path:
+        return self.root / "field_labels.json"
+
+    @property
+    def jobs(self) -> Path:
+        return self.root / "jobs"
+
+    @property
+    def header_screen(self) -> Path:
+        return self.root / "header_screen.json"
+
+    @property
     def documents(self) -> Path:
         return self.root / "documents"
 
@@ -93,6 +111,24 @@ def find_files(inputs: list[str | Path]) -> list[Path]:
         else:
             raise FileNotFoundError(f"No such file or folder: {item}")
     return files
+
+
+def source_headers(inputs: list[str | Path]) -> list[str]:
+    """Every column header in every sheet of the inputs, in first-seen order: what the header
+    screen is given. Headers only; no values leave this function.
+
+    Raises:
+        ValueError: If a file can't be read (the message names it).
+    """
+    headers: dict[str, None] = {}
+    for path in find_files(inputs):
+        try:
+            sources = load_sources(path)
+        except ValueError as e:
+            raise ValueError(f"{path.name}: {e}") from e
+        for _, rows in sources:
+            headers.update(dict.fromkeys(headers_of(rows)))
+    return list(headers)
 
 
 def _id_text(value: Any) -> str:
@@ -121,13 +157,17 @@ def compile_sources(
     inputs: list[str | Path],
     fields: list[FieldSpec] | None = None,
     column_mapping: dict[str, str | None] | None = None,
+    screen: HeaderScreen | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, IntakeReport], list[str]]:
-    """Read, standardize and merge every sheet of every input file.
+    """Read, screen, standardize and merge every sheet of every input file.
 
     Args:
         inputs: Files and/or folders (folders are expanded with `find_files`).
         fields: Standard field catalog. Defaults to `intake.DEFAULT_FIELDS`.
         column_mapping: Overrides applied to every source (source column -> field, or None).
+        screen: The header screen for these files (see `source_headers` and
+            screening.screen_headers). Its dropped columns are removed from each source and
+            listed with the sensitive ones in the report. None: only intake's blocklist applies.
 
     Returns:
         (records, reports, warnings): one merged record per candidate in first-seen order,
@@ -151,14 +191,19 @@ def compile_sources(
             if not rows:
                 warnings.append(f"{label}: no data rows, skipped.")
                 continue
+            mapping, screened_out = column_mapping, []
+            if screen is not None:
+                rows, mapping, screened_out, screen_warnings = apply_screen(rows, screen, fields, column_mapping)
+                warnings += [f"{label}: {w}" for w in screen_warnings]
             try:
                 records, report, source_warnings = standardize(
-                    rows, keep, fields, column_mapping, keep_unmatched=True)
+                    rows, keep, fields, mapping, keep_unmatched=True)
             except NoIdColumnError:
                 warnings.append(f"{label}: no candidate ID column, skipped.")
                 continue
             except ValueError as e:
                 raise ValueError(f"{label}: {e}") from e
+            report.dropped_sensitive = screened_out + report.dropped_sensitive
             records, consumed, avail_warnings = extract_availability(records, term_of(label))
             for col, fid in report.column_mapping.items():
                 if fid in consumed:
@@ -191,6 +236,14 @@ def compile_sources(
                         "all values were kept as a list.")
     logger.info("Compiled %d candidates from %d sources", len(merged), len(reports))
     return list(merged.values()), reports, warnings
+
+
+def load_field_labels(store: Store) -> dict[str, str]:
+    """Field -> original column header, saved when the store was processed ({} if not)."""
+    try:
+        return json.loads(store.field_labels.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
 
 
 def write_store(records: list[dict[str, Any]], path: Path = COMPILED_PATH) -> Path:

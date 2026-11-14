@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run Viewer</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1d2330; --muted: #5d6677; --line: #e2e5ea;
+    --accent: #2f5bd3; --accent-soft: #e8eefc; --good: #1d7a46; --bad: #b42318; --bad-soft: #fdecea;
+    --warn: #9a5b00; --warn-soft: #fff4e0; --code-bg: #f1f3f6;
+    --s-screen: #0f8a8a; --s-store: #5b6b84; --s-criteria: #7a4fd0; --s-manager: #2f5bd3;
+    --s-job: #b7791f; --s-data: #c05621; --s-privacy: #1d7a46; --s-rank: #4c51bf;
+    --s-validate: #64748b; --s-aggregate: #c53077; --s-extract: #d9480f; --s-other: #6b7280;
+    --s-review: #0b7285;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12151b; --card: #1b1f27; --text: #e6e9ef; --muted: #9aa3b2; --line: #2c323d;
+      --accent: #7c9cf5; --accent-soft: #232c45; --good: #5cc28a; --bad: #f2827a; --bad-soft: #3d1d1b;
+      --warn: #f0b45a; --warn-soft: #3a2c14; --code-bg: #151920;
+      --s-screen: #3cc4c4; --s-store: #93a3bd; --s-criteria: #a98bf0; --s-manager: #7c9cf5;
+      --s-job: #e3b04b; --s-data: #f08a4b; --s-privacy: #5cc28a; --s-rank: #8f94f0;
+      --s-validate: #9aa7ba; --s-aggregate: #ee6aa7; --s-extract: #ff8a50; --s-other: #9ca3af;
+      --s-review: #4fc3d9;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--card);
+           display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  header h1 { margin: 0; font-size: 18px; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  header .spacer { flex: 1; }
+  a { color: var(--accent); }
+  button { font: inherit; border: 1px solid var(--accent); background: var(--accent); color: #fff;
+           padding: 6px 12px; border-radius: 7px; cursor: pointer; }
+  button.secondary { background: transparent; color: var(--accent); }
+  .check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+  .layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); min-height: calc(100vh - 58px); }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+  aside { border-right: 1px solid var(--line); background: var(--card); padding: 12px; overflow-y: auto;
+          max-height: calc(100vh - 58px); position: sticky; top: 0; }
+  @media (max-width: 900px) { aside { position: static; max-height: 320px; border-right: 0;
+                                      border-bottom: 1px solid var(--line); } }
+  aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
+             margin: 14px 4px 6px; }
+  aside h2:first-child { margin-top: 2px; }
+  .op { display: block; width: 100%; text-align: left; background: transparent; color: var(--text);
+        border: 1px solid transparent; border-radius: 8px; padding: 7px 9px; margin: 2px 0; }
+  .op:hover { background: var(--bg); }
+  .op.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .op .t { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; }
+  .op .d { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  main { padding: 18px 20px 60px; min-width: 0; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+          margin-bottom: 16px; min-width: 0; }
+  .card h2 { margin: 0 0 10px; font-size: 15px; }
+  .card h2 .muted { font-weight: 400; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .pill { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 999px; font-weight: 500;
+          background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
+  .pill.ok { background: transparent; border: 1px solid var(--good); color: var(--good); }
+  .pill.bad { background: var(--bad-soft); color: var(--bad); }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 10px; }
+  .stat { background: var(--bg); border-radius: 8px; padding: 8px 10px; }
+  .stat b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 12px; color: var(--muted); }
+  .empty { text-align: center; padding: 50px 20px; color: var(--muted); }
+  .empty code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+
+  /* Flow diagram */
+  .flow { display: flex; flex-wrap: wrap; align-items: center; row-gap: 14px; padding: 4px 2px 10px; }
+  .col { display: flex; flex-direction: column; justify-content: center; gap: 8px; flex: 0 0 auto; }
+  .col.par { padding: 8px; border: 1px dashed var(--line); border-radius: 10px; }
+  .col.par > .partag { font-size: 11px; color: var(--muted); text-align: center; }
+  .arrow { flex: 0 0 26px; display: flex; align-items: center; justify-content: center; color: var(--muted); }
+  .node { width: 168px; text-align: left; background: var(--card); color: var(--text);
+          border: 1px solid var(--line); border-left: 4px solid var(--stage, var(--s-other));
+          border-radius: 8px; padding: 7px 9px; cursor: pointer; }
+  .node:hover { border-color: var(--stage, var(--s-other)); }
+  .node.sel { box-shadow: 0 0 0 2px var(--stage, var(--accent)); }
+  .node.agent { background: color-mix(in srgb, var(--stage) 9%, var(--card)); }
+  .node.failed { border-color: var(--bad); }
+  .node .k { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--stage, var(--muted));
+             font-weight: 700; display: flex; justify-content: space-between; }
+  .node .n { font-weight: 600; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .node .m { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 6px; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+  .legend i { width: 10px; height: 10px; border-radius: 3px; background: var(--stage); display: inline-block; }
+
+  /* Timeline */
+  .tl { position: relative; }
+  .tl-row { display: grid; grid-template-columns: 180px minmax(0, 1fr) 56px; gap: 8px; align-items: center;
+            padding: 3px 0; cursor: pointer; }
+  .tl-row:hover .tl-name { color: var(--accent); }
+  .tl-name { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tl-track { position: relative; height: 16px; background: var(--bg); border-radius: 4px; }
+  .tl-bar { position: absolute; top: 2px; bottom: 2px; border-radius: 3px; background: var(--stage); min-width: 3px; }
+  .tl-bar.failed { background: repeating-linear-gradient(45deg, var(--bad), var(--bad) 4px, transparent 4px, transparent 7px); }
+  .tl-tick { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--stage); opacity: .8; }
+  .tl-sec { font-size: 12px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+  .tl-axis { display: grid; grid-template-columns: 180px minmax(0, 1fr) 56px; gap: 8px; font-size: 11px; color: var(--muted); }
+  .tl-axis div:nth-child(2) { display: flex; justify-content: space-between; }
+  @media (max-width: 600px) { .tl-row, .tl-axis { grid-template-columns: 110px minmax(0, 1fr) 44px; } }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-top: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; border-top: 0; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td code { font-size: 12px; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+  .scroll { overflow-x: auto; }
+
+  /* Detail panel */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 10px 0 10px; flex-wrap: wrap; }
+  .tab { background: transparent; color: var(--muted); border: 0; border-bottom: 2px solid transparent;
+         border-radius: 0; padding: 6px 10px; }
+  .tab.on { color: var(--text); border-bottom-color: var(--accent); }
+  pre.prompt { background: var(--code-bg); border-radius: 8px; padding: 12px; white-space: pre-wrap;
+               word-break: break-word; font: 12.5px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace;
+               max-height: 560px; overflow: auto; margin: 0; }
+  .json { font: 12.5px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; background: var(--code-bg);
+          border-radius: 8px; padding: 10px 12px; max-height: 620px; overflow: auto; }
+  .json details { margin-left: 14px; }
+  .json > details { margin-left: 0; }
+  .json summary { cursor: pointer; color: var(--muted); list-style-position: outside; }
+  .json .kv { margin-left: 14px; word-break: break-word; }
+  .json .key { color: var(--accent); }
+  .json .str { color: var(--good); white-space: pre-wrap; }
+  .json .num { color: var(--s-aggregate); }
+  .json .lit { color: var(--s-criteria); }
+  .json .more { margin: 4px 0 4px 14px; font-size: 12px; padding: 2px 8px; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); }
+  .meta-row b { color: var(--text); font-weight: 600; }
+  .err { background: var(--bad-soft); color: var(--bad); border-radius: 8px; padding: 9px 12px; white-space: pre-wrap; }
+  .note { background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 9px 12px; font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Run viewer</h1>
+  <span class="sub">Recorded with AGENT_TRACE=ON · pseudonymized data only; real IDs are never in a trace</span>
+  <span class="spacer"></span>
+  <label class="check"><input type="checkbox" id="auto"> Auto-refresh</label>
+  <button class="secondary" id="refresh">Refresh</button>
+  <a href="/">← Ranking</a>
+</header>
+<div class="layout">
+  <aside id="side"><div class="muted">Loading…</div></aside>
+  <main id="main"></main>
+</div>
+
+<script>
+"use strict";
+// Every value from a trace is inserted with textContent / createTextNode, never as HTML.
+
+const STAGES = {
+  screen: "Header screen", store: "Store", criteria: "Criteria", manager: "Manager",
+  job: "Job spreadsheet", data: "Data Agent", privacy: "Privacy", rank: "Rankers",
+  validate: "Validation", aggregate: "Aggregation", review: "Final review", extract: "Text extraction",
+  other: "Other",
+};
+// Agent name -> [stage, prompt file] (see prompts/README.md).
+function agentInfo(name) {
+  if (name === "Header Screen") return ["screen", "prompts/header_screen.md"];
+  if (name === "Criteria Planner") return ["criteria", "prompts/criteria_planner.md"];
+  if (name === "Manager: job spreadsheet") return ["job", "prompts/manager_schema.md"];
+  if (name === "Manager: final review") return ["review", "prompts/manager_review.md"];
+  if (name === "Manager") return ["manager", "prompts/manager.md"];
+  if (name === "Data Agent") return ["data", "prompts/data_agent.md"];
+  if (name.startsWith("Ranker")) return ["rank", "prompts/ranker/main.md (+ parts)"];
+  return ["other", "?"];
+}
+const stageVar = s => `var(--s-${STAGES[s] ? s : "other"})`;
+
+let traces = [], events = [], selTrace = null, selOp = null, selNode = null, nodes = [];
+
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === undefined || v === null || v === false) continue;
+    if (k === "class") e.className = v;
+    else if (k === "style") e.setAttribute("style", v);
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat()) {
+    if (kid === null || kid === undefined || kid === false) continue;
+    e.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+  }
+  return e;
+}
+const secs = s => s == null ? "–" : s < 1 ? `${Math.round(s * 1000)} ms` : s < 120 ? `${s.toFixed(1)} s` : `${(s / 60).toFixed(1)} min`;
+const clock = t => t ? new Date(t * 1000).toLocaleTimeString() : "";
+const day = t => t ? new Date(t * 1000).toLocaleString() : "";
+const size = v => { const n = JSON.stringify(v ?? "").length; return n < 1024 ? `${n} B` : n < 1048576 ? `${(n / 1024).toFixed(1)} KB` : `${(n / 1048576).toFixed(1)} MB`; };
+
+async function getJSON(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
+  return r.json();
+}
+
+// ---------- URL state ----------
+function readHash() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  return { trace: p.get("trace"), op: p.get("op") };
+}
+function writeHash() {
+  const p = new URLSearchParams();
+  if (selTrace) p.set("trace", selTrace);
+  if (selOp !== null) p.set("op", selOp ?? "");
+  history.replaceState(null, "", "#" + p.toString());
+}
+
+// ---------- Sidebar ----------
+async function loadList(keepSelection) {
+  traces = await getJSON("/api/traces");
+  const want = keepSelection ? { trace: selTrace, op: selOp } : readHash();
+  const side = document.getElementById("side");
+  side.replaceChildren();
+  if (!traces.length) {
+    side.append(el("div", { class: "muted" }, "No recorded runs yet."));
+    renderEmpty();
+    return;
+  }
+  for (const t of traces) {
+    const m = t.name.match(/trace-(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})/);
+    side.append(el("h2", {}, m ? `${m[1]}-${m[2]}-${m[3]} ${m[4]}:${m[5]}` : t.name,
+      el("span", { class: "muted", style: "text-transform:none;letter-spacing:0;font-weight:400" }, ` · ${(t.size / 1024).toFixed(0)} KB`)));
+    for (const op of [...t.operations].reverse()) {
+      const status = op.ok === false ? el("span", { class: "pill bad" }, "failed")
+        : op.ok === null || op.ok === undefined ? el("span", { class: "pill warn" }, op.id ? "running" : "–")
+        : el("span", { class: "pill ok" }, secs(op.seconds));
+      const b = el("button", { class: "op" + (t.name === want.trace && (op.id ?? "") === (want.op ?? "") ? " sel" : ""),
+                               onclick: () => selectOp(t.name, op.id) },
+        el("div", { class: "t" }, el("span", {}, op.name), status),
+        el("div", { class: "d" }, `${clock(op.started)} · ${op.agent_calls} agent call${op.agent_calls === 1 ? "" : "s"}` +
+                                  (op.failed_calls ? ` (${op.failed_calls} failed)` : "") + (op.detail ? ` · ${op.detail}` : "")));
+      b.dataset.trace = t.name; b.dataset.op = op.id ?? "";
+      side.append(b);
+    }
+  }
+  const has = want.trace && traces.some(t => t.name === want.trace);
+  if (has) await selectOp(want.trace, want.op || null, keepSelection);
+  else {
+    const t = traces.find(x => x.operations.length);
+    if (t) await selectOp(t.name, t.operations[t.operations.length - 1].id);
+    else renderEmpty();
+  }
+}
+
+async function selectOp(trace, op, keepNode) {
+  const changed = trace !== selTrace || op !== selOp;
+  if (trace !== selTrace || keepNode) events = await getJSON(`/api/traces/${encodeURIComponent(trace)}`);
+  selTrace = trace; selOp = op;
+  if (changed) selNode = null;
+  for (const b of document.querySelectorAll(".op"))
+    b.classList.toggle("sel", b.dataset.trace === trace && b.dataset.op === (op ?? ""));
+  writeHash();
+  renderOp();
+}
+
+// ---------- Main view ----------
+function renderEmpty() {
+  document.getElementById("main").replaceChildren(el("div", { class: "card empty" },
+    el("h2", {}, "No recorded runs"),
+    el("p", {}, "Add ", el("code", {}, "AGENT_TRACE=ON"), " to environment_vars.env, restart the server (or use the CLI), then process, draft, rank or create a job."),
+    el("p", {}, "Each run is written to ", el("code", {}, "logs/trace-<time>.jsonl"), " and shows up here.")));
+}
+
+function opEvents() {
+  return events.filter(e => (e.op ?? null) === (selOp ?? null));
+}
+
+// Steps and agent calls in order; agent calls that overlap in time share a column (they ran in parallel).
+function buildColumns(evs) {
+  const items = evs.filter(e => e.type === "agent" || e.type === "step")
+    .map(e => ({ e, t: e.type === "agent" ? e.start : e.time }))
+    .sort((a, b) => a.t - b.t);
+  const cols = [];
+  for (const { e } of items) {
+    const last = cols[cols.length - 1];
+    if (e.type === "agent" && last && last.agent &&
+        last.items.some(x => x.start < e.start + e.seconds && e.start < x.start + x.seconds)) {
+      last.items.push(e);
+    } else cols.push({ agent: e.type === "agent", items: [e] });
+  }
+  return cols;
+}
+
+function nodeMeta(e) {
+  if (e.type === "agent") {
+    const inp = e.input || {};
+    const bits = [secs(e.seconds)];
+    if (Array.isArray(inp.candidates)) bits.push(`${inp.candidates.length} candidates`);
+    else if (Array.isArray(inp.headers)) bits.push(`${inp.headers.length} headers`);
+    else if (Array.isArray(inp.fields)) bits.push(`${inp.fields.length} fields`);
+    else if (Array.isArray(inp.criteria)) bits.push(`${inp.criteria.length} criteria`);
+    else if (Array.isArray(inp.sample_rows)) bits.push(`${inp.sample_rows.length} sample rows`);
+    else if (Array.isArray(inp.shortlist)) bits.push(`${inp.shortlist.length} shortlisted`);
+    return bits.join(" · ");
+  }
+  const d = e.details || {};
+  const n = (v, word) => `${v.length ?? Object.keys(v).length} ${word}`;
+  if (Array.isArray(d.ranking)) return `top ${d.ranking.length} of ${d.candidates}`;
+  if (d.adjustments && typeof d.shortlist === "number") return `${Object.keys(d.adjustments).length} adjusted of ${d.shortlist}`;
+  if (Array.isArray(d.succeeded)) return `${d.succeeded.length} ok · ${d.failed.length} failed`;
+  if (Array.isArray(d.skipped_or_partial)) return n(d.skipped_or_partial, "warnings");
+  if (Array.isArray(d.active)) return `${d.active.length} active · ${d.sleeping.length} sleeping`;
+  if (d.weights && d.role !== undefined) return n(d.weights, "criteria weighted");
+  if (d.mapped) return `${Object.keys(d.mapped).length} mapped · ${Object.keys(d.unfilled).length} unfilled`;
+  if (d.groups) return `${Object.keys(d.groups).length} groups · ${Object.values(d.groups).flat().length} columns`;
+  if (d.auto_criteria) return n(d.auto_criteria, "auto criteria");
+  if (d.dropped && typeof d.new_headers === "number") return `${d.new_headers} headers · ${d.dropped.length} dropped`;
+  if (d.columns && typeof d.candidates === "number") return `${d.candidates} candidates · ${n(d.columns, "columns")}`;
+  for (const k of ["candidates", "rows", "headers", "fields"])
+    if (typeof d[k] === "number") return `${d[k]} ${k}`;
+  if (Array.isArray(d.dropped)) return n(d.dropped, "dropped");
+  return Object.keys(d).slice(0, 3).join(", ");
+}
+
+function renderOp() {
+  const main = document.getElementById("main");
+  const evs = opEvents();
+  const start = evs.find(e => e.type === "operation_start");
+  const end = evs.find(e => e.type === "operation_end");
+  const agents = evs.filter(e => e.type === "agent");
+  const steps = evs.filter(e => e.type === "step");
+  const t0 = start ? start.time : Math.min(...evs.map(e => e.type === "agent" ? e.start : e.time));
+  const t1 = end ? end.time : Math.max(...evs.map(e => e.type === "agent" ? e.start + e.seconds : e.time));
+  const total = Math.max(t1 - t0, 0.001);
+  const models = [...new Set(agents.map(a => a.model))];
+  const agentTime = agents.reduce((s, a) => s + a.seconds, 0);
+
+  // Summary
+  const status = end ? (end.ok ? el("span", { class: "pill ok" }, "completed") : el("span", { class: "pill bad" }, "failed"))
+                     : el("span", { class: "pill warn" }, start ? "running or interrupted" : "no operation");
+  const summary = el("div", { class: "card" },
+    el("h2", {}, start ? start.name : "(no operation)", " ", status, " ",
+       el("span", { class: "muted" }, start && start.detail ? start.detail : "")),
+    el("div", { class: "meta-row" }, el("span", {}, "Started ", el("b", {}, day(t0))),
+       el("span", {}, "Trace ", el("b", {}, selTrace))),
+    end && !end.ok ? el("div", { class: "err", style: "margin-top:10px" }, end.error) : null,
+    el("div", { class: "stats" },
+      stat(secs(total), "wall time"), stat(agents.length, "agent calls"),
+      stat(agents.filter(a => !a.ok).length, "failed calls"), stat(steps.length, "code steps"),
+      stat(secs(agentTime), "total agent time"), stat(models.join(", ") || "–", "models")));
+
+  // Flow
+  const cols = buildColumns(evs);
+  nodes = [];
+  const flow = el("div", { class: "flow" });
+  cols.forEach((c, i) => {
+    if (i) flow.append(el("div", { class: "arrow", "aria-hidden": "true" }, "→"));
+    const col = el("div", { class: "col" + (c.items.length > 1 ? " par" : "") });
+    if (c.items.length > 1) col.append(el("div", { class: "partag" }, `${c.items.length} in parallel`));
+    for (const e of c.items) col.append(makeNode(e));
+    flow.append(col);
+  });
+  const usedStages = [...new Set([...steps.map(s => s.stage), ...agents.map(a => agentInfo(a.agent)[0])])];
+  const flowCard = el("div", { class: "card" },
+    el("h2", {}, "Workflow ", el("span", { class: "muted" }, "· code steps and agent calls in order; click any box")),
+    cols.length ? flow : el("div", { class: "muted" }, "No steps recorded in this operation."),
+    el("div", { class: "legend" },
+      el("span", {}, el("i", { style: "--stage:var(--s-other);background:transparent;border:1px solid var(--muted)" }), "code step (light) / agent call (tinted)"),
+      usedStages.map(s => el("span", { style: `--stage:${stageVar(s)}` }, el("i"), STAGES[s] || s))));
+
+  // Timeline
+  const tl = el("div", { class: "tl" },
+    el("div", { class: "tl-axis" }, el("div"), el("div", {}, el("span", {}, "0 s"), el("span", {}, secs(total / 2)), el("span", {}, secs(total))), el("div")));
+  for (const it of [...agents, ...steps].sort((a, b) => (a.start ?? a.time) - (b.start ?? b.time))) {
+    const isAgent = it.type === "agent";
+    const stage = isAgent ? agentInfo(it.agent)[0] : it.stage;
+    const left = (((isAgent ? it.start : it.time) - t0) / total) * 100;
+    const mark = isAgent
+      ? el("div", { class: "tl-bar" + (it.ok ? "" : " failed"),
+                    style: `left:${clamp(left)}%;width:${Math.max((it.seconds / total) * 100, 0.4)}%;--stage:${stageVar(stage)}` })
+      : el("div", { class: "tl-tick", style: `left:${clamp(left)}%;--stage:${stageVar(stage)}` });
+    tl.append(el("div", { class: "tl-row", onclick: () => showDetail(it) },
+      el("div", { class: "tl-name", title: isAgent ? it.agent : it.name }, isAgent ? it.agent : `· ${it.name}`),
+      el("div", { class: "tl-track" }, mark),
+      el("div", { class: "tl-sec" }, isAgent ? secs(it.seconds) : "")));
+  }
+  const tlCard = el("div", { class: "card" },
+    el("h2", {}, "Timeline ", el("span", { class: "muted" }, "· bars are agent calls, ticks are code steps; overlapping bars ran in parallel")),
+    agents.length || steps.length ? tl : el("div", { class: "muted" }, "Nothing to show."));
+
+  // Agents table
+  const byName = new Map();
+  for (const a of agents) {
+    const r = byName.get(a.agent) || { agent: a.agent, model: a.model, calls: 0, failed: 0, time: 0, inSize: 0, outSize: 0, last: a };
+    r.calls++; r.failed += !a.ok; r.time += a.seconds; r.last = a;
+    r.inSize += JSON.stringify(a.input ?? "").length; r.outSize += JSON.stringify(a.output ?? a.error ?? "").length;
+    byName.set(a.agent, r);
+  }
+  const kb = n => n < 1024 ? `${n} B` : `${(n / 1024).toFixed(1)} KB`;
+  const agentsCard = el("div", { class: "card" },
+    el("h2", {}, "Agents created ", el("span", { class: "muted" }, "· each call builds a fresh agent from its prompt file")),
+    byName.size ? el("div", { class: "scroll" }, el("table", {},
+      el("thead", {}, el("tr", {}, ["Agent", "Prompt file", "Model", "Calls", "Time", "Sent", "Received", ""].map(h => el("th", {}, h)))),
+      el("tbody", {}, [...byName.values()].map(r => el("tr", {},
+        el("td", {}, el("span", { class: "pill", style: `background:transparent;border:1px solid ${stageVar(agentInfo(r.agent)[0])};color:${stageVar(agentInfo(r.agent)[0])}` }, r.agent)),
+        el("td", {}, el("code", {}, agentInfo(r.agent)[1])),
+        el("td", {}, r.model),
+        el("td", { class: "num" }, r.calls + (r.failed ? ` (${r.failed} failed)` : "")),
+        el("td", { class: "num" }, secs(r.time)),
+        el("td", { class: "num" }, kb(r.inSize)), el("td", { class: "num" }, kb(r.outSize)),
+        el("td", {}, el("button", { class: "secondary", style: "padding:2px 8px;font-size:12px", onclick: () => showDetail(r.last) }, "Open")))))))
+      : el("div", { class: "muted" }, "No agents ran in this operation."));
+
+  const detail = el("div", { class: "card", id: "detail" });
+  main.replaceChildren(summary, flowCard, detail, tlCard, agentsCard);
+  // After a refresh the events are new objects: find the selected one again by identity fields.
+  const same = selNode && evs.find(x => x.type === selNode.type && x.time === selNode.time &&
+                                        (x.seq ?? x.name) === (selNode.seq ?? selNode.name));
+  const first = same || agents[0] || steps[0];
+  if (first) showDetail(first, true); else detail.append(el("div", { class: "muted" }, "Select a step."));
+}
+
+const clamp = v => Math.min(Math.max(v, 0), 99.6);
+function stat(value, label) { return el("div", { class: "stat" }, el("b", {}, value), el("span", {}, label)); }
+
+function makeNode(e) {
+  const isAgent = e.type === "agent";
+  const stage = isAgent ? agentInfo(e.agent)[0] : e.stage;
+  const n = el("button", { class: "node" + (isAgent ? " agent" : "") + (isAgent && !e.ok ? " failed" : ""),
+                           style: `--stage:${stageVar(stage)}`, title: isAgent ? e.agent : e.name,
+                           onclick: () => showDetail(e) },
+    el("div", { class: "k" }, el("span", {}, isAgent ? "agent" : "code"), isAgent && !e.ok ? el("span", { style: "color:var(--bad)" }, "failed") : null),
+    el("div", { class: "n" }, isAgent ? e.agent.replace(/^Ranker: /, "") : e.name),
+    el("div", { class: "m" }, isAgent && e.agent.startsWith("Ranker") ? `Ranker · ${nodeMeta(e)}` : nodeMeta(e)));
+  n._event = e;
+  nodes.push(n);
+  return n;
+}
+
+// ---------- Detail panel ----------
+function showDetail(e, quiet) {
+  selNode = e;
+  for (const n of nodes) n.classList.toggle("sel", n._event === e);
+  const box = document.getElementById("detail");
+  if (!box) return;
+  box.replaceChildren();
+  if (e.type === "step") {
+    box.append(el("h2", {}, e.name, " ", el("span", { class: "pill", style: `background:transparent;border:1px solid ${stageVar(e.stage)};color:${stageVar(e.stage)}` }, STAGES[e.stage] || e.stage)),
+      el("div", { class: "meta-row" }, el("span", {}, "Plain code · ", el("b", {}, clock(e.time))),
+        el("span", {}, "Summary only: names, counts and pseudonymous refs")),
+      el("div", { style: "margin-top:10px" }, jsonView(e.details, 2)));
+  } else {
+    const [stage, prompt] = agentInfo(e.agent);
+    const tabs = [["Prompt (instructions)", () => el("pre", { class: "prompt" }, e.instructions || "")],
+                  ["Input sent", () => jsonView(e.input, 1)],
+                  [e.ok ? "Output received" : "Error", () => e.ok ? jsonView(e.output, 1) : el("div", { class: "err" }, e.error)]];
+    const body = el("div");
+    const bar = el("div", { class: "tabs" });
+    const open = i => { for (const [j, b] of [...bar.children].entries()) b.classList.toggle("on", i === j); body.replaceChildren(tabs[i][1]()); };
+    tabs.forEach(([label], i) => bar.append(el("button", { class: "tab", onclick: () => open(i) }, label)));
+    box.append(el("h2", {}, e.agent, " ", e.ok ? el("span", { class: "pill ok" }, "ok") : el("span", { class: "pill bad" }, "failed")),
+      el("div", { class: "meta-row" },
+        el("span", {}, "Stage ", el("b", {}, STAGES[stage] || stage)),
+        el("span", {}, "Prompt ", el("b", {}, prompt)),
+        el("span", {}, "Model ", el("b", {}, e.model)),
+        el("span", {}, "Started ", el("b", {}, clock(e.start))),
+        el("span", {}, "Took ", el("b", {}, secs(e.seconds))),
+        el("span", {}, "Sent ", el("b", {}, size(e.input)), " · received ", el("b", {}, size(e.ok ? e.output : e.error))),
+        el("span", {}, "Call #", el("b", {}, e.seq))),
+      bar, body);
+    open(e.ok ? 0 : 2);   // the prompt first; straight to the error for a failed call
+  }
+  if (!quiet) box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+// Collapsible JSON tree. Children are built when a branch is first opened, and long lists
+// show 100 entries at a time, so multi-MB ranker payloads stay fast.
+function jsonView(value, openDepth) {
+  return el("div", { class: "json" }, jsonNode(null, value, 0, openDepth));
+}
+function jsonNode(key, v, depth, openDepth) {
+  const keyEl = key === null ? null : el("span", { class: "key" }, `${key}: `);
+  if (v === null || typeof v !== "object") {
+    const cls = typeof v === "string" ? "str" : typeof v === "number" ? "num" : "lit";
+    return el("div", { class: "kv" }, keyEl, el("span", { class: cls }, typeof v === "string" ? JSON.stringify(v) : String(v)));
+  }
+  const isArr = Array.isArray(v);
+  const entries = isArr ? v.map((x, i) => [i, x]) : Object.entries(v);
+  const label = isArr ? `[${entries.length} item${entries.length === 1 ? "" : "s"}]` : `{${entries.length} key${entries.length === 1 ? "" : "s"}}`;
+  const preview = !isArr && entries.length ? " " + entries.slice(0, 4).map(([k]) => k).join(", ") + (entries.length > 4 ? ", …" : "") : "";
+  const d = el("details", {}, el("summary", {}, keyEl, label, el("span", { class: "muted" }, preview)));
+  let built = 0;
+  const more = () => {
+    const stop = Math.min(built + 100, entries.length);
+    for (; built < stop; built++) d.append(jsonNode(entries[built][0], entries[built][1], depth + 1, openDepth));
+    if (built < entries.length) d.append(el("button", { class: "secondary more", onclick: ev => { ev.target.remove(); more(); } },
+                                            `Show ${Math.min(100, entries.length - built)} more of ${entries.length - built}`));
+  };
+  d.addEventListener("toggle", () => { if (d.open && !built) more(); });
+  if (depth < openDepth && entries.length <= 50) d.open = true;
+  return d;
+}
+
+// ---------- Wiring ----------
+document.getElementById("refresh").addEventListener("click", () => loadList(true).catch(showError));
+let timer = null;
+document.getElementById("auto").addEventListener("change", ev => {
+  clearInterval(timer);
+  if (ev.target.checked) timer = setInterval(() => loadList(true).catch(showError), 5000);
+});
+function showError(err) {
+  document.getElementById("main").prepend(el("div", { class: "card err" }, `Couldn't load runs: ${err.message}`));
+}
+loadList(false).catch(showError);
+</script>
+</body>
+</html>

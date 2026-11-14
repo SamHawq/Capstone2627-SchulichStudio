@@ -1,0 +1,1126 @@
+{
+  "candidates": 5,
+  "nonblank_candidates": 5,
+  "repeats": 3,
+  "reasoning_effort": "none",
+  "quality_metric": null,
+  "models": {
+    "gpt-5.6-luna": {
+      "runs": [
+        {
+          "repeat": 1,
+          "status": "ok",
+          "elapsed_seconds": 18.999580707983114,
+          "request_seconds": [
+            3.1070600830717012,
+            2.537726750015281,
+            8.157798208994791,
+            2.541412917082198,
+            2.6547039579600096
+          ],
+          "keywords": {
+            "1": {
+              "skills, and technical knowledge check.": [
+                "Teaching assistant experience across engineering, chemistry, and physics departments",
+                "Electrical engineering proficiency",
+                "Materials science proficiency",
+                "Physics proficiency",
+                "Chemistry proficiency",
+                "Biomedical signals, systems, and instrumentation",
+                "Electrical circuits and machines",
+                "Biomedical engineering design",
+                "Electromagnetism and thermal physics"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining laboratory procedures",
+                "Explaining the purposes of procedures",
+                "Explaining how to carry out procedures",
+                "Leading laboratory and tutorial sessions"
+              ],
+              "engaged learning, helped improved understanding": [
+                "One-on-one student support",
+                "Collaborative problem-solving",
+                "Guiding questions",
+                "Supporting independent lab completion"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Promoted active learning in laboratory and tutorial environments",
+                "Pre-practiced labs before sessions",
+                "Connected lab activities to previous course content",
+                "Asked students to recall lecture learning",
+                "Used prompts to guide students toward solutions independently",
+                "Helped students understand the bigger picture",
+                "Supported careful reading and understanding of questions"
+              ]
+            },
+            "2": {
+              "skills, and technical knowledge check.": [
+                "research instrumentation design, fabrication, and evaluation",
+                "multiple sensor sampling and filtering",
+                "data processing and storage with a microcontroller",
+                "equine biomechanics",
+                "directed study in biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "TA experience in circuits courses",
+                "combining verbal and written explanations",
+                "using drawings to relate physical circuits to circuit diagrams"
+              ],
+              "engaged learning, helped improved understanding": [
+                "lab-based problem solving assistance",
+                "explaining problem-solving processes during and after labs",
+                "using questions to develop student skills"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "hands-on circuits labs",
+                "supporting student circuit debugging",
+                "demonstrating multimeter features",
+                "guiding independent debugging",
+                "oscilloscope use",
+                "signal generator use",
+                "relating circuit diagrams to breadboard connections"
+              ]
+            },
+            "4": {
+              "skills, and technical knowledge check.": [
+                "Biomedical engineering coursework",
+                "BMEN 468 and BMEN 478 projects",
+                "Hydration-monitoring wearable",
+                "Arduino",
+                "Coding",
+                "EDA sensors",
+                "Intellectual property research",
+                "BMEN 401",
+                "Biomedical engineering capstone",
+                "Lab, tutorial, and grading support",
+                "Knowledge of course structure",
+                "Hands-on technical experience"
+              ],
+              "verbal and written skills to communicate": [
+                "Led team communication",
+                "Capstone project communication",
+                "Technical and non-technical presentations",
+                "Stakeholder presentations",
+                "Intubation model project"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Group study sessions",
+                "Explained signals and instrumentation",
+                "Controller understanding",
+                "Peer explanation",
+                "Lab group support"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Led BMEN study group",
+                "Problem-based discussions",
+                "Real exam question practice",
+                "Collaborative problem solving",
+                "Explained solution approaches",
+                "Collaboration",
+                "Critical thinking",
+                "Improved confidence and performance",
+                "BMEN 488",
+                "BMEN 523",
+                "BMEN 585"
+              ]
+            },
+            "8": {
+              "skills, and technical knowledge check.": [
+                "3rd-year PhD in biomedical engineering",
+                "medical imaging",
+                "biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "TA experience in undergraduate mechanics courses",
+                "explaining concepts in tutorial settings",
+                "explaining concepts in lab settings"
+              ],
+              "engaged learning, helped improved understanding": [
+                "asking students to explain their reasoning",
+                "identifying where students are going wrong"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "TA in flipped-classroom mechanics course",
+                "facilitating problem-solving sessions",
+                "students reviewing lecture materials in advance",
+                "guiding real-time application of concepts",
+                "challenging problem solving"
+              ]
+            },
+            "261": {
+              "skills, and technical knowledge check.": [
+                "CAD design",
+                "SolidWorks",
+                "Fusion 360",
+                "Additive manufacturing",
+                "3D printing",
+                "Automation manufacturing",
+                "CAM",
+                "Mastercam",
+                "Biomaterial synthesis",
+                "Mechanical characterization",
+                "Cell culturing",
+                "Teaching Physics, Design & Construction",
+                "TA for manufacturing lab and lecture",
+                "Problem-based design",
+                "Project management",
+                "PhD candidate in Stem Cell Regenerative Medicine",
+                "Advanced topics in Stem Cell Biology"
+              ],
+              "verbal and written skills to communicate": [
+                "Individualized technical explanations",
+                "Translating technical concepts for product design challenges",
+                "Facilitating CAD design and project management in groups"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Connecting material properties to manufacturing processes",
+                "Industry-contextualized instruction",
+                "Safety-focused learning",
+                "Efficiency-focused learning",
+                "Innovation-focused learning"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Design, construction, and fabrication shop management",
+                "Course design",
+                "Assessment",
+                "Project innovation",
+                "Applied skills training",
+                "Industrial woodworking equipment",
+                "Welding equipment",
+                "CWB SMAW (Stick) welding certification",
+                "CWB GMAW (MIG) welding certification",
+                "Permanent Alberta Education teacher status"
+              ]
+            }
+          }
+        },
+        {
+          "repeat": 2,
+          "status": "ok",
+          "elapsed_seconds": 13.543642041971907,
+          "request_seconds": [
+            3.153326957952231,
+            2.3539117500185966,
+            2.802406166912988,
+            2.070636083954014,
+            3.1605841669952497
+          ],
+          "keywords": {
+            "1": {
+              "skills, and technical knowledge check.": [
+                "Teaching assistant experience across engineering, chemistry, and physics departments",
+                "Electrical engineering proficiency",
+                "Materials science proficiency",
+                "Physics proficiency",
+                "Chemistry proficiency",
+                "Laboratory and tutorial instruction",
+                "Biomedical signals, systems, and instrumentation",
+                "Electrical circuits and machines",
+                "Biomedical engineering design",
+                "Electromagnetism and thermal physics"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining laboratory procedures",
+                "Explaining the purposes of procedures",
+                "Explaining how to carry out procedures",
+                "Laboratory-based instruction",
+                "Tutorial facilitation"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Responding to student requests for help",
+                "Collaborative problem-solving",
+                "Guiding questions",
+                "Supporting independent lab completion"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Active learning environments",
+                "Laboratory and tutorial instruction",
+                "Preparing for labs in advance",
+                "Connecting problems to previous content",
+                "Checking students’ lecture learning",
+                "Guiding students with prompts",
+                "Helping students see the bigger picture",
+                "Supporting students in reaching solutions independently"
+              ]
+            },
+            "2": {
+              "skills, and technical knowledge check.": [
+                "instrumentation design, fabrication, and evaluation",
+                "sensor sampling and filtering",
+                "data processing and storage",
+                "microcontroller use",
+                "equine biomechanics",
+                "directed study in biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "TA experience in circuits courses",
+                "combining verbal and written explanations",
+                "using drawings to relate physical circuits to circuit diagrams"
+              ],
+              "engaged learning, helped improved understanding": [
+                "assisting students with problem solving",
+                "explaining problem-solving processes during and after labs",
+                "using questions to encourage skill development"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "hands-on circuits labs",
+                "supporting student circuit debugging",
+                "demonstrating multimeter features",
+                "guiding independent debugging",
+                "oscilloscope use",
+                "signal generator use",
+                "relating circuit diagrams to breadboard connections"
+              ]
+            },
+            "4": {
+              "skills, and technical knowledge check.": [
+                "Biomedical engineering coursework",
+                "BMEN 468 and BMEN 478 projects",
+                "Hydration-monitoring wearable",
+                "Arduino",
+                "Coding",
+                "EDA sensors",
+                "Intellectual property research in BMEN 401",
+                "BME capstone project",
+                "Hands-on technical experience",
+                "Lab, tutorial, and grading support",
+                "Familiarity with course structure"
+              ],
+              "verbal and written skills to communicate": [
+                "Led team communication",
+                "Capstone project communication",
+                "Intubation model project",
+                "Technical presentations",
+                "Non-technical presentations",
+                "Stakeholder presentations"
+              ],
+              "engaged learning, helped improved understanding": [
+                "BMEN 488 group study sessions",
+                "Explaining signals and instrumentation",
+                "Controller understanding",
+                "Breaking down complex topics",
+                "Peer support",
+                "Lab group instruction"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Led BMEN study group",
+                "Problem-based discussions",
+                "Real exam question practice",
+                "Collaborative problem solving",
+                "Explaining solution approaches",
+                "Collaboration",
+                "Critical thinking",
+                "Improved student confidence and performance",
+                "BMEN 488",
+                "BMEN 523",
+                "BMEN 585"
+              ]
+            },
+            "8": {
+              "skills, and technical knowledge check.": [
+                "3rd-year PhD candidate",
+                "Biomedical engineering",
+                "Medical imaging",
+                "Biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "Teaching assistant experience",
+                "Undergraduate mechanics courses",
+                "Explaining concepts",
+                "Tutorial and lab instruction"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Asking students to explain their reasoning",
+                "Identifying where students are going wrong",
+                "Mechanics courses"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Teaching assistant in a flipped classroom-style mechanics course",
+                "Facilitating problem-solving sessions",
+                "Students reviewing lecture materials in advance",
+                "Guiding students through real-time application of concepts",
+                "Challenging problem solving"
+              ]
+            },
+            "261": {
+              "skills, and technical knowledge check.": [
+                "CAD design",
+                "SolidWorks",
+                "Fusion 360",
+                "Additive manufacturing",
+                "3D printing",
+                "Automation manufacturing",
+                "CAM",
+                "Mastercam",
+                "Biomaterial synthesis",
+                "Mechanical characterization",
+                "Cell culturing",
+                "Teaching assistant for manufacturing lab and lecture",
+                "Problem-based design",
+                "Project management",
+                "High school physics teaching",
+                "Design and construction teaching",
+                "PhD candidate in stem cell regenerative medicine",
+                "Advanced stem cell biology"
+              ],
+              "verbal and written skills to communicate": [
+                "Individualized technical explanations",
+                "Translating CAD and project-management concepts for students with limited experience",
+                "Group-based communication",
+                "Product design and design challenges"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Connecting material properties to manufacturing processes",
+                "Industry-context learning",
+                "Safety-focused instruction",
+                "Efficiency-focused instruction",
+                "Innovation-focused instruction",
+                "Manufacturing engineering"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Ran a design, construction, and fabrication shop for 3 years",
+                "Course design",
+                "Assessment",
+                "Project innovation",
+                "Applied skills training",
+                "Industrial woodworking equipment",
+                "Welding equipment",
+                "CWB welding certificates",
+                "SMAW (Stick) welding",
+                "GMAW (MIG) welding",
+                "Permanent Alberta Education teacher status"
+              ]
+            }
+          }
+        },
+        {
+          "repeat": 3,
+          "status": "ok",
+          "elapsed_seconds": 12.2305260830326,
+          "request_seconds": [
+            2.6017562090419233,
+            2.151177666033618,
+            2.6562787909060717,
+            1.9783902079798281,
+            2.840304874931462
+          ],
+          "keywords": {
+            "1": {
+              "skills, and technical knowledge check.": [
+                "Teaching assistant experience across engineering, chemistry, and physics departments",
+                "Strong proficiency in electrical engineering",
+                "Strong proficiency in materials science",
+                "Strong proficiency in physics",
+                "Strong proficiency in chemistry",
+                "Biomedical signals, systems, and instrumentation",
+                "Electrical circuits and machines",
+                "Biomedical engineering design",
+                "General chemistry: structure and bonding",
+                "Electromagnetism and thermal physics"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining laboratory procedures",
+                "Explaining the purpose of procedures",
+                "Explaining how to carry out procedures",
+                "Laboratory and tutorial session communication"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Student-centered guidance",
+                "Asking guiding questions",
+                "Collaborative problem-solving",
+                "Helping students complete labs independently"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Promoted active learning in laboratory and tutorial environments",
+                "Prepared by practicing each lab in advance",
+                "Connected problems to previous course content",
+                "Asked students to recall lecture learning",
+                "Used prompts to guide students toward solutions independently",
+                "Helped students understand the bigger picture",
+                "Encouraged students to read and interpret questions carefully"
+              ]
+            },
+            "2": {
+              "skills, and technical knowledge check.": [
+                "instrumentation design, fabrication, and evaluation",
+                "sensor sampling and filtering",
+                "data processing and storage",
+                "microcontroller use",
+                "equine biomechanics",
+                "directed study in biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "TA experience in circuits courses",
+                "verbal and written explanations",
+                "drawings connecting physical circuits to circuit diagrams"
+              ],
+              "engaged learning, helped improved understanding": [
+                "lab-based problem-solving assistance",
+                "explaining problem-solving processes",
+                "summarizing solution processes",
+                "question-based skill development"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "hands-on circuits labs",
+                "circuit debugging support",
+                "multimeter feature demonstrations",
+                "oscilloscope use",
+                "signal generator use",
+                "connecting circuit diagrams to breadboard connections",
+                "guided tool use and debugging procedures"
+              ]
+            },
+            "4": {
+              "skills, and technical knowledge check.": [
+                "Biomedical engineering coursework",
+                "BMEN 468 and BMEN 478 projects",
+                "Hydration-monitoring wearable",
+                "Arduino",
+                "Coding",
+                "EDA sensors",
+                "Intellectual property research",
+                "BMEN 401",
+                "Biomedical engineering capstone",
+                "Lab, tutorial, and grading support",
+                "Understanding of common student difficulties"
+              ],
+              "verbal and written skills to communicate": [
+                "Led team communication",
+                "Capstone project communication",
+                "Intubation model project",
+                "Technical presentations",
+                "Non-technical presentations",
+                "Stakeholder communication"
+              ],
+              "engaged learning, helped improved understanding": [
+                "BMEN 488",
+                "Group study sessions",
+                "Explaining signals and instrumentation",
+                "Controller understanding",
+                "Lab group support"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Led BMEN study group",
+                "Problem-based discussions",
+                "Real exam question solving",
+                "Explaining problem-solving approaches",
+                "Collaboration",
+                "Critical thinking",
+                "Improved student confidence and performance",
+                "BMEN 488",
+                "BMEN 523",
+                "BMEN 585",
+                "Assignments involving presentations and reports"
+              ]
+            },
+            "8": {
+              "skills, and technical knowledge check.": [
+                "3rd-year PhD student",
+                "Biomedical engineering",
+                "Medical imaging",
+                "Biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "Teaching assistant experience",
+                "Undergraduate mechanics courses",
+                "Explaining concepts",
+                "Tutorial setting",
+                "Laboratory setting"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Asking students to explain their reasoning",
+                "Identifying where students are going wrong",
+                "Mechanics courses"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Teaching assistant in a flipped classroom-style mechanics course",
+                "Facilitating problem-solving sessions",
+                "Students reviewed lecture materials in advance",
+                "Guiding students through real-time application of concepts",
+                "Challenging problems"
+              ]
+            },
+            "261": {
+              "skills, and technical knowledge check.": [
+                "CAD design",
+                "SolidWorks",
+                "Fusion 360",
+                "Additive manufacturing",
+                "3D printing",
+                "CAM/Mastercam",
+                "Biomaterial synthesis",
+                "Mechanical characterization",
+                "Cell culturing",
+                "Manufacturing lab and lecture TA experience",
+                "Problem-based design",
+                "Project management",
+                "High school teaching in Physics, Design, and Construction",
+                "PhD candidate in Stem Cell Regenerative Medicine",
+                "Advanced topics in stem cell biology"
+              ],
+              "verbal and written skills to communicate": [
+                "Individualized technical explanations",
+                "Translating technical concepts for product design",
+                "Communicating with students with limited experience",
+                "Group-based CAD design instruction",
+                "Project management instruction"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Connecting material properties to manufacturing processes",
+                "Industry applications",
+                "Safety-focused instruction",
+                "Efficiency-focused instruction",
+                "Innovation-focused instruction",
+                "Manufacturing engineering teaching assistance"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Ran a design, construction, and fabrication shop for 3 years",
+                "Course design",
+                "Assessment",
+                "Project innovation",
+                "Applied skills training",
+                "Industrial woodworking equipment",
+                "Industrial welding equipment",
+                "CWB SMAW (Stick) welding certification",
+                "CWB GMAW (MIG) welding certification",
+                "Permanent Alberta Education teacher status"
+              ]
+            }
+          }
+        }
+      ],
+      "summary": {
+        "successful_runs": 3,
+        "failed_runs": 0,
+        "median_dataset_seconds": 13.543642041971907,
+        "median_request_seconds": 2.6547039579600096,
+        "p95_request_seconds": 8.157798208994791,
+        "mean_f1": null
+      }
+    },
+    "gpt-6-luna": {
+      "runs": [
+        {
+          "repeat": 1,
+          "status": "ok",
+          "elapsed_seconds": 18.4283944159979,
+          "request_seconds": [
+            3.4335323750274256,
+            3.4339102080557495,
+            3.761121958028525,
+            3.4708971669897437,
+            4.324284542002715
+          ],
+          "keywords": {
+            "1": {
+              "skills, and technical knowledge check.": [
+                "Teaching assistant experience",
+                "Electrical engineering",
+                "Materials science",
+                "Physics",
+                "Chemistry"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining procedures",
+                "Explaining the purpose of procedures",
+                "Guiding students through procedures"
+              ],
+              "engaged learning, helped improved understanding": [
+                "One-on-one support",
+                "Guiding questions",
+                "Collaborative problem-solving",
+                "Independent lab completion"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Lab- and tutorial-based active learning",
+                "Preparing for labs in advance",
+                "Connecting activities to previous course content",
+                "Asking students to recall lecture learning",
+                "Guiding students with prompts",
+                "Helping students reach solutions independently",
+                "Supporting students in understanding questions"
+              ]
+            },
+            "2": {
+              "skills, and technical knowledge check.": [
+                "Instrumentation design, fabrication, and evaluation",
+                "Sensor sampling and filtering",
+                "Data processing and storage",
+                "Microcontroller",
+                "Equine biomechanics",
+                "Directed study in biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "Teaching assistant for circuits courses",
+                "Combining verbal and written explanations",
+                "Drawings to relate physical circuits to circuit diagrams"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Explaining problem-solving processes",
+                "Process summaries",
+                "Using questions to develop student skills"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on circuits labs",
+                "Supporting independent circuit debugging",
+                "Demonstrating multimeter features",
+                "Guiding students in tool use and debugging procedures",
+                "Oscilloscope",
+                "Signal generator",
+                "Relating circuit diagrams to breadboard connections"
+              ]
+            },
+            "4": {
+              "skills, and technical knowledge check.": [
+                "Biomedical Engineering alumnus",
+                "BMEN 468 and 478 projects",
+                "hydration-monitoring wearable",
+                "Arduino",
+                "coding",
+                "EDA sensors",
+                "in-depth research on IP in BMEN 401",
+                "BME capstone project",
+                "hands-on experience",
+                "course structure familiarity",
+                "lab, tutorial, and grading support"
+              ],
+              "verbal and written skills to communicate": [
+                "led team communication",
+                "intubation model project",
+                "technical and non-technical communication",
+                "stakeholder presentations"
+              ],
+              "engaged learning, helped improved understanding": [
+                "group study sessions",
+                "broke down topics for a peer",
+                "signals and instrumentation",
+                "controller understanding",
+                "supporting lab group learning"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "led BMEN study group",
+                "problem-based discussions",
+                "real exam question exercises",
+                "individual problem-solving",
+                "explaining approaches to the group",
+                "collaboration",
+                "critical thinking",
+                "improved confidence and performance",
+                "BMEN 488, BMEN 523, and BMEN 585"
+              ]
+            },
+            "8": {
+              "skills, and technical knowledge check.": [
+                "PhD candidate, 3rd year",
+                "Biomedical engineering",
+                "Medical imaging",
+                "Biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "Teaching assistant",
+                "Undergraduate mechanics courses",
+                "Explaining concepts",
+                "Tutorial and lab instruction"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Ask students to explain their reasoning",
+                "Identify where students are going wrong"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Flipped classroom-style mechanics course",
+                "Facilitated problem-solving sessions",
+                "Students reviewed lecture materials in advance",
+                "Guided real-time application of concepts to challenging problems"
+              ]
+            },
+            "261": {
+              "skills, and technical knowledge check.": [
+                "CAD design (SolidWorks, Fusion 360)",
+                "Additive manufacturing (3D printing)",
+                "Automation manufacturing (CAM, Mastercam)",
+                "Biomaterial synthesis",
+                "Mechanical characterization",
+                "Cell culturing",
+                "Teaching assistant for ENMF 417 Manufacturing (lab and lecture)",
+                "Teaching assistant for ENGG 200 (part-time)",
+                "Problem-based design and project management",
+                "High school teaching (physics, design, and construction)",
+                "PhD candidate in Stem Cell Regenerative Medicine",
+                "Advanced topics in stem cell biology"
+              ],
+              "verbal and written skills to communicate": [
+                "Individualized technical explanations",
+                "Translating technical concepts for product design",
+                "Supporting group CAD design and project management"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Connecting material properties and context to manufacturing processes",
+                "Teaching manufacturing applications across industries",
+                "Emphasizing safety, efficiency, and innovation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Ran a design, construction, and fabrication shop for 3 years",
+                "Course design and assessment",
+                "Project innovation",
+                "Applied skills training",
+                "Industrial woodworking and welding equipment",
+                "CWB welding certificates: SMAW (Stick) and GMAW (MIG)",
+                "Permanent Alberta Education teacher status"
+              ]
+            }
+          }
+        },
+        {
+          "repeat": 2,
+          "status": "ok",
+          "elapsed_seconds": 19.141636083018966,
+          "request_seconds": [
+            3.7512733329785988,
+            3.2608513339655474,
+            4.2495364169590175,
+            3.731592291034758,
+            4.147327375016175
+          ],
+          "keywords": {
+            "1": {
+              "skills, and technical knowledge check.": [
+                "Teaching assistant experience",
+                "Electrical engineering",
+                "Materials science",
+                "Physics",
+                "Chemistry",
+                "Laboratory instruction",
+                "Tutorial instruction"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining procedures",
+                "Explaining the purpose of procedures",
+                "Explaining how to carry out procedures"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Guiding questions",
+                "Collaborative problem-solving",
+                "Supporting independent lab completion"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Active learning in lab and tutorial environments",
+                "Preparing for labs in advance",
+                "Connecting current work to previous course content",
+                "Asking students to recall lecture learning",
+                "Guiding students with prompts",
+                "Helping students understand the bigger picture",
+                "Supporting students to reach solutions independently",
+                "Helping students interpret questions"
+              ]
+            },
+            "2": {
+              "skills, and technical knowledge check.": [
+                "Instrumentation design, fabrication, and evaluation",
+                "Sensor sampling and filtering",
+                "Data processing and storage",
+                "Microcontroller",
+                "Equine biomechanics",
+                "Directed study in biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "Teaching assistant for circuits courses",
+                "Verbal and written explanations",
+                "Drawings to relate physical circuits to circuit diagrams"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Lab-based student support",
+                "Explain problem-solving processes during and after activities",
+                "Use questions to develop student skills"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Hands-on circuits labs",
+                "Support students in debugging circuits",
+                "Demonstrate multimeter features",
+                "Guide students to debug independently",
+                "Guide use of an oscilloscope and signal generator",
+                "Relate circuit diagrams to breadboard connections"
+              ]
+            },
+            "4": {
+              "skills, and technical knowledge check.": [
+                "Biomedical Engineering alumnus",
+                "BMEN 468 and 478 projects",
+                "Hydration-monitoring wearable",
+                "Arduino",
+                "Coding",
+                "EDA sensors",
+                "In-depth research on IP in BMEN 401",
+                "BME capstone project",
+                "Hands-on experience",
+                "Familiarity with course structure",
+                "Lab, tutorial, and grading support"
+              ],
+              "verbal and written skills to communicate": [
+                "Led team communication",
+                "Presented to stakeholders",
+                "Communicated technical and non-technical information",
+                "Intubation model capstone project"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Group study sessions",
+                "Broke down topics for a peer",
+                "Explained signals and instrumentation",
+                "Supported understanding of controller use",
+                "Planned to use the same approach with lab group"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Led a BMEN study group",
+                "Problem-based discussions",
+                "Collaborative solving of real exam questions",
+                "Students explained their approaches",
+                "Encouraged collaboration and critical thinking",
+                "Reported improved confidence and performance",
+                "BMEN 488, BMEN 523, and BMEN 585"
+              ]
+            },
+            "8": {
+              "skills, and technical knowledge check.": [
+                "3rd-year PhD student",
+                "biomedical engineering",
+                "medical imaging",
+                "biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining concepts",
+                "Tutorial and lab instruction",
+                "Undergraduate mechanics courses"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Asking students to explain their reasoning",
+                "Identifying where students are going wrong"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Flipped classroom-style mechanics course",
+                "Facilitating problem-solving sessions",
+                "Students review lecture materials in advance",
+                "Guiding students in applying concepts to challenging problems in real time"
+              ]
+            },
+            "261": {
+              "skills, and technical knowledge check.": [
+                "CAD design",
+                "SolidWorks",
+                "Fusion 360",
+                "additive manufacturing (3D printing)",
+                "CAM/Mastercam",
+                "biomaterial synthesis",
+                "mechanical characterization",
+                "cell culturing",
+                "teaching physics, design, and construction",
+                "TA experience in manufacturing",
+                "fundamentals of problem-based design",
+                "project management",
+                "PhD candidate in stem cell regenerative medicine",
+                "advanced topics in stem cell biology"
+              ],
+              "verbal and written skills to communicate": [
+                "individualized technical explanations",
+                "translating technical concepts for product design",
+                "communicating with students with limited experience",
+                "group project support"
+              ],
+              "engaged learning, helped improved understanding": [
+                "connecting material properties to manufacturing processes",
+                "industry-contextualized learning",
+                "emphasis on safety, efficiency, and innovation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "ran a design, construction, and fabrication shop for 3 years",
+                "course design",
+                "assessment",
+                "project innovation",
+                "applied skills training",
+                "industrial woodworking equipment",
+                "welding equipment",
+                "CWB SMAW (Stick) welding certificate",
+                "CWB GMAW (MIG) welding certificate",
+                "permanent Alberta Education teacher status"
+              ]
+            }
+          }
+        },
+        {
+          "repeat": 3,
+          "status": "ok",
+          "elapsed_seconds": 17.25190220796503,
+          "request_seconds": [
+            3.1515101669356227,
+            3.420995916938409,
+            3.6068379590287805,
+            2.4992278330028057,
+            4.5718907080590725
+          ],
+          "keywords": {
+            "1": {
+              "skills, and technical knowledge check.": [
+                "Teaching assistant experience",
+                "Electrical engineering",
+                "Materials science",
+                "Physics",
+                "Chemistry"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining procedures",
+                "Explaining the purpose of procedures",
+                "Guiding students through procedures"
+              ],
+              "engaged learning, helped improved understanding": [
+                "One-on-one support",
+                "Guiding questions",
+                "Supporting independent lab completion"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Lab- and tutorial-based active learning",
+                "Pre-session lab practice",
+                "Connecting activities to previous course content",
+                "Asking students to recall lecture learning",
+                "Guided questioning",
+                "Helping students see the bigger picture",
+                "Encouraging students to reach solutions independently"
+              ]
+            },
+            "2": {
+              "skills, and technical knowledge check.": [
+                "instrumentation design, fabrication, and evaluation",
+                "sensor sampling and filtering",
+                "data processing and storage",
+                "microcontroller",
+                "equine biomechanics",
+                "directed study in biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "TA experience in circuits courses",
+                "verbal and written explanations",
+                "drawings to relate physical circuits to circuit diagrams"
+              ],
+              "engaged learning, helped improved understanding": [
+                "lab-based student support",
+                "explaining problem-solving processes",
+                "summarizing problem-solving processes",
+                "using questions to develop skills"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "hands-on circuits labs",
+                "supporting independent circuit debugging",
+                "demonstrating multimeter features",
+                "guiding use of an oscilloscope and signal generator",
+                "relating circuit diagrams to breadboard connections"
+              ]
+            },
+            "4": {
+              "skills, and technical knowledge check.": [
+                "Biomedical Engineering coursework",
+                "BMEN 468 and BMEN 478 projects",
+                "Arduino",
+                "Coding",
+                "EDA sensors",
+                "Hydration-monitoring wearable",
+                "In-depth research on intellectual property (BMEN 401)",
+                "BME capstone project",
+                "Hands-on experience",
+                "Familiarity with course structure",
+                "Lab, tutorial, and grading support"
+              ],
+              "verbal and written skills to communicate": [
+                "Led team communication",
+                "Presented to stakeholders",
+                "Communicated technical and non-technical information",
+                "Intubation model capstone project"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Group study sessions",
+                "Explained signals and instrumentation",
+                "Controller use",
+                "Explaining concepts to lab group"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Led a BMEN study group",
+                "Problem-based discussions",
+                "Collaborative exam-question solving",
+                "Explained solution approaches to peers",
+                "Promoted collaboration and critical thinking",
+                "Reported improved confidence and performance",
+                "BMEN 488, BMEN 523, and BMEN 585"
+              ]
+            },
+            "8": {
+              "skills, and technical knowledge check.": [
+                "3rd-year PhD in biomedical engineering",
+                "Medical imaging",
+                "Biomechanics"
+              ],
+              "verbal and written skills to communicate": [
+                "Explaining mechanics concepts",
+                "Tutorial and lab instruction",
+                "Undergraduate teaching assistant"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Asking students to explain their reasoning",
+                "Identifying where students are going wrong"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Flipped classroom-style mechanics course",
+                "Facilitating problem-solving sessions",
+                "Students reviewing lecture materials in advance",
+                "Guiding real-time application of concepts to challenging problems"
+              ]
+            },
+            "261": {
+              "skills, and technical knowledge check.": [
+                "CAD design (SolidWorks, Fusion 360)",
+                "Additive manufacturing (3D printing)",
+                "Manufacturing automation (CAM, Mastercam)",
+                "Biomaterial synthesis",
+                "Mechanical characterization",
+                "Cell culturing",
+                "Teaching assistant: manufacturing lab and lecture",
+                "Teaching assistant: problem-based design and project management",
+                "High school teaching: physics, design, and construction",
+                "PhD candidate in stem cell regenerative medicine",
+                "Advanced topics in stem cell biology"
+              ],
+              "verbal and written skills to communicate": [
+                "Individualized technical explanations",
+                "Translating technical concepts for product design",
+                "Group project support",
+                "CAD design and project management instruction"
+              ],
+              "engaged learning, helped improved understanding": [
+                "Connecting material properties and context to manufacturing processes",
+                "Industry-based manufacturing examples",
+                "Safety",
+                "Efficiency",
+                "Innovation"
+              ],
+              "Describe where you have successfully promoted an active learning learning style to engage students.": [
+                "Ran a design, construction, and fabrication shop for three years",
+                "Course design",
+                "Assessment",
+                "Project innovation",
+                "Applied skills training",
+                "Industrial woodworking equipment",
+                "Welding equipment",
+                "CWB SMAW (Stick) welding certificate",
+                "CWB GMAW (MIG) welding certificate",
+                "Permanent Alberta Education teacher status"
+              ]
+            }
+          }
+        }
+      ],
+      "summary": {
+        "successful_runs": 3,
+        "failed_runs": 0,
+        "median_dataset_seconds": 18.4283944159979,
+        "median_request_seconds": 3.6068379590287805,
+        "p95_request_seconds": 4.5718907080590725,
+        "mean_f1": null
+      }
+    }
+  }
+}

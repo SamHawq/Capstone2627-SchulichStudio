@@ -79,6 +79,11 @@ def render_html(final: FinalRanking, ref_map: dict[str, str], request: HiringReq
         for cid, w in request.criteria.items() if w > 0
     )
     notes = f'<p class="notes">{escape(request.notes)}</p>' if request.notes else ""
+    if final.reviewed and final.review_summary:
+        notes += f'<p class="notes"><b>Manager review:</b> {escape(final.review_summary)}</p>'
+    if final.tiebreak_fields:
+        notes += ('<p class="notes">Other information (no criterion uses it; only breaks ties): '
+                  f'{escape(", ".join(final.tiebreak_fields))}</p>')
     if request.documents:
         notes += f'<p class="notes">Drafted from: {escape(", ".join(request.documents))}</p>'
     if request.sessions:
@@ -95,12 +100,22 @@ def render_html(final: FinalRanking, ref_map: dict[str, str], request: HiringReq
                 f'<span class="num">{score}/10</span></div>'
                 f'<p class="why">{escape(c.rationales.get(cid, ""))}</p>'
             )
+        weighted = c.weighted_score if c.weighted_score is not None else c.total_score
+        label = (f"weighted {weighted:.2f} {c.adjustment:+.2f}" if c.adjustment
+                 else ("final score" if final.reviewed else "weighted score"))
+        review = ""
+        if c.justification:
+            review += f'<p class="why"><b>Manager:</b> {escape(c.justification)}</p>'
+        if c.adjustment:
+            review += f'<p class="why"><b>Adjusted {c.adjustment:+.2f}:</b> {escape(c.adjustment_reason)}</p>'
+        if c.tiebreak_reason:
+            review += f'<p class="why"><b>Tie broken by other information:</b> {escape(c.tiebreak_reason)}</p>'
         cards.append(
             f'<div class="card"><div class="head"><div class="rank">{i}</div>'
             f'<div class="who"><b>UCID {escape(ref_map.get(c.candidate_ref, "?"))}</b>'
             f'<div class="ref">{escape(c.candidate_ref)}</div></div>'
-            f'<div class="total"><b>{c.total_score:.2f}</b><span>weighted score</span></div></div>'
-            f'<div class="crit">{"".join(rows)}</div></div>'
+            f'<div class="total"><b>{c.total_score:.2f}</b><span>{escape(label)}</span></div></div>'
+            f'{review}<div class="crit">{"".join(rows)}</div></div>'
         )
 
     excluded = "".join(
@@ -121,8 +136,8 @@ def render_html(final: FinalRanking, ref_map: dict[str, str], request: HiringReq
     if final.skipped_fields:
         criteria += (
             f'<details class="card"><summary>{len(final.skipped_fields)} fields not ranked on</summary>'
-            + "".join(f'<p class="meta"><b>{escape(s.field)}</b>: {escape(s.reason)}</p>'
-                      for s in final.skipped_fields)
+            + "".join(f'<p class="meta"><b>{escape(s.field)}</b> ({escape(s.use.replace("_", " "))}): '
+                      f'{escape(s.reason)}</p>' for s in final.skipped_fields)
             + "</details>"
         )
 

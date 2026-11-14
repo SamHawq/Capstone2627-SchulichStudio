@@ -105,6 +105,7 @@
 <header>
   <h1>Hiring Agents</h1>
   <span class="sub">Local · data stays on this machine; only pseudonymized fields reach the LLMs</span>
+  <a href="/runs" style="margin-left:auto;color:var(--accent)">Run viewer →</a>
 </header>
 
 <main>
@@ -170,15 +171,17 @@
           <div style="width:140px"><label for="rq-top">Candidates to return</label><input type="number" id="rq-top" min="1" value="5"></div>
           <label class="check" style="margin-bottom:10px"><input type="checkbox" id="rq-auto" checked> Let fitting auto criteria join</label>
         </div>
-        <label for="rq-notes">Notes for every ranker (optional)</label>
-        <textarea id="rq-notes" placeholder="e.g. Prefer TAs who can explain programming concepts to first-year students."></textarea>
+        <label for="rq-notes">Notes for the Manager's final review (optional)</label>
+        <textarea id="rq-notes" placeholder="e.g. Between similar candidates, prefer ones who have run labs."></textarea>
 
         <h3>Criteria and weights</h3>
         <p class="muted" style="margin:0 0 6px">Tick a criterion to weight it. Weights are relative; the share column shows each one's part of the total, including auto criteria expected to join. A ticked criterion can also get instructions for its ranker.</p>
+        <div id="crit-source" class="muted" style="margin:0 0 6px"></div>
         <div id="crit-list"><p class="muted">Loading…</p></div>
 
         <div class="row" style="margin-top:14px">
           <button id="rk-btn">Rank candidates</button>
+          <button id="rk-latest" class="secondary">Show latest saved ranking</button>
           <span id="rk-busy" class="hidden row"><span class="spinner"></span><span class="muted">Ranking: one LLM call per criterion, usually under a minute…</span></span>
         </div>
         <div id="rk-err"></div>
@@ -186,12 +189,30 @@
     </section>
   </div>
 
+  <!-- Job spreadsheets -->
+  <section class="card" style="margin-top:16px">
+    <h2>Job spreadsheets</h2>
+    <p class="muted" style="margin:0 0 8px">A spreadsheet designed for one job: the Manager picks the columns (grouped by what they show about a candidate) from the text in <b>Describe the hire</b> and the ticked documents, and the Data Agent fills them from the candidate data (2–4 LLM calls). Download it as an Excel workbook to review or edit, and import it later to skip the design and mapping.</p>
+    <div class="row">
+      <button id="jb-create">Create from the description above</button>
+      <span id="jb-busy" class="hidden row"><span class="spinner"></span><span class="muted" id="jb-busy-text">Designing…</span></span>
+      <span style="flex:1"></span>
+      <input type="file" id="jb-file" accept=".xlsx">
+      <button class="secondary" id="jb-import">Import workbook</button>
+    </div>
+    <div id="jb-out"></div>
+    <h3>Saved jobs</h3>
+    <div id="jb-list"><p class="muted">Loading…</p></div>
+    <div id="jb-detail"></div>
+  </section>
+
   <!-- Results -->
   <section id="results" class="card hidden" style="margin-top:16px">
     <div class="row" style="justify-content:space-between">
       <h2 id="rs-title" style="margin:0">Results</h2>
       <a id="rs-report" target="_blank" rel="noopener">Open full report ↗</a>
     </div>
+    <p id="rs-status" class="muted"></p>
     <h3>Criteria that ran</h3>
     <div class="chips" id="rs-criteria"></div>
     <h3>Ranking</h3>
@@ -262,6 +283,7 @@ function sourcesBlock(sources) {
 
 async function afterProcessing(out, summary, result) {
   out.replaceChildren(message("ok", summary), sourcesBlock(result.sources) || "", warningsBlock(result.warnings) || "");
+  if (fromDraft.catalog) { fromDraft.catalog = null; saved.draftCriteria = null; $("#rq-auto").checked = true; }
   await Promise.all([loadStatus(), loadCriteria()]);
 }
 
@@ -350,18 +372,46 @@ function updateShares() {
     share.title = c.id in joins ? "Auto criterion expected to join" : "";
   }
   remember({ role: $("#rq-role").value, top: $("#rq-top").value, notes: $("#rq-notes").value,
-             auto: $("#rq-auto").checked, choice, brief: $("#mg-text").value, docs: [...pickedDocs], fromDraft });
+             auto: $("#rq-auto").checked, choice, criteriaKey: criteriaKey(criteria), brief: $("#mg-text").value,
+             docs: [...pickedDocs], fromDraft, draftCriteria: fromDraft.catalog ? criteria : null });
 }
 
+const criteriaKey = (list) => list.map((c) => c.id).sort().join("|");
+
+// The criteria shown: the ones planned for the drafted description if there is a draft,
+// otherwise the data's general criteria.
 async function loadCriteria() {
-  criteria = await api("/api/criteria");
-  const list = $("#crit-list");
-  if (!criteria.length) { list.replaceChildren(el("p", { class: "muted" }, "No criteria yet.")); return; }
-  list.replaceChildren(...criteria.map((c) => {
-    const prev = (saved.choice || {})[c.id];
-    choice[c.id] = choice[c.id] || prev || { on: false, weight: c.suggested_weight };
+  if (fromDraft.catalog && saved.draftCriteria) renderCriteria(saved.draftCriteria, true);
+  else renderCriteria(await api("/api/criteria"), true);
+}
+
+function useGeneralCriteria() {
+  fromDraft.catalog = null;
+  saved.draftCriteria = null;
+  $("#rq-auto").checked = true;
+  loadCriteria().catch((e) => $("#crit-list").replaceChildren(message("err", e.message)));
+}
+
+function renderCriteria(list, restore, preset = null) {
+  criteria = list;
+  for (const k of Object.keys(choice)) delete choice[k];
+  // Saved ticks belong to one criteria list; a different list (re-planned data, a new draft)
+  // starts fresh, so stale ticks never carry over by id.
+  const same = restore && saved.criteriaKey === criteriaKey(list);
+  $("#crit-source").replaceChildren(...(fromDraft.catalog
+    ? ["Criteria planned for your description. ", el("a", { href: "#", onclick: (e) => { e.preventDefault(); useGeneralCriteria(); } },
+        "Use the data's general criteria instead")]
+    : ["The data's general criteria. Draft a request above to plan criteria for your description."]));
+  const listEl = $("#crit-list");
+  if (!criteria.length) { listEl.replaceChildren(el("p", { class: "muted" }, "No criteria yet.")); return; }
+  listEl.replaceChildren(...criteria.map((c) => {
+    const usable = c.fields.length > 0;
+    const prev = same ? (saved.choice || {})[c.id] : null;
+    choice[c.id] = (preset && preset[c.id]) || prev || { on: usable && !c.courses.length, weight: c.suggested_weight };
+    if (!usable) choice[c.id].on = false;
     const st = choice[c.id];
-    const box = el("input", { type: "checkbox", checked: st.on, "aria-label": `Use ${c.name}` });
+    const box = el("input", { type: "checkbox", checked: st.on, disabled: !usable, "aria-label": `Use ${c.name}`,
+                              title: usable ? "" : "No data fields for this criterion in this data" });
     const range = el("input", { type: "range", min: "0", max: "5", step: "0.1", value: st.weight, "aria-label": `${c.name} weight` });
     const num = el("input", { type: "number", min: "0", step: "0.1", value: st.weight, "aria-label": `${c.name} weight` });
     const set = (v, from) => {
@@ -369,7 +419,7 @@ async function loadCriteria() {
       st.weight = w;
       if (from !== range) range.value = w;
       if (from !== num) num.value = w;
-      if (w > 0 && !st.on) { st.on = true; box.checked = true; }
+      if (w > 0 && !st.on && usable) { st.on = true; box.checked = true; }
       updateShares();
     };
     const instr = el("input", { type: "text", value: st.instr || "", placeholder: "Instructions for this ranker (optional)",
@@ -379,7 +429,7 @@ async function loadCriteria() {
     range.addEventListener("input", () => set(range.value, range));
     num.addEventListener("input", () => set(num.value, num));
     instr.addEventListener("input", () => { st.instr = instr.value; updateShares(); });
-    const meta = [c.type === "auto" ? "auto" : "built-in", `${c.fields.length} field(s)`]
+    const meta = [c.type === "auto" ? "auto" : "built-in", usable ? `${c.fields.length} field(s)` : "no fields in this data"]
       .concat(c.courses.length ? [`only for ${c.courses.join(", ")}`] : []).join(" · ");
     return el("div", { class: "crit", id: `crit-${c.id}` }, box,
       el("div", { class: "name", title: `${c.description}\n\nFields: ${c.fields.join(", ")}` },
@@ -439,13 +489,20 @@ function applyDraft(draft) {
   $("#rq-notes").value = r.notes;
   // The draft weights every criterion, so nothing else should join on its own.
   $("#rq-auto").checked = false;
-  fromDraft = { sessions: r.sessions, documents: r.documents };
-  for (const c of criteria) {
+  // A draft carries the criteria planned for it. An older server sends none: then keep the
+  // criteria already shown, and say the server needs a restart.
+  const planned = Array.isArray(draft.criteria) && draft.criteria.length && r.catalog;
+  const list = planned ? draft.criteria : criteria;
+  fromDraft = { sessions: r.sessions, documents: r.documents, catalog: planned ? r.catalog : null };
+  saved.draftCriteria = planned ? draft.criteria : null;
+  const preset = {};
+  for (const c of list) {
     const w = r.criteria[c.id] ?? 0;
-    choice[c.id] = { on: w > 0, weight: w > 0 ? w : c.suggested_weight,
+    preset[c.id] = { on: w > 0, weight: w > 0 ? w : c.suggested_weight,
                      instr: r.instructions[c.id] || "", reason: draft.reasons[c.id] || "" };
   }
-  saved.choice = choice;
+  renderCriteria(list, false, preset);
+  return planned;
 }
 
 $("#mg-btn").addEventListener("click", async () => {
@@ -455,11 +512,13 @@ $("#mg-btn").addEventListener("click", async () => {
   try {
     const draft = await api("/api/requests/draft", { method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ instructions: text, documents }) });
-    applyDraft(draft);
-    await loadCriteria();
+    const planned = applyDraft(draft);
     const n = Object.values(draft.request.criteria).filter((w) => w > 0).length;
     const from = documents.length ? ` from ${documents.length} document(s)` : "";
-    const parts = [message("ok", `Drafted${from}: ${n} criteria weighted. Review the request below, then rank.`)];
+    const parts = [message("ok", `Drafted${from}: ${n} criteria weighted${planned ? ", planned for your description" : ""}. `
+                                 + "Review the request below, then rank.")];
+    if (!planned) parts.push(message("warn", "The server didn't send criteria planned for this description: it's "
+                                     + "probably running older code. Restart it (python src/server.py) and draft again."));
     if (draft.request.sessions.length) parts.push(el("details", { class: "msg ok" },
       el("summary", {}, `${draft.request.sessions.length} session(s) to cover, kept for scheduling (not used for ranking yet)`),
       el("ul", { class: "plain" }, draft.request.sessions.map((s) => el("li", {}, `${s.label}: ${s.day} ${s.start}–${s.end}`)))));
@@ -475,6 +534,27 @@ for (const id of ["#rq-role", "#rq-top", "#rq-notes", "#mg-text"]) $(id).addEven
 $("#rq-auto").addEventListener("change", updateShares);
 
 // ---------- Ranking ----------
+let rankingVersion = 0;
+
+async function loadLatestRanking({ scroll = true, quiet = false } = {}) {
+  const version = rankingVersion;
+  const response = await api("/api/rankings/latest");
+  if (version !== rankingVersion) return; // A new ranking started while this request was pending.
+  if (!response) {
+    if (!quiet) $("#rk-err").replaceChildren(message("ok", "No completed rankings have been saved yet."));
+    return;
+  }
+  showResults(response, { saved: true, scroll });
+}
+
+$("#rk-latest").addEventListener("click", async () => {
+  $("#rk-err").replaceChildren();
+  $("#rk-latest").disabled = true;
+  try { await loadLatestRanking(); }
+  catch (e) { $("#rk-err").replaceChildren(message("err", e.message)); }
+  finally { $("#rk-latest").disabled = false; }
+});
+
 $("#rk-btn").addEventListener("click", async () => {
   const err = $("#rk-err"), weights = requestedWeights();
   const role = $("#rq-role").value.trim(), top = parseInt($("#rq-top").value, 10);
@@ -482,19 +562,24 @@ $("#rk-btn").addEventListener("click", async () => {
   if (!Object.keys(weights).length) { err.replaceChildren(message("err", "Tick at least one criterion with a weight above 0.")); return; }
   if (!(top >= 1)) { err.replaceChildren(message("err", "Candidates to return must be at least 1.")); return; }
   err.replaceChildren();
+  rankingVersion += 1;
+  $("#rk-latest").disabled = true;
   busy($("#rk-btn"), $("#rk-busy"), true);
   try {
     const r = await api("/api/rankings", { method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ role, criteria: requestCriteria(), top_x: top, notes: $("#rq-notes").value,
+                             client_instructions: $("#mg-text").value, catalog: fromDraft.catalog || null,
                              instructions: requestInstructions(), sessions: fromDraft.sessions,
                              documents: fromDraft.documents }) });
     showResults(r);
   } catch (e) { err.replaceChildren(message("err", e.message)); }
-  finally { busy($("#rk-btn"), $("#rk-busy"), false); }
+  finally { busy($("#rk-btn"), $("#rk-busy"), false); $("#rk-latest").disabled = false; }
 });
 
-function showResults({ result, report_url }) {
+function showResults({ result, report_url }, { saved = false, scroll = true } = {}) {
   const f = result.ranking, ids = result.candidate_ids;
+  rankingVersion += 1;
+  $("#rs-status").textContent = saved ? "Latest saved ranking" : "Ranking complete";
   const names = Object.fromEntries(f.criteria.map((c) => [c.id, c.name]));
   $("#rs-title").textContent = `Top ${f.ranking.length}: ${f.role}`;
   $("#rs-report").href = report_url;
@@ -505,8 +590,15 @@ function showResults({ result, report_url }) {
     el("div", { class: "head" },
       el("div", { class: "rank" }, i + 1),
       el("div", { class: "who" }, el("b", {}, ids[c.candidate_ref] || "?"), el("div", { class: "ref" }, c.candidate_ref)),
-      el("div", { class: "total" }, el("b", {}, c.total_score.toFixed(2)), el("div", { class: "ref" }, "weighted score"))),
+      el("div", { class: "total" }, el("b", {}, c.total_score.toFixed(2)), el("div", { class: "ref" },
+        c.adjustment ? `weighted ${(c.weighted_score ?? c.total_score).toFixed(2)} ${c.adjustment > 0 ? "+" : ""}${c.adjustment.toFixed(2)}`
+                     : f.reviewed ? "final score" : "weighted score"))),
     el("div", { class: "bar", style: "margin-top:8px" }, el("i", { style: `width:${Math.round(c.total_score * 100)}%` })),
+    c.justification ? el("p", { class: "why", style: "margin:8px 0 0" }, el("b", {}, "Manager: "), c.justification) : "",
+    c.adjustment ? el("p", { class: "why", style: "margin:4px 0 0" },
+      el("b", {}, `Adjusted ${c.adjustment > 0 ? "+" : ""}${c.adjustment.toFixed(2)}: `), c.adjustment_reason) : "",
+    c.tiebreak_reason ? el("p", { class: "why", style: "margin:4px 0 0" },
+      el("b", {}, "Tie broken by other information: "), c.tiebreak_reason) : "",
     el("details", { style: "margin-top:8px" }, el("summary", {}, "Scores and reasons"),
       el("div", { class: "scores" }, Object.entries(c.per_criterion).map(([cid, s]) => el("div", { class: "score" },
         el("div", { class: "top" }, el("span", {}, names[cid] || cid), el("span", {}, `${s}/10`)),
@@ -515,10 +607,86 @@ function showResults({ result, report_url }) {
   )) : [el("p", { class: "muted" }, "No candidates ranked.")]));
   $("#rs-excluded").replaceChildren(...(f.excluded.length ? [el("h3", {}, "Excluded"),
     el("ul", { class: "plain" }, f.excluded.map((e) => el("li", {}, `${ids[e.candidate_ref] || e.candidate_ref}: ${e.reason}`)))] : []));
-  $("#rs-warnings").replaceChildren(warningsBlock(f.warnings) || "");
+  $("#rs-warnings").replaceChildren(...(f.reviewed && f.review_summary
+    ? [message("ok", `Manager's final review: ${f.review_summary}`)] : []),
+    ...(f.tiebreak_fields.length ? [el("p", { class: "muted" },
+      `Other information (no criterion uses it; only breaks ties): ${f.tiebreak_fields.join(", ")}`)] : []),
+    warningsBlock(f.warnings) || "");
   $("#results").classList.remove("hidden");
-  $("#results").scrollIntoView({ behavior: "smooth" });
+  if (scroll) $("#results").scrollIntoView({ behavior: "smooth" });
 }
+
+// ---------- Job spreadsheets ----------
+function jobLink(id) { return `/api/jobs/${encodeURIComponent(id)}/export`; }
+
+async function loadJobs() {
+  const jobs = await api("/api/jobs");
+  $("#jb-list").replaceChildren(...(jobs.length ? jobs.map((j) => el("div", { class: "result", style: "padding:8px 12px" },
+    el("div", { class: "row", style: "justify-content:space-between" },
+      el("div", {}, el("b", {}, j.role || j.id), " ",
+        el("span", { class: j.source === "import" ? "pill good" : "pill" }, j.source === "import" ? "imported" : "designed"),
+        el("div", { class: "muted" }, `${j.candidates} candidates · ${j.created_at.replace("T", " ")} · ${j.id}`)),
+      el("div", { class: "row" },
+        el("button", { class: "secondary", onclick: () => showJob(j.id) }, "View"),
+        el("a", { href: jobLink(j.id) }, "Download .xlsx"))))) : [el("p", { class: "muted" }, "No jobs yet.")]));
+}
+
+function renderJob(job) {
+  const byId = Object.fromEntries(job.columns.map((c) => [c.id, c]));
+  const parts = [el("div", { class: "row", style: "justify-content:space-between;margin-top:12px" },
+      el("h3", { style: "margin:0" }, job.design.role || job.info.id),
+      el("a", { href: jobLink(job.info.id) }, "Download .xlsx")),
+    job.design.summary ? el("p", { class: "muted" }, job.design.summary) : ""];
+  for (const g of job.design.groups) {
+    parts.push(el("div", { class: "result" },
+      el("b", {}, g.name), el("div", { class: "muted" }, g.purpose),
+      el("ul", { class: "plain" }, g.fields.map((f) => {
+        const c = byId[f.id] || {};
+        return el("li", {}, el("b", {}, f.label), ` · ${f.kind}${f.values.length ? ` (${f.values.join(" < ")})` : ""} · `,
+          `${c.filled ?? 0} of ${job.info.candidates} filled · `,
+          c.method ? `${c.method}(${c.sources.join(", ")})` : el("span", { class: "pill warn" }, "no data"),
+          c.free_text ? el("span", { class: "pill", style: "margin-left:6px" }, "free text") : "");
+      }))));
+  }
+  if (job.mapping.unplaced.length) parts.push(message("warn", "Relevant data with no column: " +
+    job.mapping.unplaced.map((g) => `${g.name} (${g.reason})`).join("; ")));
+  const w = warningsBlock(job.info.warnings);
+  if (w) parts.push(w);
+  $("#jb-detail").replaceChildren(...parts);
+}
+
+async function showJob(id) {
+  try { renderJob(await api(`/api/jobs/${encodeURIComponent(id)}`)); }
+  catch (e) { $("#jb-detail").replaceChildren(message("err", e.message)); }
+}
+
+$("#jb-create").addEventListener("click", async () => {
+  const text = $("#mg-text").value.trim(), documents = [...pickedDocs];
+  if (!text && !documents.length) { $("#jb-out").replaceChildren(message("err", "Describe the hire above (or tick a document) first.")); return; }
+  $("#jb-out").replaceChildren(); $("#jb-busy-text").textContent = "Designing and filling… (2–4 LLM calls)";
+  busy($("#jb-create"), $("#jb-busy"), true);
+  try {
+    const job = await api("/api/jobs", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ instructions: text, documents, role: $("#rq-role").value.trim() }) });
+    $("#jb-out").replaceChildren(message("ok", `Created ${job.info.id}.`));
+    renderJob(job); await loadJobs();
+  } catch (e) { $("#jb-out").replaceChildren(message("err", e.message)); }
+  finally { busy($("#jb-create"), $("#jb-busy"), false); }
+});
+
+$("#jb-import").addEventListener("click", async () => {
+  const file = $("#jb-file").files[0];
+  if (!file) { $("#jb-out").replaceChildren(message("err", "Choose a job workbook (.xlsx) first.")); return; }
+  const form = new FormData(); form.append("file", file);
+  $("#jb-out").replaceChildren(); $("#jb-busy-text").textContent = "Importing…";
+  busy($("#jb-import"), $("#jb-busy"), true);
+  try {
+    const job = await api("/api/jobs/import", { method: "POST", body: form });
+    $("#jb-out").replaceChildren(message("ok", `Imported as ${job.info.id}: no redesign or re-mapping needed.`));
+    renderJob(job); await loadJobs();
+  } catch (e) { $("#jb-out").replaceChildren(message("err", e.message)); }
+  finally { busy($("#jb-import"), $("#jb-busy"), false); }
+});
 
 // ---------- Start ----------
 if (saved.role) $("#rq-role").value = saved.role;
@@ -529,6 +697,8 @@ if (saved.brief) $("#mg-text").value = saved.brief;
 loadStatus().catch((e) => $("#st-when").replaceChildren(message("err", e.message)));
 loadCriteria().catch((e) => $("#crit-list").replaceChildren(message("err", e.message)));
 loadDocuments().catch((e) => $("#doc-list").replaceChildren(message("err", e.message)));
+loadJobs().catch((e) => $("#jb-list").replaceChildren(message("err", e.message)));
+loadLatestRanking({ scroll: false, quiet: true }).catch((e) => $("#rk-err").replaceChildren(message("err", e.message)));
 </script>
 </body>
 </html>

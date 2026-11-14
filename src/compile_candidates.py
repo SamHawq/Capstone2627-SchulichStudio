@@ -5,7 +5,13 @@ Usage (from the repo root):
     python src/compile_candidates.py a.xlsx b.xlsx more/   # specific files and/or folders
     python src/compile_candidates.py --map mapping.json -o other.json
     python src/compile_candidates.py --purpose "Lab TA hiring" --rebuild-criteria
-    python src/compile_candidates.py --no-criteria          # no LLM call
+    python src/compile_candidates.py --no-criteria          # no planner call
+    python src/compile_candidates.py --no-screen            # no header screen (not recommended)
+
+First screens the column headers (one Header Screen call, headers only, see
+hiring_agents/screening.py): columns it drops are removed before any value reaches an LLM, and
+its decisions are saved, editable, in header_screen.json next to the output. Headers screened
+before are not sent again.
 
 Reads every sheet of every .xlsx/.xlsm/.csv/.json file, maps the columns to the standard fields,
 merges rows that share a candidate ID, and writes candidate_data/candidates.json. See
@@ -30,10 +36,12 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from hiring_agents.datastore import CATALOG_PATH, COMPILED_PATH, RAW_DIR, compile_sources, write_store
+from hiring_agents.agent_trace import trace_operation
+from hiring_agents.datastore import CATALOG_PATH, COMPILED_PATH, RAW_DIR, compile_sources, source_headers, write_store
 from hiring_agents.logging_config import setup_logging
 from hiring_agents.planning import field_labels, refresh_catalog
 from hiring_agents.registry import default_registry
+from hiring_agents.screening import ScreeningError, screen_headers
 from hiring_agents.service import DEFAULT_PURPOSE
 
 REPO = Path(__file__).resolve().parents[1]
@@ -54,16 +62,29 @@ def main() -> int:
     parser.add_argument("--rebuild-criteria", action="store_true",
                         help="plan the criteria again even if the fields haven't changed")
     parser.add_argument("--no-criteria", action="store_true", help="skip criteria planning")
+    parser.add_argument("--no-screen", action="store_true",
+                        help="skip the header screen (only the built-in name list drops sensitive columns)")
     args = parser.parse_args()
     # Same LOG_FILE_LEVEL / LOG_CONSOLE_LEVEL switches as main.py (see hiring_agents/logging_config.py).
     log_path = setup_logging(REPO / "logs")
     if log_path:
         print(f"Log: {log_path}")
+    # With AGENT_TRACE=ON, the whole compile shows as one operation on the /runs page.
+    with trace_operation("compile", ", ".join(str(i) for i in args.inputs)):
+        return compile_store(args)
 
+
+def compile_store(args) -> int:
     mapping = json.loads(args.map.read_text(encoding="utf-8")) if args.map else None
     try:
-        records, reports, warnings = compile_sources(args.inputs, column_mapping=mapping)
-    except (ValueError, FileNotFoundError) as e:
+        screen, warnings = None, []
+        if not args.no_screen:
+            screen_path = args.output.parent / "header_screen.json"
+            screen, screened, warnings = asyncio.run(screen_headers(source_headers(args.inputs), screen_path))
+            print(f"Header screen {'updated' if screened else 'unchanged'}: {screen_path}")
+        records, reports, compile_warnings = compile_sources(args.inputs, column_mapping=mapping, screen=screen)
+        warnings += compile_warnings
+    except (ValueError, FileNotFoundError, ScreeningError) as e:
         print(f"Error: {e}", file=sys.stderr)
         return 1
 
@@ -73,13 +94,15 @@ def main() -> int:
         for col, fid in report.column_mapping.items():
             print(f"    {col!r:32} -> {fid}")
         if report.dropped_sensitive:
-            print(f"    dropped (sensitive): {report.dropped_sensitive}")
+            print(f"    dropped (sensitive or screened out): {report.dropped_sensitive}")
         if report.dropped_unused:
             print(f"    dropped (mapped to null): {report.dropped_unused}")
     for w in warnings:
         print(f"Warning: {w}")
 
     out = write_store(records, args.output)
+    (args.output.parent / "field_labels.json").write_text(
+        json.dumps(field_labels(list(reports.values())), indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\n{len(records)} candidates from {len(reports)} source(s) written to {out}")
     if not args.no_criteria:
         plan_criteria(records, list(reports.values()), args)

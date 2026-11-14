@@ -4,8 +4,11 @@ Rankers aren't given open-ended tasks. Each one is tied to a registered `Criteri
 description, scoring guide, and list of allowed fields. This keeps rankers predictable and makes
 the system reusable beyond TA hiring: a new client supplies a different registry, not new code.
 
-To add a built-in criterion, append a `Criterion` to `DEFAULT_CRITERIA`. Its `relevant_fields`
-must be standard field ids from `intake.DEFAULT_FIELDS` (add a FieldSpec there for new data).
+To add a built-in criterion, append a `Criterion` to `DEFAULT_CRITERIA`. Built-in criteria
+describe WHAT to judge, not which columns to read: they start with no fields. The Criteria
+Planner reads each dataset's fields and assigns the ones that are evidence for a built-in
+criterion (criteria.json "extensions"), by reasoning about the field names, headers and kinds,
+never by matching default column names.
 """
 
 from .schemas import Criterion
@@ -67,17 +70,17 @@ DEFAULT_CRITERIA = [
             "10 = multiple prior TA terms in closely related courses; "
             "5 = some tutoring or one unrelated TA term; 0 = no teaching experience."
         ),
-        relevant_fields=["previous_ta_courses", "teaching_experience"],
+        relevant_fields=[],
     ),
     Criterion(
         id="subject_knowledge",
         name="Subject Knowledge",
         description="Mastery of the course material the TA will support.",
         scoring_guidance=(
-            "Weigh grades in courses relevant to the role most heavily, then program and year. "
+            "Weigh grades in courses relevant to the role most heavily, then program and year of study. "
             "10 = top grades in the course itself or direct prerequisites; 0 = no relevant coursework."
         ),
-        relevant_fields=["program", "year_of_study", "relevant_courses"],
+        relevant_fields=[],
     ),
     Criterion(
         id="past_performance",
@@ -87,7 +90,7 @@ DEFAULT_CRITERIA = [
             "10 = consistently excellent reviews; 5 = mixed or average; "
             "0 = poor reviews. If there are no reviews, score 0 and say so."
         ),
-        relevant_fields=["previous_ta_reviews"],
+        relevant_fields=[],
     ),
 ]
 

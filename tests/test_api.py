@@ -16,24 +16,27 @@ from unittest.mock import AsyncMock, patch
 from fastapi import HTTPException
 from starlette.datastructures import UploadFile
 
-import hiring_agents.drafting as drafting
+import hiring_agents.agent_trace as agent_trace
 import hiring_agents.orchestrator as orchestrator
-import hiring_agents.planning as planning
 from hiring_agents.api import ProcessRequest, create_app
 from hiring_agents.datastore import Store
 from hiring_agents.schemas import HiringRequest, RequestBrief
 from hiring_agents.service import ServiceError
+from tests.stubs import patch_screen, runner_by_agent
 from tests.test_drafting import _choice, _output
-from tests.test_service import APPS, _fake_ranker, _planner
+from tests.test_service import APPS, DRAFT, _fake_ranker, _planner
 
 
 class ApiTests(unittest.TestCase):
     def setUp(self):
+        screen = patch_screen()   # keep-all Header Screen, no LLM call
+        screen.start()
+        self.addCleanup(screen.stop)
         self.tmp = tempfile.TemporaryDirectory()
         d = Path(self.tmp.name)
         self.results = d / "results"
         self.app = create_app(Store(d / "store"), self.results)
-        self.planner = patch.object(planning.Runner, "run", _planner())
+        self.planner = patch.object(agent_trace.Runner, "run", _planner())
         self.planner.start()
 
     def tearDown(self):
@@ -63,6 +66,26 @@ class ApiTests(unittest.TestCase):
         name = response.report_url.rsplit("/", 1)[1]
         self.assertTrue((self.results / name).exists())
         self.assertEqual(Path(self.call("/results/{name}", "GET", name).path).name, name)
+        latest = self.call("/api/rankings/latest", "GET")
+        self.assertEqual(latest.result, response.result)
+        self.assertEqual(latest.report_url, response.report_url)
+
+    def test_latest_ranking_is_empty_without_saved_results(self):
+        self.assertIsNone(self.call("/api/rankings/latest", "GET"))
+
+    def test_latest_ranking_skips_incomplete_or_corrupt_files_without_agents(self):
+        self.upload()
+        request = HiringRequest(role="TA", criteria={"subject_knowledge": 1}, top_x=2)
+        with patch.object(orchestrator, "run_ranker", _fake_ranker):
+            response = self.call("/api/rankings", "POST", request)
+        (self.results / "results-99999999-235959.json").write_text("{}")  # No paired report.
+        (self.results / "results-99999998-235959.json").write_text("invalid json")
+        (self.results / "results-99999998-235959.html").write_text("incomplete")
+        with patch.object(agent_trace.Runner, "run", new_callable=AsyncMock) as runner:
+            latest = self.call("/api/rankings/latest", "GET")
+        runner.assert_not_awaited()
+        self.assertEqual(latest.result, response.result)
+        self.assertEqual(latest.report_url, response.report_url)
 
     def test_upload_path_parts_are_stripped(self):
         result = self.upload(name="../../evil.csv")
@@ -82,10 +105,11 @@ class ApiTests(unittest.TestCase):
     def test_draft_endpoint(self):
         self.upload()
         output = _output([_choice("technical_skills", 3, "Python first")])
-        reply = SimpleNamespace(final_output_as=lambda *a, **k: output)
-        with patch.object(drafting.Runner, "run", AsyncMock(return_value=reply)):
+        with patch.object(agent_trace.Runner, "run", runner_by_agent({"Criteria Planner": DRAFT, "Manager": output})):
             draft = self.call("/api/requests/draft", "POST", RequestBrief(instructions="Python TA"))
         self.assertEqual(draft.request.criteria["technical_skills"], 3)
+        self.assertIsNotNone(draft.request.catalog)                       # carries its own criteria
+        self.assertIn("technical_skills", [c.id for c in draft.criteria])
 
     def test_service_errors_become_400(self):
         handler = self.app.exception_handlers[ServiceError]

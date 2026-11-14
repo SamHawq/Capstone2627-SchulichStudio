@@ -7,20 +7,21 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
+import hiring_agents.agent_trace as agent_trace
 import hiring_agents.orchestrator as orchestrator
-import hiring_agents.planning as planning
 from hiring_agents.datastore import Store
 from hiring_agents.llm_agents import build_ranker
 from hiring_agents.planning import (
     MAX_AUTO_CRITERIA, MAX_CATALOG_CRITERIA, add_auto_criteria, plan_catalog, profile_fields,
-    refresh_catalog, validate_draft, with_catalog,
+    refresh_catalog, tiebreak_fields, validate_draft, with_catalog,
 )
 from hiring_agents.privacy import view_for
 from hiring_agents.registry import default_registry
 from hiring_agents.schemas import (
     CandidateScore, CriteriaDraft, CriterionExtension, DraftCriterion, FieldNote, FieldProfile,
-    HiringRequest, RankerOutput, SkippedField,
+    CriteriaCatalog, HiringRequest, PlannedSkip, RankerOutput, SkippedField,
 )
+from tests.stubs import patch_screen
 
 REQUEST = HiringRequest(role="TA for ENGG 233", criteria={"teaching_experience": 0.6, "subject_knowledge": 0.4})
 BASE = [default_registry().get(cid) for cid in default_registry().ids()]
@@ -78,7 +79,7 @@ class ValidateDraftTests(unittest.TestCase):
         draft = _draft(
             extensions=[CriterionExtension(criterion_id="teaching_experience", fields=_notes("comm"))],
             criteria=[_criterion("technical skills", ["python", "java"], importance=3, courses=[" ENGG 233 "])],
-            skipped=[SkippedField(field="timestamp", reason="administrative")],
+            skipped=[PlannedSkip(field="timestamp", reason="form metadata", use="administrative")],
         )
         catalog, warnings = validate_draft(
             draft, _profiles("comm", "python", "java", "timestamp", "other"), BASE, "TA hiring")
@@ -88,7 +89,12 @@ class ValidateDraftTests(unittest.TestCase):
         self.assertEqual((c.id, c.type, c.importance, c.courses), ("technical_skills", "auto", 3, ["ENGG 233"]))
         self.assertEqual(c.relevant_fields, ["python", "java"])       # one criterion, several fields
         self.assertEqual(c.field_notes[1].meaning, "how to read java")
-        self.assertEqual([s.field for s in catalog.skipped], ["timestamp", "other"])   # unnamed reported too
+        self.assertEqual([(s.field, s.use) for s in catalog.skipped],
+                         [("timestamp", "administrative"), ("other", "tiebreak")])   # unnamed -> other info
+        self.assertEqual(tiebreak_fields(catalog), ["other"])                       # never the administrative one
+        legacy = CriteriaCatalog.model_validate({"purpose": "p", "fields": ["x"], "extensions": [], "criteria": [],
+                                                 "skipped": [{"field": "x", "reason": "planned before uses"}]})
+        self.assertEqual(tiebreak_fields(legacy), [])        # unlabelled (old criteria.json): excluded, not tie-break
         self.assertEqual(catalog.fields, ["comm", "python", "java", "timestamp", "other"])
 
     def test_invalid_parts_are_dropped_with_warnings(self):
@@ -162,14 +168,15 @@ class RequestTimeTests(unittest.TestCase):
         self.assertEqual(sum(c.type == "auto" for c in criteria), MAX_AUTO_CRITERIA)
         self.assertEqual([s.field for s in skipped], ["f0"])
 
-    def test_extended_built_in_missing_its_own_fields_is_not_a_warning(self):
+    def test_built_in_runs_on_planned_fields_only(self):
         from hiring_agents.schemas import Candidate
         candidates = [Candidate(ref="C-1", fields={"comm": "x", "program": "SE"})]
         active = [self.registry.get("teaching_experience"), default_registry().get("subject_knowledge")]
         runnable, warnings = orchestrator.criteria_with_data(active, candidates)
-        self.assertEqual(len(runnable), 2)
-        # teaching_experience runs on its planned field; subject_knowledge has no planned
-        # fields, so its partly missing data is still reported.
+        # teaching_experience runs on the field the planner gave it; subject_knowledge was given
+        # none, so it sleeps even though a column happens to be called "program".
+        self.assertEqual([c.id for c in runnable], ["teaching_experience"])
+        self.assertEqual(runnable[0].relevant_fields, ["comm"])
         self.assertEqual(len(warnings), 1)
         self.assertIn("subject_knowledge", warnings[0])
 
@@ -183,7 +190,7 @@ class CatalogFileTests(unittest.TestCase):
 
     def test_unchanged_fields_reuse_the_saved_file(self):
         draft = _draft(criteria=[_criterion("technical", ["python"])])
-        with tempfile.TemporaryDirectory() as d, patch.object(planning.Runner, "run", _fake_planner(draft)) as fake:
+        with tempfile.TemporaryDirectory() as d, patch.object(agent_trace.Runner, "run", _fake_planner(draft)) as fake:
             path = Path(d) / "criteria.json"
             first, planned, _ = asyncio.run(refresh_catalog(self.RECORDS, BASE, "p", path=path))
             self.assertTrue(planned and path.exists())
@@ -202,7 +209,7 @@ class CatalogFileTests(unittest.TestCase):
 
     def test_planner_failure_is_a_warning_and_writes_nothing(self):
         with tempfile.TemporaryDirectory() as d, \
-             patch.object(planning.Runner, "run", AsyncMock(side_effect=RuntimeError("api down"))):
+             patch.object(agent_trace.Runner, "run", AsyncMock(side_effect=RuntimeError("api down"))):
             path = Path(d) / "criteria.json"
             catalog, _, warnings = asyncio.run(refresh_catalog(self.RECORDS, BASE, "p", path=path))
             self.assertIsNone(catalog)
@@ -211,7 +218,7 @@ class CatalogFileTests(unittest.TestCase):
 
     def test_request_time_plans_are_cached(self):
         draft = _draft(criteria=[_criterion("technical", ["python"])])
-        with tempfile.TemporaryDirectory() as d, patch.object(planning.Runner, "run", _fake_planner(draft)) as fake:
+        with tempfile.TemporaryDirectory() as d, patch.object(agent_trace.Runner, "run", _fake_planner(draft)) as fake:
             cache = Path(d) / "plans.json"
             first, _ = asyncio.run(plan_catalog(self.RECORDS, BASE, "role", cache_path=cache))
             second, _ = asyncio.run(plan_catalog(self.RECORDS, BASE, "role", cache_path=cache))
@@ -221,6 +228,11 @@ class CatalogFileTests(unittest.TestCase):
 
 class EndToEndTests(unittest.TestCase):
     """rank_candidates on survey-style data, with the planner and rankers stubbed."""
+
+    def setUp(self):
+        screen = patch_screen()   # keep-all Header Screen, no LLM call
+        screen.start()
+        self.addCleanup(screen.stop)
 
     DRAFT = _draft(
         extensions=[CriterionExtension(criterion_id="teaching_experience",
@@ -239,7 +251,7 @@ class EndToEndTests(unittest.TestCase):
 
         # A temp store, so the plan cache in the real candidate_data/ is never touched.
         with tempfile.TemporaryDirectory() as d, \
-             patch.object(planning.Runner, "run", _fake_planner(draft)) as planner, \
+             patch.object(agent_trace.Runner, "run", _fake_planner(draft)) as planner, \
              patch.object(orchestrator, "run_ranker", fake_ranker):
             final, _ = asyncio.run(orchestrator.rank_candidates(request, SURVEY, store=Store(Path(d))))
         return final, seen, planner

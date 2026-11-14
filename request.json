@@ -1,0 +1,22 @@
+{
+  "role": "TA for ENGG 204, Fall 2026",
+  "criteria": {
+    "teaching_experience": 4.0,
+    "subject_knowledge": 2.0,
+    "past_performance": 1.0,
+    "technical_skills": 5.0,
+    "engg_204_fit": 5.0,
+    "engg_225_fit": 0.0
+  },
+  "top_x": 10,
+  "notes": "",
+  "instructions": {
+    "teaching_experience": "Prior TA, tutoring, or teaching experience is helpful, with particular attention to hands-on teaching and promoting active learning.",
+    "technical_skills": "Prior hands-on engineering lab experience and demonstrated practical technical skills should be prioritized.",
+    "engg_204_fit": "Prior experience and stated interest specifically related to ENGG 204 should be prioritized."
+  },
+  "custom_criteria": [],
+  "auto_criteria": true,
+  "sessions": [],
+  "documents": []
+}
